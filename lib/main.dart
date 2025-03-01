@@ -1,32 +1,52 @@
-import 'package:flutter/material.dart';
-import 'package:recipeapp/pages/sign_in.dart';
-import 'package:recipeapp/pages/sign_up.dart';
-import 'package:recipeapp/pages/main_screen.dart';
-import 'package:recipeapp/pages/add_recipe.dart' as add_recipe;
-import 'package:recipeapp/pages/add_ingredient.dart' as add_ingredient;
-import 'package:recipeapp/base/theme.dart';
+// import 'package:flutter/material.dart';
+// import 'package:recipeapp/pages/sign_in.dart';
+// import 'package:recipeapp/pages/sign_up.dart';
+// import 'package:recipeapp/pages/main_screen.dart';
+// import 'package:recipeapp/pages/add_recipe.dart' as add_recipe;
+// import 'package:recipeapp/pages/add_ingredient.dart' as add_ingredient;
+// import 'package:recipeapp/base/theme.dart';
 
-void main() {
+// void main() {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   runApp(const MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Recipe App',
+//       theme: RecipeAppTheme().themeData, // Using your centralized custom theme
+//       initialRoute: '/signIn',
+//       routes: {
+//         '/signIn': (context) => const SignInPage(),
+//         '/signUp': (context) => const CreateAccountPage(),
+//         '/main': (context) => const MainScreen(),
+//         '/create_recipe': (context) => const add_recipe.AddRecipePage(),
+//         '/addIngredient': (context) => add_ingredient.AddIngredientPage(recipeId: 'dummy_recipe_id'),
+//       },
+//     );
+//   }
+// }
+import 'package:flutter/material.dart';
+import 'package:recipeapp/page/home.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Recipe App',
-      theme: RecipeAppTheme().themeData, // Using your centralized custom theme
-      initialRoute: '/signIn',
-      routes: {
-        '/signIn': (context) => const SignInPage(),
-        '/signUp': (context) => const CreateAccountPage(),
-        '/main': (context) => const MainScreen(),
-        '/create_recipe': (context) => const add_recipe.AddRecipePage(),
-        '/addIngredient': (context) => add_ingredient.AddIngredientPage(recipeId: 'dummy_recipe_id'),
-      },
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: HomeScreen(),
     );
   }
 }

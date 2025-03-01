@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
-import 'package:recipeapp/base/theme.dart'; // Provides RecipeAppTheme
 
 // Global PocketBase client.
 final pb = PocketBase('http://127.0.0.1:8090');
@@ -38,9 +37,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
     // Retrieve the current signed-in user's id.
     final userId = pb.authStore.model?.id;
     if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("User not signed in")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("User not signed in")));
       setState(() {
         _isLoading = false;
       });
@@ -111,9 +110,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
           // Apply blur effect.
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              color: Colors.black.withOpacity(0),
-            ),
+            child: Container(color: Colors.black.withOpacity(0)),
           ),
           // "X" button at the top-right.
           Positioned(
@@ -139,7 +136,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                       blurRadius: 4,
                       color: Color(0x33000000),
                       offset: Offset(0, 2),
-                    )
+                    ),
                   ],
                 ),
                 child: Form(
@@ -150,9 +147,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                       Text(
                         'Add New Recipe',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(color: Colors.black),
                       ),
                       const SizedBox(height: 16),
@@ -224,12 +219,12 @@ class _AddRecipePageState extends State<AddRecipePage> {
                       _isLoading
                           ? const CircularProgressIndicator()
                           : SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: _createRecipe,
-                                child: const Text('Create'),
-                              ),
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _createRecipe,
+                              child: const Text('Create'),
                             ),
+                          ),
                     ],
                   ),
                 ),
@@ -248,9 +243,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
                   context,
                   '/addIngredient',
                   arguments: {
-                    'recipeId': _nameController.text.trim().isEmpty
-                        ? 'dummy_recipe_id'
-                        : _nameController.text.trim(),
+                    'recipeId':
+                        _nameController.text.trim().isEmpty
+                            ? 'dummy_recipe_id'
+                            : _nameController.text.trim(),
                   },
                 );
               },
