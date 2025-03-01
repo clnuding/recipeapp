@@ -34,6 +34,7 @@ dependencies:
   pocketbase: ^0.18.0
   google_fonts: ^6.2.1
   shared_preferences: ^2.5.2
+  flutter_launcher_icons: ^0.13.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -90,3 +91,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+# flutter_launcher_icons:
+#   android: true
+#   ios: true
+#   remove_alpha_ios: true
+#   image_path: "assets/icons/mango_icon_new.png"
+#   adaptive_icon_background: "#ffffff"  # (For Android adaptive icon)
+#   # adaptive_icon_foreground: "assets/icons/app_icon_foreground.png" # Optional
