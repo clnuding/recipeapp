@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:recipeapp/base/theme.dart'; // Make sure this exports RecipeAppTheme
+import 'package:recipeapp/theme.dart'; // Make sure this exports RecipeAppTheme
 
 class RecipeListItemWidget extends StatelessWidget {
   final String recipeName;

@@ -5,10 +5,10 @@ class ScrollableCardSection extends StatelessWidget {
   final List<Map<String, String>> items;
 
   const ScrollableCardSection({
-    Key? key,
+    super.key,
     required this.headline,
     required this.items,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

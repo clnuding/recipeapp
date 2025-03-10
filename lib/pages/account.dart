@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/base/theme.dart' as CustomTheme;
+import 'package:recipeapp/theme.dart' as CustomTheme;
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});

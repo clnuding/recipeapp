@@ -18,7 +18,7 @@ class GlassBottomNavigationBar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Blur effect
         child: Container(
-          color: Colors.black.withValues(alpha: 0.3), // Glass effect background
+          color: Colors.transparent, // Glass effect background
           padding: EdgeInsets.only(top: 10), // Add padding
           child: BottomNavigationBar(
             backgroundColor: Colors.transparent, // Transparent background

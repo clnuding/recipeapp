@@ -28,7 +28,7 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:recipeapp/base/theme.dart';
+import 'package:recipeapp/theme.dart';
 
 class MealPlanningPage extends StatelessWidget {
   const MealPlanningPage({super.key});

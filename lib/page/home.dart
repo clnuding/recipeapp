@@ -1,10 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:recipeapp/components/bottom_bar.dart';
 import 'package:recipeapp/components/scrollcard.dart';
 import 'package:recipeapp/page/recipes.dart';
 import 'package:recipeapp/page/settings.dart';
+import 'package:recipeapp/theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,28 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeColors = Theme.of(context).extension<RecipeColors>()!;
+
     return Stack(
       children: [
-        /// Background image covering the whole screen including bottom bar area
-        Positioned.fill(
-          child: Image.asset(
-            'assets/images/recipeapp_bg.jpg',
-            fit: BoxFit.cover, // Ensures full coverage
-          ),
-        ),
-
-        // Blur Effect
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
-            child: Container(color: Colors.black.withValues(alpha: 0.4)),
-          ),
-        ),
-
         /// Main content with blur effect
         Scaffold(
-          backgroundColor:
-              Colors.transparent, // Make Scaffold background transparent
           extendBody: true,
           extendBodyBehindAppBar: true,
           body: IndexedStack(index: _selectedIndex, children: _pages),
@@ -71,9 +53,46 @@ class _HomeScreenState extends State<HomeScreen> {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
             ),
-            child: GlassBottomNavigationBar(
-              selectedIndex: _selectedIndex,
-              onItemTapped: _onItemTapped,
+            child: Container(
+              decoration: BoxDecoration(
+                color: themeColors.accent,
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 10,
+                    spreadRadius: 5,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: BottomNavigationBar(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                elevation: 0,
+                selectedItemColor: themeColors.accent!,
+                unselectedItemColor: themeColors.accentSecondary!,
+                currentIndex: _selectedIndex,
+                onTap: _onItemTapped,
+                iconSize: 25,
+                type: BottomNavigationBarType.fixed,
+                enableFeedback: false, // Disables the tap animation effect
+                selectedFontSize: 10, // Prevents font from animating
+                unselectedFontSize: 10, // Keeps it consistent
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.food_bank_rounded),
+                    label: 'Recipes',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Profile',
+                  ),
+                ],
+              ),
             ),
           ),
         ),

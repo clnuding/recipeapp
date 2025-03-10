@@ -1,0 +1,157 @@
+[
+  {
+    "name": "Teaspoon",
+    "abbreviation": "tsp",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Tablespoon",
+    "abbreviation": "tbsp",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Fluid Ounce",
+    "abbreviation": "fl oz",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Cup",
+    "abbreviation": "cup",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Pint",
+    "abbreviation": "pt",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Quart",
+    "abbreviation": "qt",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Gallon",
+    "abbreviation": "gal",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Milliliter",
+    "abbreviation": "ml",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Centiliter",
+    "abbreviation": "cl",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Deciliter",
+    "abbreviation": "dl",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Liter",
+    "abbreviation": "l",
+    "measurement_type": "volume"
+  },
+  {
+    "name": "Ounce",
+    "abbreviation": "oz",
+    "measurement_type": "weight"
+  },
+  {
+    "name": "Pound",
+    "abbreviation": "lb",
+    "measurement_type": "weight"
+  },
+  {
+    "name": "Gram",
+    "abbreviation": "g",
+    "measurement_type": "weight"
+  },
+  {
+    "name": "Kilogram",
+    "abbreviation": "kg",
+    "measurement_type": "weight"
+  },
+  {
+    "name": "Milligram",
+    "abbreviation": "mg",
+    "measurement_type": "weight"
+  },
+  {
+    "name": "Piece",
+    "abbreviation": "pc",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Dozen",
+    "abbreviation": "doz",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Unit",
+    "abbreviation": "unit",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Pinch",
+    "abbreviation": "pinch",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Dash",
+    "abbreviation": "dash",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Inch",
+    "abbreviation": "in",
+    "measurement_type": "length"
+  },
+  {
+    "name": "Centimeter",
+    "abbreviation": "cm",
+    "measurement_type": "length"
+  },
+  {
+    "name": "Millimeter",
+    "abbreviation": "mm",
+    "measurement_type": "length"
+  },
+  {
+    "name": "Fahrenheit",
+    "abbreviation": "°F",
+    "measurement_type": "temperature"
+  },
+  {
+    "name": "Celsius",
+    "abbreviation": "°C",
+    "measurement_type": "temperature"
+  },
+  {
+    "name": "Stick",
+    "abbreviation": "stick",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Clove",
+    "abbreviation": "clove",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Bunch",
+    "abbreviation": "bunch",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Sprig",
+    "abbreviation": "sprig",
+    "measurement_type": "count"
+  },
+  {
+    "name": "Leaf",
+    "abbreviation": "leaf",
+    "measurement_type": "count"
+  }
+]

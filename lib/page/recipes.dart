@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/components/card.dart';
+import 'package:recipeapp/components/alternative_card.dart';
 import 'package:recipeapp/components/listitem.dart';
+import 'package:recipeapp/components/searchbar.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/page/settings.dart';
+import 'package:recipeapp/theme.dart';
 
 class RecipesPage extends StatefulWidget {
   const RecipesPage({super.key});
@@ -47,12 +49,14 @@ class RecipesPageState extends State<RecipesPage> {
         {
           "title": "Recipe1",
           "description": "Description1",
+          "subheader": "Subheader1",
           "image_url":
               "https://www.healthbenefitstimes.com/glossary/wp-content/uploads/2020/08/Recipe.jpg",
         },
         {
           "title": "Recipe2",
           "description": "Description2",
+          "subheader": "Subheader2",
           "image_url":
               "https://www.healthbenefitstimes.com/glossary/wp-content/uploads/2020/08/Recipe.jpg",
         },
@@ -86,6 +90,8 @@ class RecipesPageState extends State<RecipesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeColors = Theme.of(context).extension<RecipeColors>()!;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -94,32 +100,20 @@ class RecipesPageState extends State<RecipesPage> {
             children: [
               // Search Bar + Square Button
               Padding(
-                padding: const EdgeInsets.only(top: 70, left: 10, right: 10),
+                padding: const EdgeInsets.only(
+                  top: 70,
+                  left: 10,
+                  right: 10,
+                  bottom: 5,
+                ),
                 child: Row(
                   children: [
                     // Search Field
                     Expanded(
-                      child: TextField(
+                      child: CustomSearchbar(
+                        hintText: "Filter recipes ...",
+                        icon: Icons.filter_list,
                         onChanged: _filterRecipes,
-                        decoration: InputDecoration(
-                          hintText: "Filter Recipes...",
-                          hintStyle: const TextStyle(color: Colors.white60),
-                          suffixIcon: const Icon(
-                            Icons.filter_list,
-                            color: Colors.white70,
-                          ),
-                          border: const OutlineInputBorder(),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 191, 105, 0),
-                              width: 1.0,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: Colors.black.withValues(alpha: 0.3),
-                        ),
-                        style: const TextStyle(color: Colors.white),
-                        cursorColor: const Color.fromARGB(255, 191, 105, 0),
                       ),
                     ),
 
@@ -128,21 +122,22 @@ class RecipesPageState extends State<RecipesPage> {
                     ), // Space between search and button
                     // Square Add Button
                     Container(
-                      height: 55, // Same height as the search bar
-                      width: 55, // Square shape
+                      height: 50,
+                      width: 50, // Square shape
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
-                        ),
+                        color: themeColors.accent,
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 5,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: IconButton(
-                        icon: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 30,
-                        ),
+                        icon: Icon(Icons.add, color: Colors.white, size: 30),
                         onPressed: () {
                           print("Add button pressed");
                         },
@@ -188,17 +183,22 @@ class RecipesPageState extends State<RecipesPage> {
 
   Widget _buildGridView() {
     return GridView.builder(
+      padding: const EdgeInsets.all(12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 0.7,
+        crossAxisCount: 2, // 2 columns
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.65, // Adjust based on card height
       ),
-      padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
-      physics: const BouncingScrollPhysics(),
       itemCount: _filteredRecipes.length,
       itemBuilder: (context, index) {
-        return RecipeCard(recipe: _filteredRecipes[index], onTap: () {});
+        return RecipeCard2(
+          recipe: _filteredRecipes[index],
+
+          onTap: () {
+            print("Edit ${_filteredRecipes[index].title}");
+          },
+        );
       },
     );
   }

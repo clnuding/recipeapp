@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/base/theme.dart';
+import 'package:recipeapp/theme.dart';
 
 class GroceriesPage extends StatelessWidget {
   const GroceriesPage({super.key});
