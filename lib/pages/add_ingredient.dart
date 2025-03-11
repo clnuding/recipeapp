@@ -8,7 +8,7 @@ final pb = PocketBase('http://127.0.0.1:8090');
 class AddIngredientPage extends StatefulWidget {
   // The recipeId is passed from the Add Recipe screen.
   final String recipeId;
-  const AddIngredientPage({Key? key, required this.recipeId}) : super(key: key);
+  const AddIngredientPage({super.key, required this.recipeId});
 
   @override
   State<AddIngredientPage> createState() => _AddIngredientPageState();

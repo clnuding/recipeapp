@@ -7,7 +7,7 @@ import 'package:recipeapp/base/theme.dart'; // Provides RecipeAppTheme
 final pb = PocketBase('http://127.0.0.1:8090');
 
 class AddRecipePage extends StatefulWidget {
-  const AddRecipePage({Key? key}) : super(key: key);
+  const AddRecipePage({super.key});
 
   @override
   State<AddRecipePage> createState() => _AddRecipePageState();

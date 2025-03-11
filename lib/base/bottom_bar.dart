@@ -1,60 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:recipeapp/base/theme.dart' as CustomTheme;
-
-// class AppScaffold extends StatelessWidget {
-//   final Widget child;
-//   final int selectedIndex;
-//   final ValueChanged<int> onTap;
-//   final bool showNavBar;
-
-//   const AppScaffold({
-//     super.key,
-//     required this.child,
-//     required this.selectedIndex,
-//     required this.onTap,
-//     this.showNavBar = true,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final customTheme = CustomTheme.RecipeAppTheme.of(context);
-//     return Scaffold(
-//       body: child,
-//       bottomNavigationBar: showNavBar
-//           ? BottomNavigationBar(
-//               type: BottomNavigationBarType.fixed,
-//               currentIndex: selectedIndex,
-//               // Selected items use the primary color (golden yellow).
-//               selectedItemColor: Theme.of(context).primaryColor,
-//               // Unselected items use the custom theme's primaryText color.
-//               unselectedItemColor: customTheme.primaryText,
-//               onTap: onTap,
-//               items: const [
-//                 BottomNavigationBarItem(
-//                   icon: Icon(Icons.calendar_today),
-//                   label: 'Meal Planning',
-//                 ),
-//                 BottomNavigationBarItem(
-//                   icon: Icon(Icons.restaurant_menu),
-//                   label: 'Recipes',
-//                 ),
-//                 BottomNavigationBarItem(
-//                   icon: Icon(Icons.shopping_cart),
-//                   label: 'Groceries',
-//                 ),
-//                 BottomNavigationBarItem(
-//                   icon: Icon(Icons.account_circle),
-//                   label: 'Account',
-//                 ),
-//               ],
-//             )
-//           : null,
-//     );
-//   }
-// }
-
-// 
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:recipeapp/base/theme.dart' as CustomTheme;
@@ -76,6 +19,7 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final customTheme = CustomTheme.RecipeAppTheme.of(context);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -115,13 +59,21 @@ class AppScaffold extends StatelessWidget {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                   child: Container(
-                    color: Colors.white.withOpacity(0.2),
+                    decoration: BoxDecoration(
+                      color: customTheme.primaryBackground.withOpacity(0.7), // ✅ Uses theme background with transparency
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ), // ✅ Adds slight curve to the top
+                    ),
+                    padding: const EdgeInsets.only(bottom: 10), // ✅ Slight padding at bottom
                     child: BottomNavigationBar(
                       type: BottomNavigationBarType.fixed,
                       currentIndex: selectedIndex,
-                      selectedItemColor: Theme.of(context).primaryColor,
-                      unselectedItemColor: customTheme.primaryText,
-                      backgroundColor: Colors.transparent,
+                      selectedItemColor: customTheme.primaryColor, // ✅ Uses theme primary color
+                      unselectedItemColor: customTheme.primaryText.withOpacity(0.6), // ✅ Dimmed unselected items
+                      backgroundColor: Colors.transparent, // ✅ Fully transparent background
+                      elevation: 0, // ✅ Removes bottom bar shadow
                       onTap: onTap,
                       items: const [
                         BottomNavigationBarItem(
