@@ -62,7 +62,29 @@ Future<void> main() async {
           "min": 1,
           "max": null
         }
-      }
+      },
+      {
+        "name": "url",
+        "type": "image",
+        "required": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 500,
+          "pattern": ""
+        }
+      },
+      {
+        "name": "recipe_category_id",
+        "type": "relation",
+        "required": false,
+        "unique": false,
+        "options": {
+          "collectionId": "_pb_users_auth_", // built-in users collection
+          "cascadeDelete": false,
+          "maxSelect": 1
+        }
+      },
     ],
     "listRule": "",
     "viewRule": "",

@@ -1,14 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:pocketbase/pocketbase.dart';
-
-// Global PocketBase client.
-final pb = PocketBase('http://127.0.0.1:8090');
+import 'package:recipeapp/base/theme.dart'; // Provides RecipeAppTheme
 
 class AddIngredientPage extends StatefulWidget {
-  // The recipeId is passed from the Add Recipe screen.
   final String recipeId;
-  const AddIngredientPage({Key? key, required this.recipeId}) : super(key: key);
+  const AddIngredientPage({super.key, required this.recipeId});
 
   @override
   State<AddIngredientPage> createState() => _AddIngredientPageState();
@@ -17,291 +12,292 @@ class AddIngredientPage extends StatefulWidget {
 class _AddIngredientPageState extends State<AddIngredientPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controller for the amount field.
-  final _amountController = TextEditingController();
+  // Controllers
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _ingredientSearchController = TextEditingController();
 
-  // Selected values for dropdowns.
-  String? _selectedIngredientId;
-  String? _selectedMeasurementId;
+  // Test data for ingredients and measurements
+  final List<String> _ingredientOptions = [
+    'Flour', 'Sugar', 'Salt', 'Butter', 'Eggs'
+  ];
+  final List<String> _measurementOptions = [
+    'g', 'ml', 'cup', 'tbsp', 'tsp'
+  ];
 
-  bool _isLoading = false;
-
-  // Futures to load master data.
-  late Future<List<RecordModel>> _ingredientsFuture;
-  late Future<List<RecordModel>> _measurementsFuture;
+  // Selected values
+  String? _selectedIngredient;
+  String? _selectedMeasurement;
+  List<String> _filteredIngredients = [];
 
   @override
   void initState() {
     super.initState();
-    _ingredientsFuture = pb.collection('ingredients').getFullList();
-    _measurementsFuture = pb.collection('measurements').getFullList();
+    _filteredIngredients = List.from(_ingredientOptions);
+    _ingredientSearchController.addListener(_filterIngredientList);
   }
 
   @override
   void dispose() {
     _amountController.dispose();
+    _ingredientSearchController.dispose();
     super.dispose();
   }
 
-  Future<void> _createUserIngredient() async {
-  if (!_formKey.currentState!.validate()) return;
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  final amount = double.tryParse(_amountController.text.trim());
-  if (amount == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please enter a valid amount")),
-    );
+  void _filterIngredientList() {
+    final query = _ingredientSearchController.text.toLowerCase();
     setState(() {
-      _isLoading = false;
-    });
-    return;
-  }
-
-  // Retrieve the current user id from the auth store.
-  final userId = pb.authStore.model?.id;
-  if (userId == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("User not signed in")),
-    );
-    setState(() {
-      _isLoading = false;
-    });
-    return;
-  }
-
-  final body = {
-    'user_id': userId,
-    'recipe_id': widget.recipeId,
-    'ingredient_id': _selectedIngredientId,
-    'measurement_id': _selectedMeasurementId,
-    'amount': amount,
-  };
-
-  try {
-    final record = await pb.collection('user_ingredients').create(body: body);
-    print('User ingredient created: ${record.id}');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Ingredient added successfully!")),
-    );
-    Navigator.pop(context);
-  } catch (e) {
-    print('Error adding ingredient: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error adding ingredient: ${e.toString()}")),
-    );
-  } finally {
-    setState(() {
-      _isLoading = false;
+      _filteredIngredients = _ingredientOptions
+          .where((ingredient) => ingredient.toLowerCase().contains(query))
+          .toList();
     });
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
+    final theme = RecipeAppTheme.of(context);
     return Scaffold(
-      // Stack to display background image, blur, form, and arrow.
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background image.
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  'https://images.unsplash.com/photo-1625631979614-7ab4aa53d600?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // Blur effect.
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(color: Colors.black.withOpacity(0)),
-          ),
-          // "X" button at the top-right.
-          Positioned(
-            top: 40,
-            right: 20,
-            child: IconButton(
-              icon: const Icon(Icons.close, size: 30, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          // Form container.
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                constraints: const BoxConstraints(maxWidth: 570),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.85),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x33000000),
-                      offset: Offset(0, 2),
-                    )
-                  ],
-                ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Form Content
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Add Ingredient',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(color: Colors.black),
-                      ),
-                      const SizedBox(height: 16),
-                      // Dropdown for Ingredient (using "name" field).
-                      FutureBuilder<List<RecordModel>>(
-                        future: _ingredientsFuture,
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
-                          }
-                          final ingredients = snapshot.data!;
-                          return DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(
-                              labelText: 'Ingredient',
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              fillColor: Colors.white,
-                            ),
-                            dropdownColor: Colors.white,
-                            style: const TextStyle(color: Colors.black),
-                            value: _selectedIngredientId,
-                            items: ingredients.map((record) {
-                              return DropdownMenuItem<String>(
-                                value: record.id,
-                                child: Text(record.data['name'] ?? 'Unnamed'),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedIngredientId = value;
-                              });
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select an ingredient';
-                              }
-                              return null;
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      // Dropdown for Measurement (using "abbreviation" field).
-                      FutureBuilder<List<RecordModel>>(
-                        future: _measurementsFuture,
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
-                          }
-                          final measurements = snapshot.data!;
-                          return DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(
-                              labelText: 'Measurement',
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              fillColor: Colors.white,
-                            ),
-                            dropdownColor: Colors.white,
-                            style: const TextStyle(color: Colors.black),
-                            value: _selectedMeasurementId,
-                            items: measurements.map((record) {
-                              return DropdownMenuItem<String>(
-                                value: record.id,
-                                child: Text(record.data['abbreviation'] ?? 'N/A'),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedMeasurementId = value;
-                              });
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a measurement';
-                              }
-                              return null;
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      // Amount Field.
-                      TextFormField(
-                        controller: _amountController,
-                        decoration: const InputDecoration(
-                          labelText: 'Amount',
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
+                      // Title
+                      Center(
+                        child: Text(
+                          'Step 2: Add Ingredients',
+                          style: theme.title1.copyWith(color: theme.primaryText),
                         ),
-                        keyboardType: TextInputType.number,
-                        style: const TextStyle(color: Colors.black),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the amount';
-                          }
-                          if (double.tryParse(value) == null) {
-                            return 'Enter a valid number';
-                          }
-                          return null;
-                        },
                       ),
-                      const SizedBox(height: 24),
-                      _isLoading
-                          ? const CircularProgressIndicator()
-                          : SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: _createUserIngredient,
-                                child: const Text('Add Ingredient'),
-                              ),
-                            ),
+                      const SizedBox(height: 16),
+
+                      // Ingredient Search Bar with Icon
+                      _buildIngredientSearchBar(theme),
+                      const SizedBox(height: 16),
+
+                      // Measurement Dropdown
+                      _buildMeasurementDropdown(theme),
+                      const SizedBox(height: 16),
+
+                      // Amount Input Field
+                      _buildInputField(
+                        controller: _amountController,
+                        label: "Amount",
+                        theme: theme,
+                        keyboardType: TextInputType.number,
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
+
+            // Styled Bottom Bar (Same Design as add_recipe.dart)
+            _buildBottomNavigation(theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// ✅ **Ingredient Search Bar with Search Icon & Selection**
+  Widget _buildIngredientSearchBar(RecipeAppTheme theme) {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: theme.alternateColor,
+            borderRadius: BorderRadius.circular(7.0),
           ),
-          // Positioned arrow at the bottom-right with navigation to ingredient page.
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: InkWell(
-              onTap: () {
-                // Navigate to the ingredient page.
-                Navigator.pushNamed(
-                  context,
-                  '/addIngredient',
-                  arguments: {'recipeId': widget.recipeId},
-                );
-              },
-              child: const Icon(
-                Icons.arrow_forward,
-                size: 40,
-                color: Colors.white,
-              ),
+          child: TextField(
+            controller: _ingredientSearchController,
+            style: TextStyle(color: theme.primaryText),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              hintText: "Search Ingredient",
+              hintStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.search, color: theme.primaryText.withOpacity(0.6)), // ✅ Search Icon Added
             ),
           ),
+        ),
+        if (_ingredientSearchController.text.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            decoration: BoxDecoration(
+              color: theme.alternateColor,
+              borderRadius: BorderRadius.circular(7.0),
+            ),
+            child: Column(
+              children: _filteredIngredients.map((ingredient) {
+                return ListTile(
+                  title: Text(
+                    ingredient,
+                    style: TextStyle(color: theme.primaryText),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedIngredient = ingredient;
+                      _ingredientSearchController.text = ingredient;
+                      _filteredIngredients = [];
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// ✅ **Measurement Dropdown**
+  Widget _buildMeasurementDropdown(RecipeAppTheme theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      decoration: BoxDecoration(
+        color: theme.alternateColor,
+        borderRadius: BorderRadius.circular(7),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedMeasurement,
+          hint: Text(
+            "Select Measurement",
+            style: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+          ),
+          icon: Icon(Icons.arrow_drop_down, color: theme.primaryText),
+          isExpanded: true,
+          dropdownColor: theme.alternateColor,
+          style: TextStyle(color: theme.primaryText),
+          items: _measurementOptions.map((String option) {
+            return DropdownMenuItem<String>(
+              value: option,
+              child: Text(option),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedMeasurement = newValue;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  /// ✅ **Reusable Input Field Builder**
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required RecipeAppTheme theme,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      style: TextStyle(color: theme.primaryText),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+        filled: true,
+        fillColor: theme.alternateColor, // ✅ Themed background
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(7),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(7),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  /// ✅ **Bottom Navigation (Same as add_recipe.dart)**
+  Widget _buildBottomNavigation(RecipeAppTheme theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          _buildSquareIconButton(theme, Icons.arrow_back, () => Navigator.pop(context)),
+          const SizedBox(width: 8),
+          Expanded(child: _buildProgressBar(theme, 2)), // Step 2 active for ingredients page
+          const SizedBox(width: 8),
+          _buildSquareIconButton(theme, Icons.arrow_forward, () => Navigator.pushNamed(context, '/reviewRecipe')),
         ],
       ),
+    );
+  }
+
+  /// ✅ **Reusable Square Icon Button**
+  Widget _buildSquareIconButton(RecipeAppTheme theme, IconData icon, VoidCallback onPressed) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          color: theme.alternateColor,
+          borderRadius: BorderRadius.circular(7),
+        ),
+        child: Icon(icon, color: theme.primaryColor, size: 24),
+      ),
+    );
+  }
+
+  /// ✅ **Progress Bar Widget**
+  Widget _buildProgressBar(RecipeAppTheme theme, int activeStep) {
+    return Container(
+      height: 50,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: theme.alternateColor,
+        borderRadius: BorderRadius.circular(7),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildProgressCircle(theme, activeStep >= 1),
+          _buildProgressLine(theme),
+          _buildProgressCircle(theme, activeStep >= 2),
+          _buildProgressLine(theme),
+          _buildProgressCircle(theme, activeStep >= 3),
+        ],
+      ),
+    );
+  }
+
+
+
+  /// ✅ Progress Circle: Active is filled; inactive shows only accent border.
+  Widget _buildProgressCircle(RecipeAppTheme theme, bool isActive) {
+    return Container(
+      width: 16,
+      height: 16,
+      decoration: BoxDecoration(
+        color: isActive ? theme.primaryColor : Colors.transparent,
+        border: Border.all(color: theme.primaryColor, width: 2),
+        borderRadius: BorderRadius.circular(7),
+      ),
+    );
+  }
+
+  /// ✅ Progress Line Between Circles
+  Widget _buildProgressLine(RecipeAppTheme theme) {
+    return Container(
+      width: 20,
+      height: 3,
+      color: theme.primaryColor,
     );
   }
 }

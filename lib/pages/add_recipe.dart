@@ -1,13 +1,11 @@
-import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:recipeapp/base/theme.dart'; // Provides RecipeAppTheme
 
-// Global PocketBase client.
-final pb = PocketBase('http://127.0.0.1:8090');
-
 class AddRecipePage extends StatefulWidget {
-  const AddRecipePage({Key? key}) : super(key: key);
+  const AddRecipePage({super.key});
 
   @override
   State<AddRecipePage> createState() => _AddRecipePageState();
@@ -16,69 +14,67 @@ class AddRecipePage extends StatefulWidget {
 class _AddRecipePageState extends State<AddRecipePage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for the form fields.
+  // Controllers for input fields
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _portionsController = TextEditingController();
-  final _imageUrlController = TextEditingController();
 
-  bool _isLoading = false;
+  File? _image; // Store selected image
+  String? _selectedRecipeType; // Store selected recipe type
 
-  Future<void> _createRecipe() async {
-    if (!_formKey.currentState!.validate()) return;
+  // Test data for recipe types
+  final List<String> _recipeTypes = [
+    'Side Dish',
+    'Main Course',
+    'Dessert',
+    'Snack',
+    'Dip/Spread',
+  ];
 
-    setState(() {
-      _isLoading = true;
-    });
+  // ✅ Pick image from gallery or camera
+  Future<void> _pickImage(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: source);
 
-    // Debug print to verify authStore status.
-    print('Auth store is valid: ${pb.authStore.isValid}');
-    print('Auth store model: ${pb.authStore.model}');
-
-    // Retrieve the current signed-in user's id.
-    final userId = pb.authStore.model?.id;
-    if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("User not signed in")),
-      );
+    if (pickedFile != null) {
       setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    final String name = _nameController.text.trim();
-    final String description = _descriptionController.text.trim();
-    final int? portions = int.tryParse(_portionsController.text.trim());
-    final String imageUrl = _imageUrlController.text.trim();
-
-    // Include user_id in the body.
-    final Map<String, dynamic> body = {
-      'user_id': userId,
-      'name': name,
-      'description': description,
-      'portions': portions,
-      'image': imageUrl,
-    };
-
-    try {
-      final record = await pb.collection('user_recipes').create(body: body);
-      print('Recipe created successfully: ${record.id}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Recipe created successfully!")),
-      );
-      // Navigate back to the recipe page.
-      Navigator.pop(context);
-    } catch (e) {
-      print('Error creating recipe: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error creating recipe: ${e.toString()}")),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
+        _image = File(pickedFile.path);
       });
     }
+  }
+
+  // ✅ Show dialog to choose image source
+  Future<void> _showImageSourceDialog() async {
+    final theme = RecipeAppTheme.of(context);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: theme.primaryBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: theme.primaryText),
+              title: Text("Take a Photo", style: TextStyle(color: theme.primaryText)),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.image, color: theme.primaryText),
+              title: Text("Choose from Gallery", style: TextStyle(color: theme.primaryText)),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -86,182 +82,245 @@ class _AddRecipePageState extends State<AddRecipePage> {
     _nameController.dispose();
     _descriptionController.dispose();
     _portionsController.dispose();
-    _imageUrlController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = RecipeAppTheme.of(context);
+    final Color backgroundColor = theme.alternateColor; // ✅ Matches input fields
+
     return Scaffold(
-      // We don't use an AppBar, so we'll overlay the "X" button and arrow on the Stack.
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background image.
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  'https://images.unsplash.com/photo-1625631979614-7ab4aa53d600?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // Apply blur effect.
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              color: Colors.black.withOpacity(0),
-            ),
-          ),
-          // "X" button at the top-right.
-          Positioned(
-            top: 40,
-            right: 20,
-            child: IconButton(
-              icon: const Icon(Icons.close, size: 30, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          // The form container.
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                constraints: const BoxConstraints(maxWidth: 570),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.85),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x33000000),
-                      offset: Offset(0, 2),
-                    )
+      backgroundColor: Colors.white, // ✅ Full-screen white background
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ✅ Form Content
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ✅ Title
+                    Center(
+                      child: Text(
+                        'Step 1: Add Recipe',
+                        textAlign: TextAlign.center,
+                        style: theme.title1.copyWith(color: theme.primaryText),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ✅ Recipe Name Field
+                    _buildInputField(
+                      controller: _nameController,
+                      label: "Recipe Name",
+                      theme: theme,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ✅ Portions Field
+                    _buildInputField(
+                      controller: _portionsController,
+                      label: "Portions",
+                      theme: theme,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ✅ Recipe Type Dropdown
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: backgroundColor, // ✅ Matches input fields
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedRecipeType,
+                          hint: Text(
+                            "Select Recipe Type",
+                            style: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+                          ),
+                          icon: Icon(Icons.arrow_drop_down, color: theme.primaryText),
+                          isExpanded: true,
+                          dropdownColor: backgroundColor, // ✅ Consistent color
+                          style: TextStyle(color: theme.primaryText),
+                          items: _recipeTypes.map((String type) {
+                            return DropdownMenuItem<String>(
+                              value: type,
+                              child: Text(type),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedRecipeType = newValue;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ✅ Picture Upload (Optional)
+                    GestureDetector(
+                      onTap: _showImageSourceDialog,
+                      child: Container(
+                        height: 100, // ✅ Reduced height
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: backgroundColor, // ✅ Matches input fields
+                          borderRadius: BorderRadius.circular(7), // ✅ Rounded corners
+                        ),
+                        child: _image == null
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_a_photo, color: theme.primaryText.withOpacity(0.6), size: 40),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Add Picture (Optional)",
+                                    style: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+                                  ),
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(7),
+                                child: Image.file(
+                                  _image!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ✅ Description Field (Optional)
+                    _buildInputField(
+                      controller: _descriptionController,
+                      label: "Description (Optional)",
+                      theme: theme,
+                      maxLines: 3,
+                    ),
                   ],
                 ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Add New Recipe',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(color: Colors.black),
+              ),
+            ),
+
+            // ✅ Styled Bottom Bar (Consistent Backgrounds & Sizes)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  // ✅ Close Button (Left)
+                  _buildSquareIconButton(theme, Icons.close, () => Navigator.pop(context)),
+
+                  const SizedBox(width: 8), // ✅ Spacing
+
+                  // ✅ Progress Bar (Now matches icon height)
+                  Expanded(
+                    child: Container(
+                      height: 50, // ✅ Matches icon backgrounds
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: backgroundColor, // ✅ Background matches input fields
+                        borderRadius: BorderRadius.circular(7),
                       ),
-                      const SizedBox(height: 16),
-                      // Recipe Name Field.
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Recipe Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a recipe name';
-                          }
-                          return null;
-                        },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildProgressCircle(theme, true),
+                          _buildProgressLine(theme),
+                          _buildProgressCircle(theme, false),
+                          _buildProgressLine(theme),
+                          _buildProgressCircle(theme, false),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      // Description Field.
-                      TextFormField(
-                        controller: _descriptionController,
-                        decoration: const InputDecoration(
-                          labelText: 'Description',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a description';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      // Portions Field.
-                      TextFormField(
-                        controller: _portionsController,
-                        decoration: const InputDecoration(
-                          labelText: 'Portions',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the number of portions';
-                          }
-                          if (int.tryParse(value) == null) {
-                            return 'Please enter a valid number';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      // Image URL Field.
-                      TextFormField(
-                        controller: _imageUrlController,
-                        decoration: const InputDecoration(
-                          labelText: 'Image URL',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter an image URL';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      _isLoading
-                          ? const CircularProgressIndicator()
-                          : SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: _createRecipe,
-                                child: const Text('Create'),
-                              ),
-                            ),
-                    ],
+                    ),
                   ),
-                ),
+
+                  const SizedBox(width: 8), // ✅ Spacing
+
+                  // ✅ Navigation Arrow (Right)
+                  _buildSquareIconButton(theme, Icons.arrow_forward, () => Navigator.pushNamed(context, '/addIngredient')),
+                ],
               ),
             ),
-          ),
-          // Positioned arrow at the bottom-right with navigation to ingredient page.
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: InkWell(
-              onTap: () {
-                // Navigate to the AddIngredientPage.
-                // Ensure that the recipe is created first so that you have a valid recipe id.
-                Navigator.pushNamed(
-                  context,
-                  '/addIngredient',
-                  arguments: {
-                    'recipeId': _nameController.text.trim().isEmpty
-                        ? 'dummy_recipe_id'
-                        : _nameController.text.trim(),
-                  },
-                );
-              },
-              child: const Icon(
-                Icons.arrow_forward,
-                size: 40,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// ✅ **Reusable Input Field Builder**
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required RecipeAppTheme theme,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      style: TextStyle(color: theme.primaryText),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+        filled: true,
+        fillColor: theme.alternateColor, // ✅ Themed background
+        border: InputBorder.none, // ✅ No border
+        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(7), // ✅ Rounded corners
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(7), // ✅ Rounded corners
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  /// ✅ **Progress Circle**
+  Widget _buildProgressCircle(RecipeAppTheme theme, bool isActive) {
+    return Container(
+      width: 16,
+      height: 16,
+      decoration: BoxDecoration(
+        color: isActive ? theme.primaryColor : Colors.transparent, // ✅ Active fills color
+        border: Border.all(color: theme.primaryColor, width: 2), // ✅ Outline for inactive
+        borderRadius: BorderRadius.circular(7), // ✅ Matches UI
+      ),
+    );
+  }
+
+  /// ✅ **Progress Line Between Circles**
+  Widget _buildProgressLine(RecipeAppTheme theme) {
+    return Container(
+      width: 20,
+      height: 3,
+      color: theme.primaryColor, // ✅ Consistent accent color
+    );
+  }
+
+  /// ✅ **Reusable Square Icon Button**
+  Widget _buildSquareIconButton(RecipeAppTheme theme, IconData icon, VoidCallback onPressed) {
+    return Container(
+      height: 50,
+      width:50,
+      decoration: BoxDecoration(
+        color: theme.alternateColor,
+        borderRadius: BorderRadius.circular(7),
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: theme.primaryColor, size: 24),
+        onPressed: onPressed,
       ),
     );
   }
