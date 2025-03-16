@@ -16,24 +16,24 @@ class MealPlanningPage extends StatelessWidget {
           child: Column(
             children: [
               // Page Title
-              Text(
-                "Meal Planning",
-                style: theme.displaySmall.copyWith(fontWeight: FontWeight.w600),
-              ),
+              // Text(
+              //   "Meal Planning",
+              //   style: theme.displaySmall.copyWith(fontWeight: FontWeight.w600),
+              // ),
               const SizedBox(height: 20),
 
               // Table Header (Week Navigation)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.chevron_left_sharp, color: theme.alternateColor),
+                  Icon(Icons.chevron_left_sharp, color: theme.primaryText),
                   Column(
                     children: [
                       Text("Current Week", style: theme.bodyMedium),
                       Text("Mon, 22nd July - Sun, 28th July", style: theme.bodySmall),
                     ],
                   ),
-                  Icon(Icons.chevron_right, color: theme.alternateColor),
+                  Icon(Icons.chevron_right, color: theme.primaryText),
                 ],
               ),
               const SizedBox(height: 20),
@@ -81,18 +81,18 @@ class _MealPlanningTable extends StatelessWidget {
           height: totalHeight,
           padding: const EdgeInsets.symmetric(horizontal: 3), // Equal padding
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12), // Rounded corners
+            borderRadius: BorderRadius.circular(7), // Rounded corners
             color: theme.primaryBackground,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 4,
-                spreadRadius: 1,
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.black12,
+            //     blurRadius: 4,
+            //     spreadRadius: 1,
+            //   ),
+            // ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12), // Ensures rounded corners apply to table
+            borderRadius: BorderRadius.circular(7), // Ensures rounded corners apply to table
             child: DataTable(
               columnSpacing: 8, // Reduce space between columns
               headingRowHeight: 45, // Slightly larger heading

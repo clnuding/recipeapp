@@ -15,7 +15,7 @@ class RecipeAppTheme {
   }
 
   // Brand and utility colors
-  final Color primaryColor = const Color.fromARGB(255, 200, 159, 63);
+  final Color primaryColor = const Color.fromARGB(255, 152, 138, 104);
   final Color alternateColor = const Color.fromARGB(255, 243, 242, 237);
   //const Color.fromARGB(255, 224, 224, 224);
   final Color primaryText = const Color.fromARGB(255, 63, 60, 60);
