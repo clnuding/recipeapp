@@ -46,3 +46,6 @@ app.*.map.json
 
 # ignore spread sheets
 *.xlsx
+
+# environment variables
+.env

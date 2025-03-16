@@ -55,9 +55,11 @@ class RecipeItemTiles extends StatelessWidget {
 
         return RecipeCard(
           recipe: Recipe(
+            id: "",
             title: record.data['name'] ?? 'Unnamed Recipe',
             // subheader: record.data['description'] ?? '',
-            imageUrl: record.data['image'] ?? '',
+            thumbnailUrl: record.data['image'] ?? '',
+            creatorId: "",
           ),
         );
       },
@@ -79,7 +81,12 @@ class RecipeCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 243, 242, 237), // ✅ Uses theme background color
+          color: const Color.fromARGB(
+            255,
+            243,
+            242,
+            237,
+          ), // ✅ Uses theme background color
           borderRadius: BorderRadius.circular(7),
           // boxShadow: [
           //   BoxShadow(
@@ -104,17 +111,17 @@ class RecipeCard extends StatelessWidget {
                     topRight: Radius.circular(7),
                   ),
                   child: Image.network(
-                    recipe.imageUrl.isNotEmpty
-                        ? recipe.imageUrl
-                        : 'https://via.placeholder.com/150', // ✅ Fallback image
+                    recipe.thumbnailUrl ??
+                        'https://via.placeholder.com/150', // ✅ Fallback image
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.broken_image,
-                      color: theme.primaryText.withOpacity(0.5),
-                      size: 50,
-                    ),
+                    errorBuilder:
+                        (context, error, stackTrace) => Icon(
+                          Icons.broken_image,
+                          color: theme.primaryText.withOpacity(0.5),
+                          size: 50,
+                        ),
                   ),
                 ),
               ),

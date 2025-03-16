@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:recipeapp/base/theme.dart';
 
 class GroceriesPage extends StatelessWidget {
@@ -19,26 +18,24 @@ class GroceriesPage extends StatelessWidget {
     final theme = RecipeAppTheme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.primaryBackground,
+      // backgroundColor: theme.primaryBackground,
+      backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ✅ Page Title
-            Center(
-              child: Text(
-                "Groceries",
-                style: theme.title1,
-              ),
-            ),
+            Center(child: Text("Groceries", style: theme.title1)),
             const SizedBox(height: 16),
 
             // ✅ Groceries List View
             Expanded(
               child: ListView.separated(
                 itemCount: testGroceries.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 8), // ✅ Space between list items
+                separatorBuilder:
+                    (context, index) =>
+                        const SizedBox(height: 8), // ✅ Space between list items
                 itemBuilder: (context, index) {
                   final item = testGroceries[index];
 
@@ -79,7 +76,6 @@ class GroceryListItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color textColor = theme.primaryText;
-    final Color backgroundColor = theme.alternateColor;
     final Color primaryColor = theme.primaryColor;
 
     return Row(
@@ -109,10 +105,7 @@ class GroceryListItemWidget extends StatelessWidget {
         // ✅ Unit
         _buildContainer(
           width: 80,
-          child: Text(
-            unit,
-            style: TextStyle(color: textColor, fontSize: 16),
-          ),
+          child: Text(unit, style: TextStyle(color: textColor, fontSize: 16)),
         ),
 
         // ✅ Item Name (Takes remaining space)
@@ -124,7 +117,11 @@ class GroceryListItemWidget extends StatelessWidget {
             ),
             child: Text(
               itemName,
-              style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: textColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
@@ -133,14 +130,21 @@ class GroceryListItemWidget extends StatelessWidget {
   }
 
   /// ✅ **Reusable Container for List Items**
-  Widget _buildContainer({required Widget child, double width = double.infinity, BorderRadius? borderRadius}) {
+  Widget _buildContainer({
+    required Widget child,
+    double width = double.infinity,
+    BorderRadius? borderRadius,
+  }) {
     return Container(
       width: width,
       height: 60,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: theme.alternateColor,
-        borderRadius: borderRadius ?? BorderRadius.zero, // ✅ Rounded corners only on first & last items
+        // color: theme.alternateColor,
+        color: Colors.grey.shade200,
+        borderRadius:
+            borderRadius ??
+            BorderRadius.zero, // ✅ Rounded corners only on first & last items
         border: Border.all(color: theme.primaryText.withOpacity(0.3), width: 1),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8),
