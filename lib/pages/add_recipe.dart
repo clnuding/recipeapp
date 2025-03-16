@@ -223,7 +223,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                   // ✅ Progress Bar (Now matches icon height)
                   Expanded(
                     child: Container(
-                      height: 55, // ✅ Matches icon backgrounds
+                      height: 50, // ✅ Matches icon backgrounds
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         color: backgroundColor, // ✅ Background matches input fields
@@ -312,8 +312,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
   /// ✅ **Reusable Square Icon Button**
   Widget _buildSquareIconButton(RecipeAppTheme theme, IconData icon, VoidCallback onPressed) {
     return Container(
-      height: 55,
-      width:55,
+      height: 50,
+      width:50,
       decoration: BoxDecoration(
         color: theme.alternateColor,
         borderRadius: BorderRadius.circular(7),

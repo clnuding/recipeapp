@@ -27,6 +27,17 @@ class RecipeReviewPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // ✅ Page Title (Now Matches the Format of Other Pages)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: Text(
+                  "Step 3: Review Recipe", // ✅ Updated Title
+                  style: theme.title1.copyWith(color: theme.primaryText),
+                ),
+              ),
+            ),
+
             // ✅ Recipe Image + Info (Merged)
             _buildRecipeHeader(theme, imageUrl, recipeName, recipeType, portions),
 
@@ -181,7 +192,7 @@ class RecipeReviewPage extends StatelessWidget {
   /// ✅ **Progress Bar**
   Widget _buildProgressBar(RecipeAppTheme theme, int activeStep) {
     return Container(
-      height: 55,
+      height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: theme.alternateColor,
@@ -203,8 +214,8 @@ class RecipeReviewPage extends StatelessWidget {
   /// ✅ **Reusable Square Icon Button**
   Widget _buildSquareIconButton(RecipeAppTheme theme, IconData icon, VoidCallback onPressed) {
     return Container(
-      height: 55,
-      width: 55,
+      height: 50,
+      width: 50,
       decoration: BoxDecoration(
         color: theme.alternateColor,
         borderRadius: BorderRadius.circular(7),

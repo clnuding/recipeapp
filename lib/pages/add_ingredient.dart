@@ -244,13 +244,13 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        height: 55,
-        width: 55,
+        height: 50,
+        width: 50,
         decoration: BoxDecoration(
           color: theme.alternateColor,
           borderRadius: BorderRadius.circular(7),
         ),
-        child: Icon(icon, color: theme.primaryText, size: 24),
+        child: Icon(icon, color: theme.primaryColor, size: 24),
       ),
     );
   }
@@ -258,7 +258,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   /// ✅ **Progress Bar Widget**
   Widget _buildProgressBar(RecipeAppTheme theme, int activeStep) {
     return Container(
-      height: 55,
+      height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: theme.alternateColor,
@@ -276,6 +276,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       ),
     );
   }
+
 
 
   /// ✅ Progress Circle: Active is filled; inactive shows only accent border.
