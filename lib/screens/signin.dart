@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:pocketbase/pocketbase.dart';
+//import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/screens/signup.dart';
 import 'package:recipeapp/utils/google_auth.dart';
 import 'package:recipeapp/widgets/custom_scaffold.dart';
 import 'package:recipeapp/widgets/square_tile.dart';
 import '../theme/theme.dart';
+import 'package:recipeapp/api/pb_client.dart';
 
-final pb = PocketBase('http://127.0.0.1:8090/');
+
+//final pb = PocketBase('https://pocketbase.accelizen.com');
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});

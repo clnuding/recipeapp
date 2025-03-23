@@ -5,6 +5,7 @@ import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/google_auth.dart';
 import 'package:recipeapp/widgets/custom_scaffold.dart';
 import 'package:recipeapp/widgets/square_tile.dart';
+import 'package:recipeapp/api/pb_client.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

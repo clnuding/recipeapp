@@ -1,7 +1,7 @@
 import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const pocketbaseUri = 'http://127.0.0.1:8090/';
+const pocketbaseUri = 'https://pocketbase.accelizen.com';
 
 // helper to init pocketbase instance with safed auth store
 Future<PocketBase?> getPocketbaseWithSavedStore() async {

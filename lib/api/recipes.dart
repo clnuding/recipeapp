@@ -1,8 +1,9 @@
 import 'package:recipeapp/models/recipe.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:recipeapp/api/pb_client.dart';
 
-const pbHost = 'http://127.0.0.1:8090';
-final pb = PocketBase(pbHost);
+// const pbHost = 'https://pocketbase.accelizen.com/';
+// final pb = PocketBase(pbHost);
 
 Future<RecordModel> createRecipe(Recipe recipe) async {
   Map<String, dynamic> recipeJson = recipe.toJson();

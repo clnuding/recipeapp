@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pocketbase/pocketbase.dart';
-import 'package:recipeapp/base/theme.dart'; // Provides RecipeAppTheme
-import 'package:recipeapp/pages/widgets/recipe_item_list.dart'; // List View
-import 'package:recipeapp/pages/widgets/recipe_item_tiles.dart'; // Grid View
+import 'package:recipeapp/base/theme.dart';
+import 'package:recipeapp/api/recipes.dart'; // ✅ API logic
+import 'package:recipeapp/models/recipe.dart'; // ✅ Recipe model
+import 'package:recipeapp/pages/widgets/recipe_item_list.dart';
+import 'package:recipeapp/pages/widgets/recipe_item_tiles.dart';
+import 'package:recipeapp/api/pb_client.dart';
 
-// Global PocketBase client.
-final pb = PocketBase('http://127.0.0.1:8090');
 
 class RecipesPage extends StatefulWidget {
   const RecipesPage({super.key});
@@ -17,21 +17,20 @@ class RecipesPage extends StatefulWidget {
 
 class _RecipesPageState extends State<RecipesPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<RecordModel> _allRecipes = [];
-  List<RecordModel> _filteredRecipes = [];
+  List<Recipe> _allRecipes = [];
+  List<Recipe> _filteredRecipes = [];
   bool _isLoading = true;
   String _error = '';
-  bool _isGridView = false; // ✅ Toggle state for List/Grid View
+  bool _isGridView = false;
 
   @override
   void initState() {
     super.initState();
-    _loadViewPreference(); // ✅ Load the saved view mode
-    _fetchRecipes();
+    _loadViewPreference();
+    _loadRecipes();
     _searchController.addListener(_filterRecipes);
   }
 
-  // ✅ Load the last selected view from SharedPreferences
   Future<void> _loadViewPreference() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -39,36 +38,43 @@ class _RecipesPageState extends State<RecipesPage> {
     });
   }
 
-  // ✅ Save the selected view to SharedPreferences
   Future<void> _saveViewPreference(bool isGrid) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isGridView', isGrid);
   }
 
-  Future<void> _fetchRecipes() async {
-    try {
-      final List<RecordModel> records =
-          await pb.collection('recipes_user').getFullList();
-      setState(() {
-        _allRecipes = records;
-        _filteredRecipes = records;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
+Future<void> _loadRecipes() async {
+  if (!pb.authStore.isValid) {
+    setState(() {
+      _error = 'User not authenticated.';
+      _isLoading = false;
+    });
+    return;
   }
+
+  try {
+    final recipes = await fetchRecipes(); // ✅ pulls from api/recipes.dart
+    setState(() {
+      _allRecipes = recipes;
+      _filteredRecipes = recipes;
+      _isLoading = false;
+    });
+  } catch (e) {
+    setState(() {
+      _error = e.toString();
+      _isLoading = false;
+    });
+  }
+}
+
 
   void _filterRecipes() {
     final query = _searchController.text.toLowerCase();
     setState(() {
       _filteredRecipes = query.isEmpty
           ? _allRecipes
-          : _allRecipes.where((record) {
-              final name = (record.data['name'] ?? '').toString().toLowerCase();
+          : _allRecipes.where((recipe) {
+              final name = recipe.title.toLowerCase();
               return name.contains(query);
             }).toList();
     });
@@ -83,85 +89,76 @@ class _RecipesPageState extends State<RecipesPage> {
   @override
   Widget build(BuildContext context) {
     final theme = RecipeAppTheme.of(context);
-    final Color backgroundColor = theme.alternateColor; // ✅ Use theme background color for buttons
+    final Color backgroundColor = theme.alternateColor;
 
     return Scaffold(
       backgroundColor: theme.primaryBackground,
       body: Padding(
-        padding: const EdgeInsets.only(top: 80, left: 16, right: 16), // ✅ Consistent padding
+        padding: const EdgeInsets.only(top: 80, left: 16, right: 16),
         child: Column(
           children: [
-            // ✅ Search Bar + Toggle Button + Add Recipe Button
+            // ✅ Top Bar: Search, Toggle, Add
             Row(
               children: [
-                // ✅ Compact Search Bar
                 Expanded(
                   child: Container(
-                    height: 40, // ✅ Reduced height for a sleeker look
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: backgroundColor, // ✅ Use alternateColor for background
-                      borderRadius: BorderRadius.circular(7.0), // ✅ Rounded corners
+                      color: backgroundColor,
+                      borderRadius: BorderRadius.circular(7.0),
                     ),
                     child: TextField(
                       controller: _searchController,
                       style: TextStyle(color: theme.primaryText),
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16), // ✅ Adjusted padding
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                         hintText: "Search Recipes",
                         hintStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
-                        border: InputBorder.none, // ✅ No border
+                        border: InputBorder.none,
                         prefixIcon: Icon(Icons.search, color: theme.primaryText.withOpacity(0.6)),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-
-                // ✅ Toggle Button (Switch Between List/Grid) with Background
                 Container(
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: backgroundColor, // ✅ Same background as search bar
+                    color: backgroundColor,
                     borderRadius: BorderRadius.circular(7.0),
                   ),
                   child: IconButton(
                     icon: Icon(
                       _isGridView ? Icons.list : Icons.grid_view,
-                      color: theme.primaryText, // ✅ Use theme text color
+                      color: theme.primaryText,
                     ),
                     onPressed: () {
                       setState(() {
                         _isGridView = !_isGridView;
-                        _saveViewPreference(_isGridView); // ✅ Save user preference
+                        _saveViewPreference(_isGridView);
                       });
                     },
                   ),
                 ),
                 const SizedBox(width: 8),
-
-                // ✅ Add Recipe Button with Background
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/create_recipe'),
                   child: Container(
                     height: 40,
                     width: 40,
                     decoration: BoxDecoration(
-                      color: backgroundColor, // ✅ Same background as search bar
+                      color: backgroundColor,
                       borderRadius: BorderRadius.circular(7.0),
                     ),
-                    child: Icon(
-                      Icons.add,
-                      color: theme.primaryText, // ✅ Use theme text color
-                      size: 28, // ✅ Adjusted size for better visibility
-                    ),
+                    child: Icon(Icons.add, color: theme.primaryText, size: 28),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8), // ✅ Space between search bar & list/grid
+            const SizedBox(height: 8),
 
-            // ✅ Recipe List / Grid View (Now perfectly aligned with search bar)
+            // ✅ Recipe List / Grid
             Expanded(
               child: _isGridView
                   ? RecipeItemTiles(
@@ -181,6 +178,3 @@ class _RecipesPageState extends State<RecipesPage> {
     );
   }
 }
-
-
-//add different grouping options + filter options by tag types
