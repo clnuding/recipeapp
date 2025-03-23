@@ -1,35 +1,55 @@
 class Recipe {
+  final String id;
   final String title;
-  final String imageUrl;
+  final String creatorId;
   final String? description;
-  final String? subheader;
-  final String? category;
+  final String? thumbnailUrl;
+  final String? sourceUrl;
+  final int? prepTime;
+  final int? cookingTime;
+  final int? servings;
+  final bool nutritionAutoCalculated;
 
   Recipe({
+    required this.id,
     required this.title,
-    required this.imageUrl,
-    this.subheader,
+    required this.creatorId,
     this.description,
-    this.category,
+    this.thumbnailUrl,
+    this.sourceUrl,
+    this.prepTime,
+    this.cookingTime,
+    this.servings,
+    this.nutritionAutoCalculated = false,
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
+      id: json['id'],
       title: json['title'],
+      creatorId: json['creator_id'],
       description: json['description'],
-      imageUrl: json['image_url'],
-      subheader: json['subheader'],
-      category: json['category'],
+      thumbnailUrl: json['thumbnail_url'],
+      sourceUrl: json['source_url'],
+      prepTime: json['prep_time'],
+      cookingTime: json['cooking_time'],
+      servings: json['servings'],
+      nutritionAutoCalculated: json['nutrition_auto_calculated'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
+      'creator_id': creatorId,
       'description': description,
-      'image_url': imageUrl,
-      'subheader': subheader,
-      'category': category,
+      'thumbnail_url': thumbnailUrl,
+      'source_url': sourceUrl,
+      'prep_time': prepTime,
+      'cooking_time': cookingTime,
+      'servings': servings,
+      'nutrition_auto_calculated': nutritionAutoCalculated,
     };
   }
 }
