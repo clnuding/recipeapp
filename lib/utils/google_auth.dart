@@ -6,7 +6,6 @@ import 'package:recipeapp/theme/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recipeapp/api/pb_client.dart';
 
-
 Future<void> signInWithGoogle(BuildContext context) async {
   // create local authstore to keep logged in user
   // information persistent
@@ -51,7 +50,8 @@ void launchOAuthURL(Uri url) async {
         preferredControlTintColor: lightColorScheme.onSurface,
         barCollapsingEnabled: true,
         entersReaderIfAvailable: false,
-        modalPresentationStyle: ViewControllerModalPresentationStyle.formSheet,
+        modalPresentationStyle:
+            ViewControllerModalPresentationStyle.overFullScreen,
         dismissButtonStyle: SafariViewControllerDismissButtonStyle.done,
       ),
     );
