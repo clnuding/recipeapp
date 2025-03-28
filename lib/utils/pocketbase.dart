@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const pocketbaseUri = 'https://pocketbase.accelizen.com';
 
 // helper to init pocketbase instance with safed auth store
-Future<PocketBase?> getPocketbaseWithSavedStore() async {
+Future<PocketBase> getPocketbaseWithSavedStore() async {
   try {
     final prefs = await SharedPreferences.getInstance();
     final store = AsyncAuthStore(
@@ -14,6 +14,6 @@ Future<PocketBase?> getPocketbaseWithSavedStore() async {
     return PocketBase(pocketbaseUri, authStore: store);
   } catch (e) {
     print('Error initializing auth store: $e');
-    return null;
+    return PocketBase(pocketbaseUri);
   }
 }

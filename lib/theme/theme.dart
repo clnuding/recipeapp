@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+// brown pastel colors
+const lightBackground = Color.fromARGB(255, 237, 236, 231);
+const secondary = Color.fromARGB(255, 208, 200, 189);
+const primary = Color.fromARGB(255, 156, 140, 117);
+
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xFF416FDF),
