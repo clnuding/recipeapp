@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:recipeapp/theme/themeClass.dart'; // Import your custom theme
+import 'package:recipeapp/theme/theme_class.dart'; // Import your custom theme
 
 class GButtomNavBar extends StatelessWidget {
   final Widget child;

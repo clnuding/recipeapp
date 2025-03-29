@@ -16,9 +16,7 @@ class RecipeAppTheme {
 
   // Brand and utility colors
   final Color primaryColor = const Color.fromARGB(255, 152, 138, 104);
-  //golden middle brownish Color.fromARGB(255, 152, 138, 104);
   final Color alternateColor = const Color.fromARGB(255, 255, 255, 255);
-  //const Color.fromARGB(255, 224, 224, 224);
   final Color primaryText = const Color.fromARGB(255, 63, 60, 60);
   final Color primaryBackground = Color.fromARGB(255, 240, 237, 234);
 
@@ -27,53 +25,53 @@ class RecipeAppTheme {
 
   // Text styles
   TextStyle get title1 => GoogleFonts.urbanist(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: primaryText,
-      );
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: primaryText,
+  );
 
   TextStyle get bodyText1 => GoogleFonts.urbanist(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-        color: primaryText,
-      );
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    color: primaryText,
+  );
 
   TextStyle get bodySmall => GoogleFonts.urbanist(
-        fontSize: 12,
-        fontWeight: FontWeight.normal,
-        color: primaryText,
-      );
+    fontSize: 12,
+    fontWeight: FontWeight.normal,
+    color: primaryText,
+  );
 
   TextStyle get bodyMedium => GoogleFonts.urbanist(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-        color: primaryText,
-      );
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    color: primaryText,
+  );
 
   TextStyle get displaySmall => GoogleFonts.urbanist(
-        fontSize: 36,
-        fontWeight: FontWeight.bold,
-        color: primaryText,
-      );
+    fontSize: 36,
+    fontWeight: FontWeight.bold,
+    color: primaryText,
+  );
 
   // Theme data
   ThemeData get themeData => ThemeData(
-        primaryColor: primaryColor,
-        scaffoldBackgroundColor: primaryBackground,
-        textTheme: TextTheme(
-          bodyMedium: bodyMedium,
-          bodySmall: bodySmall,
-          displaySmall: displaySmall,
-        ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: primaryColor,
-          titleTextStyle: title1.copyWith(color: primaryBackground),
-        ),
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: primaryText,
-          surface: primaryBackground,
-        ),
-      );
+    primaryColor: primaryColor,
+    scaffoldBackgroundColor: primaryBackground,
+    textTheme: TextTheme(
+      bodyMedium: bodyMedium,
+      bodySmall: bodySmall,
+      displaySmall: displaySmall,
+    ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryColor,
+      titleTextStyle: title1.copyWith(color: primaryBackground),
+    ),
+    colorScheme: ColorScheme.fromSwatch().copyWith(
+      secondary: primaryText,
+      surface: primaryBackground,
+    ),
+  );
 
   get alternate => null;
 }

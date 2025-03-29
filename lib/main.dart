@@ -3,7 +3,7 @@ import 'package:recipeapp/screens/main_screen.dart';
 import 'package:recipeapp/screens/add_recipe.dart' as add_recipe;
 import 'package:recipeapp/screens/add_ingredient.dart' as add_ingredient;
 import 'package:recipeapp/screens/review_recipe.dart' as review_recipe;
-import 'package:recipeapp/theme/themeClass.dart';
+import 'package:recipeapp/theme/theme_class.dart';
 import 'package:recipeapp/screens/signin.dart';
 import 'package:recipeapp/screens/signup.dart';
 import 'package:recipeapp/screens/splash_screen.dart';
