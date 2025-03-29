@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/base/theme.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/screens/recipe_details.dart';
 
 class RecipeItemTiles extends StatelessWidget {
   final List<Recipe> recipes;
@@ -50,7 +51,20 @@ class RecipeItemTiles extends StatelessWidget {
       ),
       itemCount: recipes.length,
       itemBuilder: (context, index) {
-        return RecipeCard(recipe: recipes[index]);
+        return RecipeCard(
+          recipe: recipes[index],
+          onTap:
+              () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            RecipeDetailScreen(recipeId: recipes[index].id),
+                  ),
+                ),
+              },
+        );
       },
     );
   }
@@ -88,11 +102,12 @@ class RecipeCard extends StatelessWidget {
                   recipe.thumbnailUrl ?? 'https://via.placeholder.com/150',
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                    Icons.broken_image,
-                    color: theme.primaryText.withOpacity(0.5),
-                    size: 50,
-                  ),
+                  errorBuilder:
+                      (context, error, stackTrace) => Icon(
+                        Icons.broken_image,
+                        color: theme.primaryText.withOpacity(0.5),
+                        size: 50,
+                      ),
                 ),
               ),
             ),

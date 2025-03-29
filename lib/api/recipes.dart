@@ -19,6 +19,11 @@ Future<List<Recipe>> fetchRecipes() async {
   return recipes;
 }
 
+Future<Recipe> fetchRecipeById(String id) async {
+  RecordModel record = await pb.collection('recipes').getOne(id);
+  return Recipe.fromJson(record.toJson());
+}
+
 Future<RecordModel> updateRecipe(Recipe recipe) async {
   Map<String, dynamic> json = recipe.toJson();
   json.remove("id");
