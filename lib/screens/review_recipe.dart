@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/base/theme.dart'; // Provides RecipeAppTheme
+import 'package:recipeapp/theme/themeClass.dart'; // Provides RecipeAppTheme
 
 class RecipeReviewPage extends StatelessWidget {
   const RecipeReviewPage({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:recipeapp/base/theme.dart';
+import 'package:recipeapp/theme/themeClass.dart';
 import 'package:recipeapp/models/recipe.dart';
 
 class RecipeItemList extends StatelessWidget {
