@@ -8,6 +8,7 @@ import 'package:recipeapp/base/theme.dart';
 import 'package:recipeapp/screens/recipe_details.dart';
 import 'package:recipeapp/screens/signin.dart';
 import 'package:recipeapp/screens/signup.dart';
+import 'package:recipeapp/screens/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +24,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Recipe App',
       theme: RecipeAppTheme().themeData, // Using your centralized custom theme
-      initialRoute: '/signIn',
+      initialRoute: '/splash',
       routes: {
         // '/signIn': (context) => const SignInScreen(),
+        '/splash': (context) => const SplashScreen(),
         '/signIn': (context) => const SignInScreen(),
         '/signUp': (context) => const SignUpScreen(),
         '/main': (context) => const MainScreen(),
