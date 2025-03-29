@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:recipeapp/theme/theme_class.dart';
 import 'package:recipeapp/models/recipe.dart';
 
 class RecipeItemList extends StatelessWidget {
@@ -17,9 +16,7 @@ class RecipeItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme.of(context);
-    final Color primaryTextColor = theme.primaryText;
-    final Color borderColor = theme.alternateColor;
+    final theme = Theme.of(context);
 
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -27,7 +24,10 @@ class RecipeItemList extends StatelessWidget {
 
     if (error.isNotEmpty) {
       return Center(
-        child: Text("Error: $error", style: TextStyle(color: primaryTextColor)),
+        child: Text(
+          "Error: $error",
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
       );
     }
 
@@ -35,7 +35,7 @@ class RecipeItemList extends StatelessWidget {
       return Center(
         child: Text(
           "No recipes found.",
-          style: TextStyle(color: primaryTextColor),
+          style: TextStyle(color: theme.colorScheme.onSurface),
         ),
       );
     }
@@ -56,6 +56,7 @@ class RecipeItemList extends StatelessWidget {
             ),
             child: Row(
               children: [
+                // ✅ Recipe image thumbnail
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(7),
@@ -66,16 +67,23 @@ class RecipeItemList extends StatelessWidget {
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.broken_image,
+                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      size: 40,
+                    ),
                   ),
                 ),
+
+                // ✅ Title and interaction
                 Expanded(
                   child: InkWell(
                     onTap: () => HapticFeedback.lightImpact(),
                     child: Container(
                       height: 80,
                       decoration: BoxDecoration(
-                        color: theme.alternateColor,
-                        border: Border.all(color: borderColor, width: 1),
+                        color: theme.colorScheme.onPrimary,
+                        border: Border.all(color: theme.colorScheme.onPrimary),
                         borderRadius: const BorderRadius.only(
                           topRight: Radius.circular(7),
                           bottomRight: Radius.circular(7),
@@ -85,11 +93,13 @@ class RecipeItemList extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         recipe.title,
-                        style: TextStyle(
-                          color: primaryTextColor,
-                          fontSize: 20,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),

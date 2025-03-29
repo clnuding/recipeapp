@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:recipeapp/theme/theme_old.dart';
+//import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/api/tags.dart';
 
 class AddRecipePage extends StatefulWidget {
@@ -48,9 +48,11 @@ class _AddRecipePageState extends State<AddRecipePage> {
   }
 
   Future<void> _showImageSourceDialog() async {
+    final theme = Theme.of(context);
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: secondary,
+      backgroundColor: theme.colorScheme.onPrimary,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
@@ -58,10 +60,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
         return Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.black87),
-              title: const Text(
+              leading:  Icon(Icons.camera_alt, color:theme.colorScheme.onSurface),
+              title:  Text(
                 "Take a Photo",
-                style: TextStyle(color: Colors.black87),
+                style: TextStyle(color: theme.colorScheme.onSurface),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -69,10 +71,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.image, color: Colors.black87),
-              title: const Text(
+              leading:  Icon(Icons.image, color: theme.colorScheme.onSurface),
+              title:  Text(
                 "Choose from Gallery",
-                style: TextStyle(color: Colors.black87),
+                style: TextStyle(color: theme.colorScheme.onSurface),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -95,8 +97,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: lightBackground,
+      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -109,13 +112,13 @@ class _AddRecipePageState extends State<AddRecipePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Center(
+                     Center(
                       child: Text(
                         'Step 1: Add Recipe',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -139,23 +142,23 @@ class _AddRecipePageState extends State<AddRecipePage> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: secondary,
+                        color: theme.colorScheme.onPrimary,
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: _selectedRecipeType,
-                          hint: const Text(
+                          hint: Text(
                             "Select Recipe Type",
-                            style: TextStyle(color: Colors.black54),
+                            style: TextStyle(color: theme.colorScheme.onSurface),
                           ),
-                          icon: const Icon(
+                          icon:  Icon(
                             Icons.arrow_drop_down,
-                            color: Colors.black,
+                            color: theme.colorScheme.onSurface,
                           ),
                           isExpanded: true,
-                          dropdownColor: secondary,
-                          style: const TextStyle(color: Colors.black87),
+                          dropdownColor: theme.colorScheme.onPrimary,
+                          style: TextStyle(color: theme.colorScheme.onSurface),
                           items:
                               _mealTypes.map((type) {
                                 return DropdownMenuItem<String>(
@@ -177,23 +180,23 @@ class _AddRecipePageState extends State<AddRecipePage> {
                         height: 100,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: secondary,
+                          color: theme.colorScheme.onPrimary,
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child:
                             _image == null
                                 ? Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(
                                       Icons.add_a_photo,
-                                      color: Colors.black45,
+                                      color: theme.colorScheme.onSurface,
                                       size: 40,
                                     ),
                                     SizedBox(height: 4),
                                     Text(
                                       "Add Picture (Optional)",
-                                      style: TextStyle(color: Colors.black45),
+                                      style: TextStyle(color: theme.colorScheme.onSurface),
                                     ),
                                   ],
                                 )
@@ -213,8 +216,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     _buildInputField(
                       controller: _descriptionController,
                       label: "Description (Optional)",
-                      maxLines: 3,
-                    ),
+                      maxLines: 3                    ),
                   ],
                 ),
               ),
@@ -235,7 +237,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                       height: 50,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: secondary,
+                        color: theme.colorScheme.onPrimary,
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: Row(
@@ -269,16 +271,17 @@ class _AddRecipePageState extends State<AddRecipePage> {
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.black87),
+      style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.black54),
+        labelStyle: TextStyle(color: theme.colorScheme.onSurface),
         filled: true,
-        fillColor: secondary,
+        fillColor: theme.colorScheme.onPrimary,
         border: InputBorder.none,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 14,
@@ -297,33 +300,36 @@ class _AddRecipePageState extends State<AddRecipePage> {
   }
 
   Widget _buildSquareIconButton(IconData icon, VoidCallback onPressed) {
+    final theme = Theme.of(context);
     return Container(
       height: 50,
       width: 50,
       decoration: BoxDecoration(
-        color: secondary,
+        color: theme.colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(7),
       ),
       child: IconButton(
-        icon: Icon(icon, color: primary, size: 24),
+        icon: Icon(icon, color: theme.colorScheme.onSurface, size: 24),
         onPressed: onPressed,
       ),
     );
   }
 
   Widget _buildProgressCircle(bool isActive) {
+    final theme = Theme.of(context);
     return Container(
       width: 16,
       height: 16,
       decoration: BoxDecoration(
-        color: isActive ? primary : Colors.transparent,
-        border: Border.all(color: primary, width: 2),
+        color: isActive ? theme.colorScheme.primary : Colors.transparent,
+        border: Border.all(color: theme.colorScheme.primary, width: 2),
         borderRadius: BorderRadius.circular(7),
       ),
     );
   }
 
   Widget _buildProgressLine() {
-    return Container(width: 20, height: 3, color: primary);
+    final theme = Theme.of(context);
+    return Container(width: 20, height: 3, color: theme.colorScheme.primary);
   }
 }

@@ -68,6 +68,7 @@ class _AccountPageState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: LogoAppbar(showBackButton: false),
       body: Padding(
@@ -92,10 +93,11 @@ class _AccountPageState extends State<AccountScreen> {
   }
 
   Widget _buildProfileSection() {
+    final theme = Theme.of(context);
     return Container(
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -115,7 +117,7 @@ class _AccountPageState extends State<AccountScreen> {
               SizedBox(height: 5),
               Text(
                 _user!.email,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface),
               ),
             ],
           ),
@@ -125,6 +127,8 @@ class _AccountPageState extends State<AccountScreen> {
   }
 
   Widget _buildPremiumButton() {
+    final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       child: ElevatedButton(
@@ -132,7 +136,7 @@ class _AccountPageState extends State<AccountScreen> {
           // Add premium subscription logic here
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.amber,
+          backgroundColor: theme.colorScheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -143,7 +147,7 @@ class _AccountPageState extends State<AccountScreen> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: theme.colorScheme.onPrimary,
           ),
         ),
       ),
@@ -151,10 +155,12 @@ class _AccountPageState extends State<AccountScreen> {
   }
 
   Widget _buildSettingsSection() {
+    final theme = Theme.of(context);
+
     return Container(
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -184,16 +190,17 @@ class _AccountPageState extends State<AccountScreen> {
   }
 
   Widget _buildLogoutButton() {
+    final theme = Theme.of(context);
     return Center(
       child: ElevatedButton(
         onPressed: _logout,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey.shade400,
+          backgroundColor: theme.colorScheme.primary,
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         ),
         child: Text(
           'Logout',
-          style: TextStyle(fontSize: 16, color: Colors.black),
+          style: TextStyle(fontSize: 16, color: theme.colorScheme.onPrimary),
         ),
       ),
     );

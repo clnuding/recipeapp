@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/widgets/logo_appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:recipeapp/theme/theme_class.dart';
 import 'package:recipeapp/api/recipes.dart'; // ✅ API logic
 import 'package:recipeapp/models/recipe.dart'; // ✅ Recipe model
 import 'package:recipeapp/widgets/recipe_item_list.dart';
@@ -88,12 +87,11 @@ class _RecipesPageState extends State<RecipesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme.of(context);
-    final Color backgroundColor = theme.alternateColor;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: LogoAppbar(showBackButton: false),
-      backgroundColor: theme.primaryBackground,
+      backgroundColor: theme.colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16),
         child: Column(
@@ -105,12 +103,12 @@ class _RecipesPageState extends State<RecipesPage> {
                   child: Container(
                     height: 40,
                     decoration: BoxDecoration(
-                      color: backgroundColor,
+                      color: theme.colorScheme.onPrimary,
                       borderRadius: BorderRadius.circular(7.0),
                     ),
                     child: TextField(
                       controller: _searchController,
-                      style: TextStyle(color: theme.primaryText),
+                      //style: TextStyle(color: theme.primaryText),
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 10,
@@ -118,12 +116,12 @@ class _RecipesPageState extends State<RecipesPage> {
                         ),
                         hintText: "Search Recipes",
                         hintStyle: TextStyle(
-                          color: theme.primaryText.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                         border: InputBorder.none,
                         prefixIcon: Icon(
                           Icons.search,
-                          color: theme.primaryText.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -134,13 +132,13 @@ class _RecipesPageState extends State<RecipesPage> {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: backgroundColor,
+                    color: theme.colorScheme.onPrimary,
                     borderRadius: BorderRadius.circular(7.0),
                   ),
                   child: IconButton(
                     icon: Icon(
                       _isGridView ? Icons.list : Icons.grid_view,
-                      color: theme.primaryText,
+                      color: theme.colorScheme.onSurface,
                     ),
                     onPressed: () {
                       setState(() {
@@ -157,10 +155,10 @@ class _RecipesPageState extends State<RecipesPage> {
                     height: 40,
                     width: 40,
                     decoration: BoxDecoration(
-                      color: backgroundColor,
+                      color: theme.colorScheme.onPrimary,
                       borderRadius: BorderRadius.circular(7.0),
                     ),
-                    child: Icon(Icons.add, color: theme.primaryText, size: 28),
+                    child: Icon(Icons.add, color: theme.colorScheme.onSurface, size: 28),
                   ),
                 ),
               ],

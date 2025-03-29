@@ -3,7 +3,6 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/screens/signup.dart';
 import 'package:recipeapp/utils/google_auth.dart';
-import 'package:recipeapp/theme/theme_old.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -57,8 +56,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.onPrimary,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -72,7 +73,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 SvgPicture.asset(
                   'assets/logos/spoonspark_logo.svg',
                   height: 80,
-                  colorFilter: ColorFilter.mode(primary, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(theme.colorScheme.primary, BlendMode.srcIn),
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -84,7 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 // Email TextField
                 TextFormField(
-                  cursorColor: Colors.black,
+                  cursorColor: theme.colorScheme.onSurface,
                   controller: _emailController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -100,8 +101,8 @@ class _SignInScreenState extends State<SignInScreen> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black, // Black border when focused
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.onSurface, // Black border when focused
                         width:
                             1.5, // Optional: make the border slightly thicker
                       ),
@@ -109,21 +110,21 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
 
                     // Customize label color when focused
-                    floatingLabelStyle: const TextStyle(
-                      color: Colors.black, // Black label when floating
+                    floatingLabelStyle:  TextStyle(
+                      color: theme.colorScheme.onSurface , // Black label when floating
                     ),
                     label: const Text('Email'),
                     hintText: 'Enter Email',
-                    hintStyle: const TextStyle(color: Colors.black26),
+                    hintStyle: TextStyle(color: theme.colorScheme.onSurface),
                     border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
+                      borderSide:  BorderSide(
+                        color: theme.colorScheme.onSurface, // Default border color
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
+                      borderSide:  BorderSide(
+                        color: theme.colorScheme.onSurface, // Default border color
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -132,7 +133,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(height: 16),
                 // Password TextField
                 TextFormField(
-                  cursorColor: Colors.black,
+                  cursorColor: theme.colorScheme.onSurface,
                   controller: _passwordController,
                   obscureText: true,
                   obscuringCharacter: '*',
@@ -147,8 +148,8 @@ class _SignInScreenState extends State<SignInScreen> {
                   },
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black, // Black border when focused
+                      borderSide:  BorderSide(
+                        color: theme.colorScheme.onSurface, // Black border when focused
                         width:
                             1.5, // Optional: make the border slightly thicker
                       ),
@@ -156,21 +157,21 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
 
                     // Customize label color when focused
-                    floatingLabelStyle: const TextStyle(
-                      color: Colors.black, // Black label when floating
+                    floatingLabelStyle:  TextStyle(
+                      color: theme.colorScheme.onSurface, // Black label when floating
                     ),
                     label: const Text('Password'),
                     hintText: 'Enter Password',
-                    hintStyle: const TextStyle(color: Colors.black26),
+                    hintStyle:  TextStyle(color: theme.colorScheme.onSurface),
                     border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
+                      borderSide:  BorderSide(
+                        color: theme.colorScheme.onSurface, // Default border color
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
+                      borderSide:  BorderSide(
+                        color: theme.colorScheme.onSurface, // Default border color
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -186,7 +187,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         'Forgot password?',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: primary,
+                          color: theme.colorScheme.primary,
                           fontSize: 12,
                         ),
                       ),
@@ -199,11 +200,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   onPressed: _signIn,
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: primary,
+                    backgroundColor: theme.colorScheme.primary,
                   ),
-                  child: const Text(
+                  child:  Text(
                     'Sign in with Email',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: theme.colorScheme.onPrimary),
                   ),
                 ),
 
@@ -217,14 +218,14 @@ class _SignInScreenState extends State<SignInScreen> {
                         color: Colors.grey.withValues(alpha: 0.5),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
                         vertical: 0,
                         horizontal: 10,
                       ),
                       child: Text(
                         'or',
-                        style: TextStyle(color: Colors.black45),
+                        style: TextStyle(color: theme.colorScheme.onSurface),
                       ),
                     ),
                     Expanded(
@@ -261,15 +262,15 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                       Text(
                         'Don\'t have an account? ',
-                        style: TextStyle(color: Colors.black45),
+                        style: TextStyle(color: theme.colorScheme.onSurface),
                       ),
-                      const Text(
+                       Text(
                         'Sign Up',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: primary,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ],
@@ -288,6 +289,8 @@ class _SignInScreenState extends State<SignInScreen> {
     required String icon,
     required Future<void> Function(BuildContext) onPressed,
   }) {
+    final theme = Theme.of(context);
+
     return OutlinedButton.icon(
       onPressed: () => onPressed(context),
       style: OutlinedButton.styleFrom(
@@ -296,15 +299,18 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
       // icon: Icon(icon, color: Colors.black),
       icon: Brand(icon, size: 20),
-      label: Text(text, style: const TextStyle(color: Colors.black)),
+      label: Text(text, style: TextStyle(color: theme.colorScheme.onSurface)),
     );
   }
 
   Widget _buildOAuthButtonIcon({
+    
     required String text,
     required IconData icon,
     required VoidCallback onPressed,
   }) {
+    final theme = Theme.of(context);
+
     return OutlinedButton.icon(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
@@ -312,7 +318,7 @@ class _SignInScreenState extends State<SignInScreen> {
         side: const BorderSide(color: Colors.grey),
       ),
       icon: Icon(icon, color: Colors.black, size: 20),
-      label: Text(text, style: const TextStyle(color: Colors.black)),
+      label: Text(text, style: TextStyle(color: theme.colorScheme.primary)),
     );
   }
 

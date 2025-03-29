@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/theme/theme_class.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/screens/recipe_details.dart';
 
@@ -17,7 +16,7 @@ class RecipeItemTiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme.of(context);
+    final theme = Theme.of(context);
 
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -27,7 +26,7 @@ class RecipeItemTiles extends StatelessWidget {
       return Center(
         child: Text(
           "Error: $error",
-          style: TextStyle(color: theme.primaryText),
+          style: TextStyle(color: theme.colorScheme.onSurface),
         ),
       );
     }
@@ -36,7 +35,7 @@ class RecipeItemTiles extends StatelessWidget {
       return Center(
         child: Text(
           "No recipes found.",
-          style: TextStyle(color: theme.primaryText),
+          style: TextStyle(color: theme.colorScheme.onSurface),
         ),
       );
     }
@@ -53,17 +52,15 @@ class RecipeItemTiles extends StatelessWidget {
       itemBuilder: (context, index) {
         return RecipeCard(
           recipe: recipes[index],
-          onTap:
-              () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) =>
-                            RecipeDetailScreen(recipeId: recipes[index].id),
-                  ),
-                ),
-              },
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    RecipeDetailScreen(recipeId: recipes[index].id),
+              ),
+            );
+          },
         );
       },
     );
@@ -78,19 +75,19 @@ class RecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme.of(context);
+    final theme = Theme.of(context);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: theme.alternateColor,
+          color: theme.colorScheme.onPrimary,
           borderRadius: BorderRadius.circular(7),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Image
+            // ✅ Image section
             Expanded(
               flex: 4,
               child: ClipRRect(
@@ -102,27 +99,25 @@ class RecipeCard extends StatelessWidget {
                   recipe.thumbnailUrl ?? 'https://via.placeholder.com/150',
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Icon(
-                        Icons.broken_image,
-                        color: theme.primaryText.withValues(alpha: 0.5),
-                        size: 50,
-                      ),
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    Icons.broken_image,
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    size: 50,
+                  ),
                 ),
               ),
             ),
 
-            // ✅ Title
+            // ✅ Title section
             Expanded(
               flex: 1,
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Text(
                   recipe.title,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.primaryText,
+                    color: theme.colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

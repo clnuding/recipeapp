@@ -13,7 +13,7 @@ class MealPlanTile extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(7),
       child: Container(
-        color: Color.fromARGB(255, 255, 255, 255),
+        color: theme.colorScheme.onPrimary,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

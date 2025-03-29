@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
-import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/logo_appbar.dart';
 import 'package:recipeapp/widgets/on_image_tag.dart';
@@ -48,8 +47,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: lightBackground,
+      backgroundColor: theme.colorScheme.surface,
       appBar: LogoAppbar(
         actions: [
           IconButton(icon: Icon(Icons.delete), onPressed: () {}),
@@ -67,7 +68,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             return Center(
               child: Text(
                 "No details about this Manga found.",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onPrimary),
               ),
             );
           }
@@ -132,7 +133,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                             ), // Glass effect
                             child: Container(
                               decoration: BoxDecoration(
-                                color: secondary.withValues(
+                                color: theme.colorScheme.onPrimary.withValues(
                                   alpha: 0.8,
                                 ), // Light transparent white
                                 borderRadius: BorderRadius.circular(20),
@@ -144,8 +145,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               ),
                               child: Text(
                                 tags.isNotEmpty ? tags[index] : "N/A",
-                                style: const TextStyle(
-                                  color: Colors.black,
+                                style: TextStyle(
+                                  color: theme.colorScheme.onSurface,
                                   fontSize: 10,
                                 ),
                               ),
@@ -185,7 +186,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   //                 overflow:
                   //                     _isExpanded
                   //                         ? TextOverflow.visible
-                  //                         : TextOverflow.ellipsis,
+                  //                         : Te,xtOverflow.ellipsis,
                   //                 style: const TextStyle(
                   //                   fontSize: 14,
                   //                   color: Colors.black,

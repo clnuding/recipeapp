@@ -24,6 +24,8 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     List<Map<String, dynamic>> toGrabItems =
         _groceryItems.where((item) => !item['checked']).toList();
     List<Map<String, dynamic>> grabbedItems =
@@ -64,11 +66,13 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
   }
 
   Widget _buildGroceryTile(Map<String, dynamic> item) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: theme.colorScheme.onPrimary,
           borderRadius: BorderRadius.circular(10),
         ),
         child: ListTile(
@@ -77,10 +81,10 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
             child: CircleAvatar(
               radius: 14,
               backgroundColor:
-                  item['checked'] ? Colors.green : Colors.grey.shade400,
+                  item['checked'] ? Colors.green : theme.colorScheme.primary,
               child: Icon(
                 item['checked'] ? Icons.check : Icons.radio_button_unchecked,
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
                 size: 14,
               ),
             ),
@@ -97,7 +101,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
           ),
           subtitle: Text(
             '${item['amount']} ${item['unit']}',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(fontSize: 14, color: theme.colorScheme.primary),
           ),
           onTap: () => _toggleChecked(_groceryItems.indexOf(item)),
         ),

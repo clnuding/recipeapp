@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/theme/theme_class.dart'; // Provides RecipeAppTheme
 
 class AddIngredientPage extends StatefulWidget {
   final String recipeId;
@@ -12,22 +11,12 @@ class AddIngredientPage extends StatefulWidget {
 class _AddIngredientPageState extends State<AddIngredientPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _ingredientSearchController =
-      TextEditingController();
+  final TextEditingController _ingredientSearchController = TextEditingController();
 
-  // Test data for ingredients and measurements
-  final List<String> _ingredientOptions = [
-    'Flour',
-    'Sugar',
-    'Salt',
-    'Butter',
-    'Eggs',
-  ];
+  final List<String> _ingredientOptions = ['Flour', 'Sugar', 'Salt', 'Butter', 'Eggs'];
   final List<String> _measurementOptions = ['g', 'ml', 'cup', 'tbsp', 'tsp'];
 
-  // Selected values
   String? _selectedIngredient;
   String? _selectedMeasurement;
   List<String> _filteredIngredients = [];
@@ -49,56 +38,46 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   void _filterIngredientList() {
     final query = _ingredientSearchController.text.toLowerCase();
     setState(() {
-      _filteredIngredients =
-          _ingredientOptions
-              .where((ingredient) => ingredient.toLowerCase().contains(query))
-              .toList();
+      _filteredIngredients = _ingredientOptions
+          .where((ingredient) => ingredient.toLowerCase().contains(query))
+          .toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme.of(context);
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.background,
       body: SafeArea(
         child: Column(
           children: [
             // Form Content
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Title
                       Center(
                         child: Text(
                           'Step 2: Add Ingredients',
-                          style: theme.title1.copyWith(
-                            color: theme.primaryText,
-                          ),
+                          style: theme.textTheme.titleLarge,
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      // Ingredient Search Bar with Icon
-                      _buildIngredientSearchBar(theme),
+                      _buildIngredientSearchBar(),
                       const SizedBox(height: 16),
 
-                      // Measurement Dropdown
-                      _buildMeasurementDropdown(theme),
+                      _buildMeasurementDropdown(),
                       const SizedBox(height: 16),
 
-                      // Amount Input Field
                       _buildInputField(
                         controller: _amountController,
                         label: "Amount",
-                        theme: theme,
                         keyboardType: TextInputType.number,
                       ),
                     ],
@@ -107,40 +86,33 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
               ),
             ),
 
-            // Styled Bottom Bar (Same Design as add_recipe.dart)
-            _buildBottomNavigation(theme),
+            _buildBottomNavigation(),
           ],
         ),
       ),
     );
   }
 
-  /// ✅ **Ingredient Search Bar with Search Icon & Selection**
-  Widget _buildIngredientSearchBar(RecipeAppTheme theme) {
+  Widget _buildIngredientSearchBar() {
+    final theme = Theme.of(context);
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: theme.alternateColor,
+            color: theme.colorScheme.onPrimary,
             borderRadius: BorderRadius.circular(7.0),
           ),
           child: TextField(
             controller: _ingredientSearchController,
-            style: TextStyle(color: theme.primaryText),
+            style: TextStyle(color: theme.colorScheme.onSurface),
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 16,
-              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               hintText: "Search Ingredient",
               hintStyle: TextStyle(
-                color: theme.primaryText.withValues(alpha: 0.6),
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
               border: InputBorder.none,
-              prefixIcon: Icon(
-                Icons.search,
-                color: theme.primaryText.withValues(alpha: 0.6),
-              ), // ✅ Search Icon Added
+              prefixIcon: Icon(Icons.search, color: theme.colorScheme.onSurface.withOpacity(0.6)),
             ),
           ),
         ),
@@ -148,38 +120,37 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
           Container(
             margin: const EdgeInsets.only(top: 4),
             decoration: BoxDecoration(
-              color: theme.alternateColor,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(7.0),
             ),
             child: Column(
-              children:
-                  _filteredIngredients.map((ingredient) {
-                    return ListTile(
-                      title: Text(
-                        ingredient,
-                        style: TextStyle(color: theme.primaryText),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _selectedIngredient = ingredient;
-                          _ingredientSearchController.text = ingredient;
-                          _filteredIngredients = [];
-                        });
-                      },
-                    );
-                  }).toList(),
+              children: _filteredIngredients.map((ingredient) {
+                return ListTile(
+                  title: Text(
+                    ingredient,
+                    style: TextStyle(color: theme.colorScheme.onSurface),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedIngredient = ingredient;
+                      _ingredientSearchController.text = ingredient;
+                      _filteredIngredients = [];
+                    });
+                  },
+                );
+              }).toList(),
             ),
           ),
       ],
     );
   }
 
-  /// ✅ **Measurement Dropdown**
-  Widget _buildMeasurementDropdown(RecipeAppTheme theme) {
+  Widget _buildMeasurementDropdown() {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       decoration: BoxDecoration(
-        color: theme.alternateColor,
+        color: theme.colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(7),
       ),
       child: DropdownButtonHideUnderline(
@@ -187,19 +158,18 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
           value: _selectedMeasurement,
           hint: Text(
             "Select Measurement",
-            style: TextStyle(color: theme.primaryText.withValues(alpha: 0.6)),
+            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
           ),
-          icon: Icon(Icons.arrow_drop_down, color: theme.primaryText),
+          icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onSurface),
           isExpanded: true,
-          dropdownColor: theme.alternateColor,
-          style: TextStyle(color: theme.primaryText),
-          items:
-              _measurementOptions.map((String option) {
-                return DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option),
-                );
-              }).toList(),
+          dropdownColor: theme.colorScheme.onPrimary,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+          items: _measurementOptions.map((String option) {
+            return DropdownMenuItem<String>(
+              value: option,
+              child: Text(option),
+            );
+          }).toList(),
           onChanged: (String? newValue) {
             setState(() {
               _selectedMeasurement = newValue;
@@ -210,29 +180,25 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     );
   }
 
-  /// ✅ **Reusable Input Field Builder**
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
-    required RecipeAppTheme theme,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
-      style: TextStyle(color: theme.primaryText),
+      style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: theme.primaryText.withValues(alpha: 0.6)),
+        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
         filled: true,
-        fillColor: theme.alternateColor, // ✅ Themed background
+        fillColor: theme.colorScheme.onPrimary,
         border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 16,
-        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
           borderSide: BorderSide.none,
@@ -245,89 +211,75 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     );
   }
 
-  /// ✅ **Bottom Navigation (Same as add_recipe.dart)**
-  Widget _buildBottomNavigation(RecipeAppTheme theme) {
+  Widget _buildBottomNavigation() {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          _buildSquareIconButton(
-            theme,
-            Icons.arrow_back,
-            () => Navigator.pop(context),
-          ),
+          _buildSquareIconButton(Icons.arrow_back, () => Navigator.pop(context)),
           const SizedBox(width: 8),
-          Expanded(
-            child: _buildProgressBar(theme, 2),
-          ), // Step 2 active for ingredients page
+          Expanded(child: _buildProgressBar(2)),
           const SizedBox(width: 8),
-          _buildSquareIconButton(
-            theme,
-            Icons.arrow_forward,
-            () => Navigator.pushNamed(context, '/reviewRecipe'),
-          ),
+          _buildSquareIconButton(Icons.arrow_forward, () => Navigator.pushNamed(context, '/reviewRecipe')),
         ],
       ),
     );
   }
 
-  /// ✅ **Reusable Square Icon Button**
-  Widget _buildSquareIconButton(
-    RecipeAppTheme theme,
-    IconData icon,
-    VoidCallback onPressed,
-  ) {
+  Widget _buildSquareIconButton(IconData icon, VoidCallback onPressed) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         height: 50,
         width: 50,
         decoration: BoxDecoration(
-          color: theme.alternateColor,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(7),
         ),
-        child: Icon(icon, color: theme.primaryColor, size: 24),
+        child: Icon(icon, color: theme.colorScheme.onSurface, size: 24),
       ),
     );
   }
 
-  /// ✅ **Progress Bar Widget**
-  Widget _buildProgressBar(RecipeAppTheme theme, int activeStep) {
+  Widget _buildProgressBar(int activeStep) {
+    final theme = Theme.of(context);
     return Container(
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: theme.alternateColor,
+        color: theme.colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(7),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildProgressCircle(theme, activeStep >= 1),
-          _buildProgressLine(theme),
-          _buildProgressCircle(theme, activeStep >= 2),
-          _buildProgressLine(theme),
-          _buildProgressCircle(theme, activeStep >= 3),
+          _buildProgressCircle(activeStep >= 1),
+          _buildProgressLine(),
+          _buildProgressCircle(activeStep >= 2),
+          _buildProgressLine(),
+          _buildProgressCircle(activeStep >= 3),
         ],
       ),
     );
   }
 
-  /// ✅ Progress Circle: Active is filled; inactive shows only accent border.
-  Widget _buildProgressCircle(RecipeAppTheme theme, bool isActive) {
+  Widget _buildProgressCircle(bool isActive) {
+    final theme = Theme.of(context);
     return Container(
       width: 16,
       height: 16,
       decoration: BoxDecoration(
-        color: isActive ? theme.primaryColor : Colors.transparent,
-        border: Border.all(color: theme.primaryColor, width: 2),
+        color: isActive ? theme.colorScheme.primary : Colors.transparent,
+        border: Border.all(color: theme.colorScheme.primary, width: 2),
         borderRadius: BorderRadius.circular(7),
       ),
     );
   }
 
-  /// ✅ Progress Line Between Circles
-  Widget _buildProgressLine(RecipeAppTheme theme) {
-    return Container(width: 20, height: 3, color: theme.primaryColor);
+  Widget _buildProgressLine() {
+    final theme = Theme.of(context);
+    return Container(width: 20, height: 3, color: theme.colorScheme.primary);
   }
 }
