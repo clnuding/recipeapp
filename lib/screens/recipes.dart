@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/widgets/logo_appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recipeapp/theme/theme_class.dart';
 import 'package:recipeapp/api/recipes.dart'; // ✅ API logic
@@ -91,9 +92,10 @@ class _RecipesPageState extends State<RecipesPage> {
     final Color backgroundColor = theme.alternateColor;
 
     return Scaffold(
+      appBar: LogoAppbar(showBackButton: false),
       backgroundColor: theme.primaryBackground,
       body: Padding(
-        padding: const EdgeInsets.only(top: 80, left: 16, right: 16),
+        padding: const EdgeInsets.only(left: 16, right: 16),
         child: Column(
           children: [
             // ✅ Top Bar: Search, Toggle, Add

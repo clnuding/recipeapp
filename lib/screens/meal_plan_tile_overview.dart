@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:recipeapp/screens/weekday_plan.dart';
 import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/widgets/logo_appbar.dart';
 import 'package:recipeapp/widgets/meal_plan_tile.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';
 
@@ -67,46 +67,11 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: LogoAppbar(showBackButton: false),
       backgroundColor: lightBackground,
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 8),
-
-            // 🥄 Logo Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'spoon',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  SvgPicture.asset(
-                    'assets/logos/spoonspark_logo.svg',
-                    height: 25,
-                  ),
-                  const SizedBox(width: 2),
-                  const Text(
-                    'spark',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
             // 📅 Week Navigation + View Toggle
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),

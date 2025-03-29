@@ -1,53 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:recipeapp/theme/theme_old.dart';
 
 class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
-  final IconButton? action;
+  final List<IconButton>? actions;
   final bool showBackButton;
-  const LogoAppbar({super.key, this.action, this.showBackButton = true});
+  const LogoAppbar({super.key, this.actions, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AppBar(
       leading:
           !showBackButton
               ? null
               : IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
-      actions: [action ?? const SizedBox.shrink()],
+      actions: actions ?? [],
       centerTitle: true,
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
             'spoon',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.black,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const SizedBox(width: 2),
           // SVG Logo
-          SvgPicture.asset('assets/logos/spoonspark_logo.svg', height: 25),
+          SvgPicture.asset(
+            'assets/logos/spoonspark_logo.svg',
+            height: 25,
+            colorFilter: ColorFilter.mode(theme.primaryColor, BlendMode.srcIn),
+          ),
           const SizedBox(width: 2),
           const Text(
             'spark',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.black,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      backgroundColor: lightBackground,
       elevation: 0,
     );
   }

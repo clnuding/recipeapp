@@ -6,6 +6,7 @@ import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
+import 'package:recipeapp/widgets/logo_appbar.dart';
 import 'package:recipeapp/widgets/on_image_tag.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
@@ -49,46 +50,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: lightBackground,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+      appBar: LogoAppbar(
         actions: [
-          IconButton(icon: const Icon(Icons.delete), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
+          IconButton(icon: Icon(Icons.delete), onPressed: () {}),
+          IconButton(icon: Icon(Icons.edit), onPressed: () {}),
         ],
-        centerTitle: true,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'spoon',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(width: 2),
-            // SVG Logo
-            SvgPicture.asset('assets/logos/spoonspark_logo.svg', height: 25),
-            const SizedBox(width: 2),
-            const Text(
-              'spark',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
-        ),
-        backgroundColor: lightBackground,
-        elevation: 0,
       ),
       body: FutureBuilder<Recipe>(
         future: recipe,

@@ -8,13 +8,16 @@ class SpoonSparkTheme {
   // Primary colors
   static const Color _primaryLight = Color(0xFF6200EE);
   static const Color _primaryVariantLight = Color(0xFF3700B3);
+  static const Color _primary = Color.fromARGB(255, 156, 140, 117);
 
   // Secondary colors
+  static const Color _secondary = Color.fromARGB(255, 208, 200, 189);
   static const Color _secondaryLight = Color(0xFF03DAC6);
   static const Color _secondaryVariantLight = Color(0xFF018786);
 
   // Background colors
-  static const Color _backgroundLight = Color(0xFFFAFAFA);
+  static const Color _backgroundLight = Color.fromARGB(255, 240, 237, 234);
+  static const Color _whiteBackground = Color.fromARGB(255, 240, 237, 234);
 
   // Surface colors
   static const Color _surfaceLight = Color(0xFFFFFFFF);
@@ -39,7 +42,6 @@ class SpoonSparkTheme {
   static const Color _textDisabledDark = Color(0x61FFFFFF); // 38% opacity
 
   // ==================== SPACING ====================
-  static const double spacing2 = 2.0;
   static const double spacing4 = 4.0;
   static const double spacing8 = 8.0;
   static const double spacing12 = 12.0;
@@ -52,13 +54,13 @@ class SpoonSparkTheme {
   // ==================== RADIUS ====================
   static const double radiusSmall = 4.0;
   static const double radiusMedium = 8.0;
-  static const double radiusLarge = 16.0;
-  static const double radiusXLarge = 24.0;
+  static const double radiusLarge = 12.0;
+  static const double radiusXLarge = 16.0;
 
   // ==================== FONTS ====================
   // Default font families
-  static String primaryFontFamily = 'Roboto';
-  static String secondaryFontFamily = 'Urbanist';
+  static String primaryFontFamily = 'Urbanist';
+  static String secondaryFontFamily = 'Roboto';
 
   // Font sizes
   static const double fontSizeXSmall = 10.0;
@@ -77,7 +79,7 @@ class SpoonSparkTheme {
       brightness: Brightness.light,
       colorScheme: ColorScheme(
         brightness: Brightness.light,
-        primary: _primaryLight,
+        primary: _primary,
         onPrimary: Colors.white,
         primaryContainer: _primaryVariantLight,
         onPrimaryContainer: Colors.white,
@@ -139,8 +141,8 @@ class SpoonSparkTheme {
         ),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: _primaryLight,
-        foregroundColor: Colors.white,
+        backgroundColor: _backgroundLight,
+        foregroundColor: Colors.black,
         elevation: 0,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
