@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/widgets/logo_appbar.dart';
 
 class GroceryListScreen extends StatefulWidget {
   const GroceryListScreen({super.key});
@@ -29,10 +30,7 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
         _groceryItems.where((item) => item['checked']).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Grocery List', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.transparent,
-      ),
+      appBar: LogoAppbar(showBackButton: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ListView(

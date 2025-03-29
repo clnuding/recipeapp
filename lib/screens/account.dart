@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/user.dart';
 import 'package:recipeapp/utils/pocketbase.dart';
+import 'package:recipeapp/widgets/logo_appbar.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -25,7 +26,7 @@ class _AccountPageState extends State<AccountScreen> {
   Future<PocketBase> _initPocketbase() async {
     await dotenv.load(fileName: ".env");
     pb = await getPocketbaseWithSavedStore();
-    pb ??= PocketBase('http://127.0.0.1:8090');
+    pb ??= PocketBase('https://pocketbase.accelizen.com');
     return pb!;
   }
 
@@ -68,7 +69,7 @@ class _AccountPageState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Account')),
+      appBar: LogoAppbar(showBackButton: false),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child:
@@ -78,6 +79,8 @@ class _AccountPageState extends State<AccountScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildProfileSection(),
+                    SizedBox(height: 20),
+                    _user!.premium ? Container() : _buildPremiumButton(),
                     SizedBox(height: 20),
                     _buildSettingsSection(),
                     SizedBox(height: 20),
@@ -121,6 +124,32 @@ class _AccountPageState extends State<AccountScreen> {
     );
   }
 
+  Widget _buildPremiumButton() {
+    return Container(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          // Add premium subscription logic here
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.amber,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 15),
+        ),
+        child: Text(
+          'Become a Premium Member',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSettingsSection() {
     return Container(
       padding: EdgeInsets.all(15),
@@ -144,7 +173,10 @@ class _AccountPageState extends State<AccountScreen> {
           ListTile(
             leading: Icon(Icons.notifications),
             title: Text('Notification Preferences'),
-            onTap: () {},
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              // Navigate to notification preferences
+            },
           ),
         ],
       ),
