@@ -186,7 +186,7 @@ class RecipeReviewPage extends StatelessWidget {
           Text(
             label,
             style: theme.bodyText1.copyWith(
-              color: theme.primaryText.withOpacity(0.7),
+              color: theme.primaryText.withValues(alpha: 0.7),
             ),
           ),
           Text(

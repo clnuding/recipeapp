@@ -116,12 +116,12 @@ class _RecipesPageState extends State<RecipesPage> {
                         ),
                         hintText: "Search Recipes",
                         hintStyle: TextStyle(
-                          color: theme.primaryText.withOpacity(0.6),
+                          color: theme.primaryText.withValues(alpha: 0.6),
                         ),
                         border: InputBorder.none,
                         prefixIcon: Icon(
                           Icons.search,
-                          color: theme.primaryText.withOpacity(0.6),
+                          color: theme.primaryText.withValues(alpha: 0.6),
                         ),
                       ),
                     ),

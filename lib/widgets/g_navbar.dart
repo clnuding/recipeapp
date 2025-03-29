@@ -39,27 +39,30 @@ class GButtomNavBar extends StatelessWidget {
           ),
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-            child: Container(color: theme.primaryBackground.withOpacity(0.2)),
+            child: Container(
+              color: theme.primaryBackground.withValues(alpha: 0.2),
+            ),
           ),
           child,
         ],
       ),
-      bottomNavigationBar: showNavBar
-          ? Container(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 15),
-              color: theme.primaryBackground,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: _navItems(theme),
-              ),
-            )
-          : null,
+      bottomNavigationBar:
+          showNavBar
+              ? Container(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 15),
+                color: theme.primaryBackground,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: _navItems(theme),
+                ),
+              )
+              : null,
     );
   }
 
   List<Widget> _navItems(RecipeAppTheme theme) {
     final Color activeColor = theme.primaryText;
-    final Color inactiveColor = theme.primaryText.withOpacity(0.5);
+    final Color inactiveColor = theme.primaryText.withValues(alpha: 0.5);
 
     final List<_NavItemData> items = [
       _NavItemData(icon: MingCute.calendar_line, label: 'Meal Plan'),
@@ -88,7 +91,8 @@ class GButtomNavBar extends StatelessWidget {
                   items[index].label,
                   style: TextStyle(
                     fontSize: isSelected ? 13.5 : 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                     color: isSelected ? activeColor : inactiveColor,
                   ),
                 ),

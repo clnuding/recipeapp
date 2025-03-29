@@ -26,7 +26,7 @@ class MealPlanTile extends StatelessWidget {
               errorBuilder:
                   (context, error, stackTrace) => Icon(
                     Icons.broken_image,
-                    color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     size: 40,
                   ),
               loadingBuilder: (context, child, loadingProgress) {

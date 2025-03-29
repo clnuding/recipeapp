@@ -133,11 +133,13 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                 horizontal: 16,
               ),
               hintText: "Search Ingredient",
-              hintStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+              hintStyle: TextStyle(
+                color: theme.primaryText.withValues(alpha: 0.6),
+              ),
               border: InputBorder.none,
               prefixIcon: Icon(
                 Icons.search,
-                color: theme.primaryText.withOpacity(0.6),
+                color: theme.primaryText.withValues(alpha: 0.6),
               ), // ✅ Search Icon Added
             ),
           ),
@@ -185,7 +187,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
           value: _selectedMeasurement,
           hint: Text(
             "Select Measurement",
-            style: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+            style: TextStyle(color: theme.primaryText.withValues(alpha: 0.6)),
           ),
           icon: Icon(Icons.arrow_drop_down, color: theme.primaryText),
           isExpanded: true,
@@ -223,7 +225,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       style: TextStyle(color: theme.primaryText),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+        labelStyle: TextStyle(color: theme.primaryText.withValues(alpha: 0.6)),
         filled: true,
         fillColor: theme.alternateColor, // ✅ Themed background
         border: InputBorder.none,

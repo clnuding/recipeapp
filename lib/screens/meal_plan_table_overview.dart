@@ -14,11 +14,7 @@ class MealPlanTableView extends StatelessWidget {
     'Sun',
   ];
 
-  final List<String> meals = const [
-    'Breakfast',
-    'Lunch',
-    'Dinner',
-  ];
+  final List<String> meals = const ['Breakfast', 'Lunch', 'Dinner'];
 
   String getMealContent(String day, String meal) {
     return '$meal for $day';
@@ -32,7 +28,8 @@ class MealPlanTableView extends StatelessWidget {
     const double rowSpacing = 6; // Space between each row
 
     final double totalSpacing = rowSpacing * (days.length - 1);
-    final double availableHeight = screenHeight - topReservedHeight - totalSpacing;
+    final double availableHeight =
+        screenHeight - topReservedHeight - totalSpacing;
     final double rowHeight = availableHeight / days.length;
 
     return Padding(
@@ -45,7 +42,9 @@ class MealPlanTableView extends StatelessWidget {
             final String day = entry.value;
 
             return Padding(
-              padding: EdgeInsets.only(bottom: index != days.length - 1 ? rowSpacing : 0),
+              padding: EdgeInsets.only(
+                bottom: index != days.length - 1 ? rowSpacing : 0,
+              ),
               child: SizedBox(
                 height: rowHeight,
                 child: Row(
@@ -56,7 +55,7 @@ class MealPlanTableView extends StatelessWidget {
                       width: 70,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: secondary.withOpacity(0.4),
+                        color: secondary.withValues(alpha: 0.4),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(

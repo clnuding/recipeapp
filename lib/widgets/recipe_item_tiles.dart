@@ -105,7 +105,7 @@ class RecipeCard extends StatelessWidget {
                   errorBuilder:
                       (context, error, stackTrace) => Icon(
                         Icons.broken_image,
-                        color: theme.primaryText.withOpacity(0.5),
+                        color: theme.primaryText.withValues(alpha: 0.5),
                         size: 50,
                       ),
                 ),
