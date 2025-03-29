@@ -1,287 +1,228 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/base/theme.dart';
-import 'package:recipeapp/screens/weekday_plan.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/pages/widgets/meal_plan_tile.dart';
+import 'package:recipeapp/pages/meal_planning_newtable.dart';
 
-class MealPlanningPage extends StatelessWidget {
+class MealPlanningPage extends StatefulWidget {
   const MealPlanningPage({super.key});
 
   @override
+  State<MealPlanningPage> createState() => _MealPlanningPageState();
+}
+
+class _MealPlanningPageState extends State<MealPlanningPage> {
+  bool isGridView = true;
+
+  DateTime _startOfWeek = _getStartOfWeek(DateTime.now());
+
+  static DateTime _getStartOfWeek(DateTime date) {
+    return date.subtract(Duration(days: date.weekday - 1));
+  }
+
+  void _goToPreviousWeek() {
+    setState(() {
+      _startOfWeek = _startOfWeek.subtract(const Duration(days: 7));
+    });
+  }
+
+  void _goToNextWeek() {
+    setState(() {
+      _startOfWeek = _startOfWeek.add(const Duration(days: 7));
+    });
+  }
+
+  String _getFormattedWeekRange() {
+    final endOfWeek = _startOfWeek.add(const Duration(days: 6));
+    final formatter = DateFormat('E, dd.MM.yyyy');
+    return '${formatter.format(_startOfWeek)} - ${formatter.format(endOfWeek)}';
+  }
+
+  final String breakfastUrl = 'https://images.unsplash.com/photo-1638813133218-4367bd8123f6';
+  final String lunchUrl = 'https://images.unsplash.com/photo-1661791839093-0b8baf8616ab';
+  final String dinnerUrl = 'https://images.unsplash.com/photo-1598532213919-078e54dd1f40';
+
+  Recipe _recipeWithImage(String title, String url) => Recipe(
+        id: "id",
+        title: title,
+        creatorId: "user",
+        thumbnailUrl: url,
+      );
+
+  late final Map<String, Map<String, Recipe?>> weeklyMeals = {
+    for (var day in [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ])
+      day: {
+        'Breakfast': _recipeWithImage('Oatmeal with yogurt and berries', breakfastUrl),
+        'Lunch': _recipeWithImage('Grilled Cheese Sandwich', lunchUrl),
+        'Dinner': _recipeWithImage('Spaghetti & Meatballs', dinnerUrl),
+      }
+  };
+
+  @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme(); // Get theme instance
-
     return Scaffold(
-      backgroundColor: theme.primaryBackground,
+      backgroundColor: lightBackground,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 3,
-            vertical: 10,
-          ), // Equal left & right padding
-          child: Column(
-            children: [
-              // Page Title
-              // Text(
-              //   "Meal Planning",
-              //   style: theme.displaySmall.copyWith(fontWeight: FontWeight.w600),
-              // ),
-              const SizedBox(height: 20),
-
-              // Table Header (Week Navigation)
-              Row(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            // 🥄 Logo Title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.chevron_left_sharp, color: theme.primaryText),
-                  Column(
-                    children: [
-                      Text("Current Week", style: theme.bodyMedium),
-                      Text(
-                        "Mon, 22nd July - Sun, 28th July",
-                        style: theme.bodySmall,
-                      ),
-                    ],
+                  const Text(
+                    'spoon',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
                   ),
-                  Icon(Icons.chevron_right, color: theme.primaryText),
+                  const SizedBox(width: 2),
+                  SvgPicture.asset('assets/logos/spoonspark_logo.svg', height: 25),
+                  const SizedBox(width: 2),
+                  const Text(
+                    'spark',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
+            ),
 
-              // Meal Planning Table (Expands Fully)
-              Expanded(child: _MealPlanningTable()),
-            ],
+            const SizedBox(height: 12),
+
+            // 📅 Week Navigation + View Toggle
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16),
+  child: Row(
+    children: [
+      // Left: + and < buttons
+      Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              // TODO: Add meal action
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: _goToPreviousWeek,
+          ),
+        ],
+      ),
+
+      // Center: Week range text, takes remaining space
+      Expanded(
+        child: Center(
+          child: Text(
+            _getFormattedWeekRange(),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
-    );
-  }
-}
 
-// ==========================
-// ✅ Meal Planning Data Table (FULL HEIGHT + CENTERED + STYLED HEADER)
-// ==========================
-class _MealPlanningTable extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = RecipeAppTheme(); // Get theme instance
-
-    // ✅ Sample Test Data (Static Meals for One Week)
-    final List<Map<String, String>> mealData = [
-      {
-        "day": "Mon",
-        "breakfast": "Pancakes",
-        "lunch": "Caesar Salad",
-        "dinner": "Grilled Chicken",
-      },
-      {
-        "day": "Tue",
-        "breakfast": "Oatmeal",
-        "lunch": "Turkey Sandwich",
-        "dinner": "Spaghetti Bolognese",
-      },
-      {
-        "day": "Wed",
-        "breakfast": "Scrambled Eggs",
-        "lunch": "Sushi",
-        "dinner": "Beef Stir-Fry",
-      },
-      {
-        "day": "Thu",
-        "breakfast": "French Toast",
-        "lunch": "Grilled Cheese",
-        "dinner": "BBQ Ribs",
-      },
-      {
-        "day": "Fri",
-        "breakfast": "Smoothie Bowl",
-        "lunch": "Quinoa Salad",
-        "dinner": "Fish Tacos",
-      },
-      {
-        "day": "Sat",
-        "breakfast": "Bagels & Cream Cheese",
-        "lunch": "Burrito Bowl",
-        "dinner": "Steak & Potatoes",
-      },
-      {
-        "day": "Sun",
-        "breakfast": "Cereal & Milk",
-        "lunch": "Chicken Wrap",
-        "dinner": "Margherita Pizza",
-      },
-    ];
-
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          double totalWidth = constraints.maxWidth;
-          double totalHeight =
-              constraints.maxHeight; // Ensure table fills the screen
-          double dayColumnWidth = totalWidth * 0.07; // Auto-size for "Day"
-          double mealColumnWidth = totalWidth * 0.28; // Fixed width for meals
-
-          return Container(
-            width: totalWidth,
-            height: totalHeight,
-            padding: const EdgeInsets.symmetric(horizontal: 3), // Equal padding
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7), // Rounded corners
-              color: theme.primaryBackground,
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black12,
-              //     blurRadius: 4,
-              //     spreadRadius: 1,
-              //   ),
-              // ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(
-                7,
-              ), // Ensures rounded corners apply to table
-              child: DataTable(
-                columnSpacing: 8, // Reduce space between columns
-                headingRowHeight: 45, // Slightly larger heading
-                dataRowHeight:
-                    (totalHeight - 45) /
-                    mealData.length, // Even row height for full screen usage
-                headingRowColor: MaterialStateProperty.all(
-                  theme.alternateColor,
-                ), // Light grey header row
-                dataRowColor: MaterialStateProperty.resolveWith<Color?>((
-                  Set<MaterialState> states,
-                ) {
-                  return states.contains(MaterialState.selected)
-                      ? const Color.fromARGB(255, 43, 42, 42)
-                      : null;
-                }),
-                border: TableBorder.all(
-                  color: theme.primaryText.withOpacity(0.4),
-                  width: 0.5,
-                ),
-                columns: [
-                  DataColumn(
-                    label: SizedBox(
-                      width: dayColumnWidth,
-                      child: Text(
-                        'Day',
-                        style: theme.bodyMedium,
-                        softWrap: true,
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: SizedBox(
-                      width: mealColumnWidth,
-                      child: Text(
-                        'Breakfast',
-                        style: theme.bodyMedium,
-                        softWrap: true,
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: SizedBox(
-                      width: mealColumnWidth,
-                      child: Text(
-                        'Lunch',
-                        style: theme.bodyMedium,
-                        softWrap: true,
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: SizedBox(
-                      width: mealColumnWidth,
-                      child: Text(
-                        'Dinner',
-                        style: theme.bodyMedium,
-                        softWrap: true,
-                      ),
-                    ),
-                  ),
-                ],
-                rows:
-                    mealData.map((meal) {
-                      return DataRow(
-                        color: MaterialStateProperty.all(
-                          theme.primaryBackground.withOpacity(0.05),
-                        ),
-                        cells: [
-                          DataCell(
-                            SizedBox(
-                              width: dayColumnWidth,
-                              child: Text(
-                                meal["day"] ?? '',
-                                style: theme.bodySmall,
-                                softWrap: true,
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                            SizedBox(
-                              width: mealColumnWidth,
-                              child: Text(
-                                meal["breakfast"] ?? '',
-                                style: theme.bodySmall,
-                                softWrap: true,
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                            SizedBox(
-                              width: mealColumnWidth,
-                              child: Text(
-                                meal["lunch"] ?? '',
-                                style: theme.bodySmall,
-                                softWrap: true,
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                            SizedBox(
-                              width: mealColumnWidth,
-                              child: Text(
-                                meal["dinner"] ?? '',
-                                style: theme.bodySmall,
-                                softWrap: true,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }).toList(),
-              ),
-            ),
-          );
-        },
+      // Right: > and view toggle
+      Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed: _goToNextWeek,
+          ),
+          IconButton(
+            icon: Icon(isGridView ? Icons.grid_view : Icons.table_chart),
+            onPressed: () {
+              setState(() => isGridView = !isGridView);
+            },
+          ),
+        ],
       ),
-      floatingActionButton: const CenteredOverlayButton(),
+    ],
+  ),
+),
+
+
+
+
+            const SizedBox(height: 4),
+
+            // 👇 Main Content Switches View
+            Expanded(
+              child: isGridView
+                  ? _buildCardStyleView()
+                  : const MealPlanTableView(),
+            ),
+          ],
+        ),
+      ),
     );
   }
-}
 
-class CenteredOverlayButton extends StatelessWidget {
-  const CenteredOverlayButton({Key? key}) : super(key: key);
+  Widget _buildCardStyleView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Column(
+        children: weeklyMeals.entries.map((entry) {
+          final day = entry.key;
+          final meals = entry.value;
 
-  @override
-  Widget build(BuildContext context) {
-    // This positions the button in the center of the screen
-    return Align(
-      alignment: Alignment.center,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => MealPlannerScreen(startDate: DateTime.now()),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  day,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    _buildMealTile(meals['Breakfast'], 'Breakfast'),
+                    const SizedBox(width: 8),
+                    _buildMealTile(meals['Lunch'], 'Lunch'),
+                    const SizedBox(width: 8),
+                    _buildMealTile(meals['Dinner'], 'Dinner'),
+                  ],
+                ),
+              ],
             ),
           );
-        },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: const TextStyle(fontSize: 18),
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildMealTile(Recipe? recipe, String label) {
+    return Expanded(
+      child: Container(
+        height: 130,
+        decoration: BoxDecoration(
+          color: lightColorScheme.surface,
+          borderRadius: BorderRadius.circular(7),
         ),
-        child: const Text('Start Meal Planning'),
+        child: recipe != null
+            ? MealPlanTile(recipe: recipe)
+            : Center(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: lightColorScheme.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
       ),
     );
   }

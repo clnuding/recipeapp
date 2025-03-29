@@ -84,7 +84,7 @@ class RecipeCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: theme.alternateColor,
+          color: theme.primaryBackground,
           borderRadius: BorderRadius.circular(7),
         ),
         child: Column(
