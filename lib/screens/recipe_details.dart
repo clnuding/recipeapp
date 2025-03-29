@@ -1,21 +1,33 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/widgets/ingredients_grid.dart';
+import 'package:recipeapp/widgets/on_image_tag.dart';
 
-class RecipeDetailScreen extends StatelessWidget {
-  final List<String> tags = ['Vegan', 'Gluten-Free', 'Dinner'];
-  final String description =
-      'A healthy and delicious vegan dinner recipe perfect for weeknights.';
-  final List<String> ingredients = [
-    '1 cup quinoa',
-    '2 cups water',
-    '1 tbsp olive oil',
-    '1 garlic clove',
-    '1 cup cherry tomatoes',
-    '1/2 cup spinach',
+class RecipeDetailScreen extends StatefulWidget {
+  const RecipeDetailScreen({super.key});
+
+  @override
+  _RecipeDetailScreenState createState() => _RecipeDetailScreenState();
+}
+
+class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
+  final String? cookingTime = "30";
+  final List<String> tags = [
+    'Vegan',
+    'Gluten-Free',
+    'Dinner',
+    'Vegan',
+    'Gluten-Free',
+    'Dinner',
+    'Vegan',
+    'Gluten-Free',
+    'Dinner',
   ];
-
-  RecipeDetailScreen({super.key});
+  final String? description =
+      'A healthy and delicious vegan dinner recipe perfect for weeknights.';
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +56,7 @@ class RecipeDetailScreen extends StatelessWidget {
             ),
             const SizedBox(width: 2),
             // SVG Logo
-            SvgPicture.asset(
-              'assets/logos/spoonspark_logo.svg', // Make sure to add this path in your pubspec.yaml
-              height: 25, // Adjust height as needed
-            ),
+            SvgPicture.asset('assets/logos/spoonspark_logo.svg', height: 25),
             const SizedBox(width: 2),
             const Text(
               'spark',
@@ -60,133 +69,200 @@ class RecipeDetailScreen extends StatelessWidget {
             const SizedBox(width: 8),
           ],
         ),
-        backgroundColor: lightBackground, // Customize as needed
-        elevation: 0, // Remove shadow if desired
+        backgroundColor: lightBackground,
+        elevation: 0,
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 4.0,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: AspectRatio(
-                  aspectRatio: 1.9,
-                  child: Image.network(
-                    'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.tastingtable.com%2Fimg%2Fgallery%2Fclassic-liver-and-onions-recipe%2Fl-intro-1666124471.jpg&f=1&nofb=1&ipt=1f14b3af8c9548580dbfdf288cbea9ad270a8573ac9bec45e01633915e8c524f&ipo=images',
-                    fit: BoxFit.cover,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: 25.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 4.0,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: AspectRatio(
+                    aspectRatio: 1.9,
+                    child: Stack(
+                      children: [
+                        // Original Image
+                        Image.network(
+                          'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.tastingtable.com%2Fimg%2Fgallery%2Fclassic-liver-and-onions-recipe%2Fl-intro-1666124471.jpg&f=1&nofb=1&ipt=1f14b3af8c9548580dbfdf288cbea9ad270a8573ac9bec45e01633915e8c524f&ipo=images',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+
+                        // Cooking Time Tag (Only shown if time is not null)
+                        if (cookingTime != null)
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: OnImageTag(
+                              icon: Icons.access_time,
+                              text: '$cookingTime min',
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            Container(
-              height: 40,
-              margin: const EdgeInsets.only(left: 16.0),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: tags.length,
-                itemBuilder:
-                    (context, index) => Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      margin: const EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(child: Text(tags[index])),
-                    ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(description, style: TextStyle(fontSize: 16)),
-            ),
+              const SizedBox(height: 16),
 
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _StatCard(
-                    icon: Icons.restaurant,
-                    label: 'Serves',
-                    value: '2',
-                  ),
-                  _StatCard(
-                    icon: Icons.schedule,
-                    label: 'Time',
-                    value: '30 min',
-                  ),
-                  _StatCard(
-                    icon: Icons.list,
-                    label: 'Ingredients',
-                    value: ingredients.length.toString(),
-                  ),
+              // Horizontally Scrollable Genres Section
+              SizedBox(
+                height: 25,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: tags.length,
+                  itemBuilder: (context, index) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 10,
+                          sigmaY: 10,
+                        ), // Glass effect
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: secondary.withValues(
+                              alpha: 0.8,
+                            ), // Light transparent white
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 5,
+                          ),
+                          child: Text(
+                            tags.isNotEmpty ? tags[index] : "N/A",
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Expandable Summary Content Section
+              // Padding(
+              //   padding: const EdgeInsets.all(16.0),
+              //   child: Container(
+              //     decoration: BoxDecoration(
+              //       color: Colors.white,
+              //       borderRadius: BorderRadius.circular(12),
+              //       boxShadow: [
+              //         BoxShadow(
+              //           color: Colors.grey.withValues(alpha: 0.1),
+              //           spreadRadius: 1,
+              //           blurRadius: 3,
+              //           offset: const Offset(0, 1),
+              //         ),
+              //       ],
+              //     ),
+              //     child: LayoutBuilder(
+              //       builder: (context, constraints) {
+              //         return Padding(
+              //           padding: const EdgeInsets.all(12.0),
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Text(
+              //                 description ?? "N/A",
+              //                 maxLines: _isExpanded ? null : 2,
+              //                 overflow:
+              //                     _isExpanded
+              //                         ? TextOverflow.visible
+              //                         : TextOverflow.ellipsis,
+              //                 style: const TextStyle(
+              //                   fontSize: 14,
+              //                   color: Colors.black,
+              //                 ),
+              //               ),
+              //               Align(
+              //                 alignment: Alignment.centerLeft,
+              //                 child: GestureDetector(
+              //                   onTap: () {
+              //                     setState(() {
+              //                       _isExpanded = !_isExpanded;
+              //                     });
+              //                   },
+              //                   child: Container(
+              //                     padding: const EdgeInsets.only(top: 5),
+              //                     child: Text(
+              //                       _isExpanded ? "less" : "more",
+              //                       style: const TextStyle(
+              //                         color: primary,
+              //                         fontWeight: FontWeight.bold,
+              //                         fontSize: 14,
+              //                       ),
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         );
+              //       },
+              //     ),
+              //   ),
+              // ),
+              const SizedBox(height: 25),
+              IngredientsGrid(
+                initialServings: 2,
+                ingredients: [
+                  {
+                    'name': 'Tomato',
+                    'measurement': 2.0,
+                    'measurementName': 'pcs',
+                    'group': 'vegetables',
+                  },
+                  {
+                    'name': 'Chicken Breast',
+                    'measurement': 150.0,
+                    'measurementName': 'g',
+                    'group': 'meat',
+                  },
+                  {
+                    'name': 'Cheese',
+                    'measurement': 50.0,
+                    'measurementName': 'g',
+                    'group': 'dairy',
+                  },
+                  {
+                    'name': 'Tomato',
+                    'measurement': 2.0,
+                    'measurementName': 'pcs',
+                    'group': 'vegetables',
+                  },
+                  {
+                    'name': 'Chicken Breast',
+                    'measurement': 150.0,
+                    'measurementName': 'g',
+                    'group': 'meat',
+                  },
+                  {
+                    'name': 'Brauner Champignon',
+                    'measurement': 50.0,
+                    'measurementName': 'g',
+                    'group': 'dairy',
+                  },
                 ],
               ),
-            ),
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Ingredients',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: ingredients.length,
-                itemBuilder:
-                    (context, index) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text("• ${ingredients[index]}"),
-                    ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(icon),
-          SizedBox(height: 4),
-          Text(value, style: TextStyle(fontWeight: FontWeight.bold)),
-          Text(label, style: TextStyle(fontSize: 12)),
-        ],
       ),
     );
   }
