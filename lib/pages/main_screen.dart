@@ -22,8 +22,8 @@ class _MainScreenState extends State<MainScreen> {
   // List of pages corresponding to each nav bar item.
   final List<Widget> _pages = [
     MealPlanningPage(), // Default page
-    // RecipesPage(),
-    RecipeDetailScreen(),
+    RecipesPage(),
+    // RecipeDetailScreen(),
     GroceryListScreen(),
     AccountScreen(), // Your Account page (create this or use a placeholder)
   ];

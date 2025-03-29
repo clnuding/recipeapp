@@ -7,7 +7,6 @@ import 'package:recipeapp/pages/widgets/recipe_item_list.dart';
 import 'package:recipeapp/pages/widgets/recipe_item_tiles.dart';
 import 'package:recipeapp/api/pb_client.dart';
 
-
 class RecipesPage extends StatefulWidget {
   const RecipesPage({super.key});
 
@@ -43,40 +42,40 @@ class _RecipesPageState extends State<RecipesPage> {
     await prefs.setBool('isGridView', isGrid);
   }
 
-Future<void> _loadRecipes() async {
-  if (!pb.authStore.isValid) {
-    setState(() {
-      _error = 'User not authenticated.';
-      _isLoading = false;
-    });
-    return;
-  }
+  Future<void> _loadRecipes() async {
+    if (!pb.authStore.isValid) {
+      setState(() {
+        _error = 'User not authenticated.';
+        _isLoading = false;
+      });
+      return;
+    }
 
-  try {
-    final recipes = await fetchRecipes(); // ✅ pulls from api/recipes.dart
-    setState(() {
-      _allRecipes = recipes;
-      _filteredRecipes = recipes;
-      _isLoading = false;
-    });
-  } catch (e) {
-    setState(() {
-      _error = e.toString();
-      _isLoading = false;
-    });
+    try {
+      final recipes = await fetchRecipes(); // ✅ pulls from api/recipes.dart
+      setState(() {
+        _allRecipes = recipes;
+        _filteredRecipes = recipes;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
   }
-}
-
 
   void _filterRecipes() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _filteredRecipes = query.isEmpty
-          ? _allRecipes
-          : _allRecipes.where((recipe) {
-              final name = recipe.title.toLowerCase();
-              return name.contains(query);
-            }).toList();
+      _filteredRecipes =
+          query.isEmpty
+              ? _allRecipes
+              : _allRecipes.where((recipe) {
+                final name = recipe.title.toLowerCase();
+                return name.contains(query);
+              }).toList();
     });
   }
 
@@ -111,11 +110,19 @@ Future<void> _loadRecipes() async {
                       controller: _searchController,
                       style: TextStyle(color: theme.primaryText),
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 16,
+                        ),
                         hintText: "Search Recipes",
-                        hintStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+                        hintStyle: TextStyle(
+                          color: theme.primaryText.withOpacity(0.6),
+                        ),
                         border: InputBorder.none,
-                        prefixIcon: Icon(Icons.search, color: theme.primaryText.withOpacity(0.6)),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: theme.primaryText.withOpacity(0.6),
+                        ),
                       ),
                     ),
                   ),
@@ -160,17 +167,18 @@ Future<void> _loadRecipes() async {
 
             // ✅ Recipe List / Grid
             Expanded(
-              child: _isGridView
-                  ? RecipeItemTiles(
-                      recipes: _filteredRecipes,
-                      error: _error,
-                      isLoading: _isLoading,
-                    )
-                  : RecipeItemList(
-                      recipes: _filteredRecipes,
-                      error: _error,
-                      isLoading: _isLoading,
-                    ),
+              child:
+                  _isGridView
+                      ? RecipeItemTiles(
+                        recipes: _filteredRecipes,
+                        error: _error,
+                        isLoading: _isLoading,
+                      )
+                      : RecipeItemList(
+                        recipes: _filteredRecipes,
+                        error: _error,
+                        isLoading: _isLoading,
+                      ),
             ),
           ],
         ),

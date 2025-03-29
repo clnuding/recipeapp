@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
         '/signUp': (context) => const SignUpScreen(),
         '/main': (context) => const MainScreen(),
         '/create_recipe': (context) => const add_recipe.AddRecipePage(),
-        '/recipe_details': (context) => RecipeDetailScreen(),
         '/addIngredient':
             (context) =>
                 add_ingredient.AddIngredientPage(recipeId: 'dummy_recipe_id'),
