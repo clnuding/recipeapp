@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:recipeapp/screens/weekday_plan.dart';
-import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/widgets/meal_plan_tile.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';

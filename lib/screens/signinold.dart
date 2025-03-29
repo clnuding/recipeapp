@@ -5,7 +5,7 @@ import 'package:recipeapp/screens/signup.dart';
 import 'package:recipeapp/utils/google_auth.dart';
 import 'package:recipeapp/widgets/custom_scaffold.dart';
 import 'package:recipeapp/widgets/square_tile.dart';
-import '../theme/theme.dart';
+import '../theme/theme_old.dart';
 import 'package:recipeapp/api/pb_client.dart';
 
 class SignInScreen extends StatefulWidget {

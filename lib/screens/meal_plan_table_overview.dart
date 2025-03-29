@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/theme/theme_old.dart';
 
 class MealPlanTableView extends StatelessWidget {
   const MealPlanTableView({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/api/tags.dart';
 
 class AddRecipePage extends StatefulWidget {

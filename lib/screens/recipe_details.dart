@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
-import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/on_image_tag.dart';
 

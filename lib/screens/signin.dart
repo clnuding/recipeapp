@@ -3,7 +3,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/screens/signup.dart';
 import 'package:recipeapp/utils/google_auth.dart';
-import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/theme/theme_old.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SignInScreen extends StatefulWidget {
