@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:recipeapp/screens/weekday_plan.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/widgets/meal_plan_tile.dart';
@@ -158,6 +159,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
           ],
         ),
       ),
+      // floatingActionButton: const CenteredOverlayButton()
     );
   }
 
@@ -216,3 +218,31 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     );
   }
 }
+
+class CenteredOverlayButton extends StatelessWidget {
+   const CenteredOverlayButton({super.key});
+ 
+   @override
+   Widget build(BuildContext context) {
+     // This positions the button in the center of the screen
+     return Align(
+       alignment: Alignment.center,
+       child: ElevatedButton(
+         onPressed: () {
+           Navigator.push(
+             context,
+             MaterialPageRoute(
+               builder:
+                   (context) => MealPlannerScreen(startDate: DateTime.now()),
+             ),
+           );
+         },
+         style: ElevatedButton.styleFrom(
+           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+           textStyle: const TextStyle(fontSize: 18),
+         ),
+         child: const Text('Start Meal Planning'),
+       ),
+     );
+   }
+ }
