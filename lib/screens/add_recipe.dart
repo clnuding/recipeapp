@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/api/tags.dart';
-import 'package:recipeapp/models/tags.dart';
 
 class AddRecipePage extends StatefulWidget {
   const AddRecipePage({super.key});
@@ -13,8 +12,6 @@ class AddRecipePage extends StatefulWidget {
 }
 
 class _AddRecipePageState extends State<AddRecipePage> {
-  final _formKey = GlobalKey<FormState>();
-
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _portionsController = TextEditingController();
@@ -32,7 +29,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
   Future<void> _loadMealTypes() async {
     try {
       final tags = await fetchTags();
-      final mealTags = tags.where((tag) => tag.category == 'meal_type').toList();
+      final mealTags =
+          tags.where((tag) => tag.category == 'meal_type').toList();
       setState(() {
         _mealTypes = mealTags.map((tag) => tag.name).toList();
       });
@@ -61,7 +59,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt, color: Colors.black87),
-              title: const Text("Take a Photo", style: TextStyle(color: Colors.black87)),
+              title: const Text(
+                "Take a Photo",
+                style: TextStyle(color: Colors.black87),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
@@ -69,7 +70,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
             ),
             ListTile(
               leading: const Icon(Icons.image, color: Colors.black87),
-              title: const Text("Choose from Gallery", style: TextStyle(color: Colors.black87)),
+              title: const Text(
+                "Choose from Gallery",
+                style: TextStyle(color: Colors.black87),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
@@ -98,19 +102,29 @@ class _AddRecipePageState extends State<AddRecipePage> {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Center(
                       child: Text(
                         'Step 1: Add Recipe',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    _buildInputField(controller: _nameController, label: "Recipe Name"),
+                    _buildInputField(
+                      controller: _nameController,
+                      label: "Recipe Name",
+                    ),
                     const SizedBox(height: 16),
                     _buildInputField(
                       controller: _portionsController,
@@ -120,7 +134,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     const SizedBox(height: 16),
 
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: secondary,
                         borderRadius: BorderRadius.circular(7),
@@ -128,17 +145,24 @@ class _AddRecipePageState extends State<AddRecipePage> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: _selectedRecipeType,
-                          hint: const Text("Select Recipe Type", style: TextStyle(color: Colors.black54)),
-                          icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+                          hint: const Text(
+                            "Select Recipe Type",
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.black,
+                          ),
                           isExpanded: true,
                           dropdownColor: secondary,
                           style: const TextStyle(color: Colors.black87),
-                          items: _mealTypes.map((type) {
-                            return DropdownMenuItem<String>(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
+                          items:
+                              _mealTypes.map((type) {
+                                return DropdownMenuItem<String>(
+                                  value: type,
+                                  child: Text(type),
+                                );
+                              }).toList(),
                           onChanged: (String? newValue) {
                             setState(() => _selectedRecipeType = newValue);
                           },
@@ -156,19 +180,32 @@ class _AddRecipePageState extends State<AddRecipePage> {
                           color: secondary,
                           borderRadius: BorderRadius.circular(7),
                         ),
-                        child: _image == null
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(Icons.add_a_photo, color: Colors.black45, size: 40),
-                                  SizedBox(height: 4),
-                                  Text("Add Picture (Optional)", style: TextStyle(color: Colors.black45)),
-                                ],
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(7),
-                                child: Image.file(_image!, fit: BoxFit.cover, width: double.infinity, height: double.infinity),
-                              ),
+                        child:
+                            _image == null
+                                ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.add_a_photo,
+                                      color: Colors.black45,
+                                      size: 40,
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      "Add Picture (Optional)",
+                                      style: TextStyle(color: Colors.black45),
+                                    ),
+                                  ],
+                                )
+                                : ClipRRect(
+                                  borderRadius: BorderRadius.circular(7),
+                                  child: Image.file(
+                                    _image!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -188,13 +225,19 @@ class _AddRecipePageState extends State<AddRecipePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  _buildSquareIconButton(Icons.close, () => Navigator.pop(context)),
+                  _buildSquareIconButton(
+                    Icons.close,
+                    () => Navigator.pop(context),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Container(
                       height: 50,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(color: secondary, borderRadius: BorderRadius.circular(7)),
+                      decoration: BoxDecoration(
+                        color: secondary,
+                        borderRadius: BorderRadius.circular(7),
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -237,9 +280,18 @@ class _AddRecipePageState extends State<AddRecipePage> {
         filled: true,
         fillColor: secondary,
         border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(7), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(7), borderSide: BorderSide.none),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 16,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(7),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(7),
+          borderSide: BorderSide.none,
+        ),
       ),
     );
   }
@@ -248,8 +300,14 @@ class _AddRecipePageState extends State<AddRecipePage> {
     return Container(
       height: 50,
       width: 50,
-      decoration: BoxDecoration(color: secondary, borderRadius: BorderRadius.circular(7)),
-      child: IconButton(icon: Icon(icon, color: primary, size: 24), onPressed: onPressed),
+      decoration: BoxDecoration(
+        color: secondary,
+        borderRadius: BorderRadius.circular(7),
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: primary, size: 24),
+        onPressed: onPressed,
+      ),
     );
   }
 

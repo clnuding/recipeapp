@@ -12,8 +12,8 @@ class RecipeReviewPage extends StatelessWidget {
     final String recipeName = "Homemade Pasta";
     final String recipeType = "Main Course";
     final int portions = 4;
-    final String description = "Delicious homemade pasta with a rich tomato sauce.";
-    final String imageUrl = "https://images.unsplash.com/photo-1512058564366-18510be2db19";
+    final String imageUrl =
+        "https://images.unsplash.com/photo-1512058564366-18510be2db19";
 
     final List<Map<String, String>> ingredients = [
       {"name": "Flour", "amount": "500g"},
@@ -39,7 +39,13 @@ class RecipeReviewPage extends StatelessWidget {
             ),
 
             // ✅ Recipe Image + Info (Merged)
-            _buildRecipeHeader(theme, imageUrl, recipeName, recipeType, portions),
+            _buildRecipeHeader(
+              theme,
+              imageUrl,
+              recipeName,
+              recipeType,
+              portions,
+            ),
 
             // ✅ Recipe Details (Scrollable)
             Expanded(
@@ -53,13 +59,16 @@ class RecipeReviewPage extends StatelessWidget {
                       theme,
                       title: "Ingredients",
                       content: Column(
-                        children: ingredients
-                            .map((ingredient) => _buildReviewRow(
-                                  ingredient["name"]!,
-                                  ingredient["amount"]!,
-                                  theme,
-                                ))
-                            .toList(),
+                        children:
+                            ingredients
+                                .map(
+                                  (ingredient) => _buildReviewRow(
+                                    ingredient["name"]!,
+                                    ingredient["amount"]!,
+                                    theme,
+                                  ),
+                                )
+                                .toList(),
                       ),
                     ),
 
@@ -75,7 +84,11 @@ class RecipeReviewPage extends StatelessWidget {
               child: Row(
                 children: [
                   // ✅ Back Button
-                  _buildSquareIconButton(theme, Icons.arrow_back, () => Navigator.pop(context)),
+                  _buildSquareIconButton(
+                    theme,
+                    Icons.arrow_back,
+                    () => Navigator.pop(context),
+                  ),
 
                   const SizedBox(width: 8),
 
@@ -99,10 +112,19 @@ class RecipeReviewPage extends StatelessWidget {
   }
 
   /// ✅ **Merged Recipe Header (Image + Name, Type, Portions)**
-  Widget _buildRecipeHeader(RecipeAppTheme theme, String imageUrl, String name, String type, int portions) {
+  Widget _buildRecipeHeader(
+    RecipeAppTheme theme,
+    String imageUrl,
+    String name,
+    String type,
+    int portions,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16), // ✅ Keeps spacing consistent
+      margin: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 16,
+      ), // ✅ Keeps spacing consistent
       decoration: BoxDecoration(
         color: theme.alternateColor,
         borderRadius: BorderRadius.circular(7),
@@ -132,7 +154,11 @@ class RecipeReviewPage extends StatelessWidget {
   }
 
   /// ✅ **Reusable Section Builder**
-  Widget _buildReviewSection(RecipeAppTheme theme, {required String title, required Widget content}) {
+  Widget _buildReviewSection(
+    RecipeAppTheme theme, {
+    required String title,
+    required Widget content,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -142,10 +168,7 @@ class RecipeReviewPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: theme.title1.copyWith(color: theme.primaryText),
-          ),
+          Text(title, style: theme.title1.copyWith(color: theme.primaryText)),
           const SizedBox(height: 8),
           content,
         ],
@@ -160,8 +183,16 @@ class RecipeReviewPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: theme.bodyText1.copyWith(color: theme.primaryText.withOpacity(0.7))),
-          Text(value, style: theme.bodyText1.copyWith(color: theme.primaryText)),
+          Text(
+            label,
+            style: theme.bodyText1.copyWith(
+              color: theme.primaryText.withOpacity(0.7),
+            ),
+          ),
+          Text(
+            value,
+            style: theme.bodyText1.copyWith(color: theme.primaryText),
+          ),
         ],
       ),
     );
@@ -182,11 +213,7 @@ class RecipeReviewPage extends StatelessWidget {
 
   /// ✅ **Progress Line Between Circles**
   Widget _buildProgressLine(RecipeAppTheme theme) {
-    return Container(
-      width: 20,
-      height: 3,
-      color: theme.primaryColor,
-    );
+    return Container(width: 20, height: 3, color: theme.primaryColor);
   }
 
   /// ✅ **Progress Bar**
@@ -212,7 +239,11 @@ class RecipeReviewPage extends StatelessWidget {
   }
 
   /// ✅ **Reusable Square Icon Button**
-  Widget _buildSquareIconButton(RecipeAppTheme theme, IconData icon, VoidCallback onPressed) {
+  Widget _buildSquareIconButton(
+    RecipeAppTheme theme,
+    IconData icon,
+    VoidCallback onPressed,
+  ) {
     return Container(
       height: 50,
       width: 50,

@@ -19,7 +19,6 @@ class RecipeItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = RecipeAppTheme.of(context);
     final Color primaryTextColor = theme.primaryText;
-    final Color primaryBackground = theme.primaryBackground;
     final Color borderColor = theme.alternateColor;
 
     if (isLoading) {
@@ -28,10 +27,7 @@ class RecipeItemList extends StatelessWidget {
 
     if (error.isNotEmpty) {
       return Center(
-        child: Text(
-          "Error: $error",
-          style: TextStyle(color: primaryTextColor),
-        ),
+        child: Text("Error: $error", style: TextStyle(color: primaryTextColor)),
       );
     }
 
@@ -66,8 +62,7 @@ class RecipeItemList extends StatelessWidget {
                     bottomLeft: Radius.circular(7),
                   ),
                   child: Image.network(
-                    recipe.thumbnailUrl ??
-                        'https://via.placeholder.com/80',
+                    recipe.thumbnailUrl ?? 'https://via.placeholder.com/80',
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,

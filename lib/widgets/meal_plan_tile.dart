@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/base/theme.dart';
 import 'package:recipeapp/models/recipe.dart';
 
 class MealPlanTile extends StatelessWidget {
@@ -24,11 +23,12 @@ class MealPlanTile extends StatelessWidget {
               height: 80,
               width: double.infinity,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Icon(
-                Icons.broken_image,
-                color: theme.colorScheme.onSurface.withOpacity(0.3),
-                size: 40,
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Icon(
+                    Icons.broken_image,
+                    color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    size: 40,
+                  ),
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return const SizedBox(
