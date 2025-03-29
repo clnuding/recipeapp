@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recipeapp/base/theme.dart';
 import 'package:recipeapp/api/recipes.dart'; // ✅ API logic
 import 'package:recipeapp/models/recipe.dart'; // ✅ Recipe model
-import 'package:recipeapp/pages/widgets/recipe_item_list.dart';
-import 'package:recipeapp/pages/widgets/recipe_item_tiles.dart';
+import 'package:recipeapp/widgets/recipe_item_list.dart';
+import 'package:recipeapp/widgets/recipe_item_tiles.dart';
 import 'package:recipeapp/api/pb_client.dart';
 
 class RecipesPage extends StatefulWidget {

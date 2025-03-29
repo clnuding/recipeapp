@@ -17,10 +17,10 @@ class RecipeAppTheme {
   // Brand and utility colors
   final Color primaryColor = const Color.fromARGB(255, 152, 138, 104);
   //golden middle brownish Color.fromARGB(255, 152, 138, 104);
-  final Color alternateColor = const Color.fromARGB(255, 243, 242, 237);
+  final Color alternateColor = const Color.fromARGB(255, 255, 255, 255);
   //const Color.fromARGB(255, 224, 224, 224);
   final Color primaryText = const Color.fromARGB(255, 63, 60, 60);
-  final Color primaryBackground = const Color.fromARGB(255, 255, 255, 255);
+  final Color primaryBackground = Color.fromARGB(255, 240, 237, 234);
 
   // ignore: prefer_typing_uninitialized_variables
   var error;

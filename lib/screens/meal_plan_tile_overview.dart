@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/models/recipe.dart';
-import 'package:recipeapp/pages/widgets/meal_plan_tile.dart';
-import 'package:recipeapp/pages/meal_planning_newtable.dart';
+import 'package:recipeapp/widgets/meal_plan_tile.dart';
+import 'package:recipeapp/screens/meal_plan_table_overview.dart';
 
 class MealPlanningPage extends StatefulWidget {
   const MealPlanningPage({super.key});

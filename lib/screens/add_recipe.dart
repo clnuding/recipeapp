@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:recipeapp/base/theme.dart';
+import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/models/tags.dart';
 
@@ -50,10 +50,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
   }
 
   Future<void> _showImageSourceDialog() async {
-    final theme = RecipeAppTheme.of(context);
     showModalBottomSheet(
       context: context,
-      backgroundColor: theme.primaryBackground,
+      backgroundColor: secondary,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
@@ -61,16 +60,16 @@ class _AddRecipePageState extends State<AddRecipePage> {
         return Wrap(
           children: [
             ListTile(
-              leading: Icon(Icons.camera_alt, color: theme.primaryText),
-              title: Text("Take a Photo", style: TextStyle(color: theme.primaryText)),
+              leading: const Icon(Icons.camera_alt, color: Colors.black87),
+              title: const Text("Take a Photo", style: TextStyle(color: Colors.black87)),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
               },
             ),
             ListTile(
-              leading: Icon(Icons.image, color: theme.primaryText),
-              title: Text("Choose from Gallery", style: TextStyle(color: theme.primaryText)),
+              leading: const Icon(Icons.image, color: Colors.black87),
+              title: const Text("Choose from Gallery", style: TextStyle(color: Colors.black87)),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
@@ -92,11 +91,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme.of(context);
-    final Color backgroundColor = theme.alternateColor;
-
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: lightBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -106,31 +102,37 @@ class _AddRecipePageState extends State<AddRecipePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Text('Step 1: Add Recipe', style: theme.title1.copyWith(color: theme.primaryText)),
+                    const Center(
+                      child: Text(
+                        'Step 1: Add Recipe',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
                     ),
                     const SizedBox(height: 16),
 
-                    _buildInputField(controller: _nameController, label: "Recipe Name", theme: theme),
+                    _buildInputField(controller: _nameController, label: "Recipe Name"),
                     const SizedBox(height: 16),
-                    _buildInputField(controller: _portionsController, label: "Portions", theme: theme, keyboardType: TextInputType.number),
+                    _buildInputField(
+                      controller: _portionsController,
+                      label: "Portions",
+                      keyboardType: TextInputType.number,
+                    ),
                     const SizedBox(height: 16),
 
-                    // Dropdown from fetched tags
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                       decoration: BoxDecoration(
-                        color: backgroundColor,
+                        color: secondary,
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: _selectedRecipeType,
-                          hint: Text("Select Recipe Type", style: TextStyle(color: theme.primaryText.withOpacity(0.6))),
-                          icon: Icon(Icons.arrow_drop_down, color: theme.primaryText),
+                          hint: const Text("Select Recipe Type", style: TextStyle(color: Colors.black54)),
+                          icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
                           isExpanded: true,
-                          dropdownColor: backgroundColor,
-                          style: TextStyle(color: theme.primaryText),
+                          dropdownColor: secondary,
+                          style: const TextStyle(color: Colors.black87),
                           items: _mealTypes.map((type) {
                             return DropdownMenuItem<String>(
                               value: type,
@@ -151,16 +153,16 @@ class _AddRecipePageState extends State<AddRecipePage> {
                         height: 100,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: backgroundColor,
+                          color: secondary,
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: _image == null
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.add_a_photo, color: theme.primaryText.withOpacity(0.6), size: 40),
-                                  const SizedBox(height: 4),
-                                  Text("Add Picture (Optional)", style: TextStyle(color: theme.primaryText.withOpacity(0.6))),
+                                children: const [
+                                  Icon(Icons.add_a_photo, color: Colors.black45, size: 40),
+                                  SizedBox(height: 4),
+                                  Text("Add Picture (Optional)", style: TextStyle(color: Colors.black45)),
                                 ],
                               )
                             : ClipRRect(
@@ -174,38 +176,41 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     _buildInputField(
                       controller: _descriptionController,
                       label: "Description (Optional)",
-                      theme: theme,
                       maxLines: 3,
                     ),
                   ],
                 ),
               ),
             ),
+
+            // Footer
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  _buildSquareIconButton(theme, Icons.close, () => Navigator.pop(context)),
+                  _buildSquareIconButton(Icons.close, () => Navigator.pop(context)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Container(
                       height: 50,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(7)),
+                      decoration: BoxDecoration(color: secondary, borderRadius: BorderRadius.circular(7)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildProgressCircle(theme, true),
-                          _buildProgressLine(theme),
-                          _buildProgressCircle(theme, false),
-                          _buildProgressLine(theme),
-                          _buildProgressCircle(theme, false),
+                          _buildProgressCircle(true),
+                          _buildProgressLine(),
+                          _buildProgressCircle(false),
+                          _buildProgressLine(),
+                          _buildProgressCircle(false),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  _buildSquareIconButton(theme, Icons.arrow_forward, () => Navigator.pushNamed(context, '/addIngredient')),
+                  _buildSquareIconButton(Icons.arrow_forward, () {
+                    Navigator.pushNamed(context, '/addIngredient');
+                  }),
                 ],
               ),
             ),
@@ -218,7 +223,6 @@ class _AddRecipePageState extends State<AddRecipePage> {
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
-    required RecipeAppTheme theme,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
@@ -226,12 +230,12 @@ class _AddRecipePageState extends State<AddRecipePage> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
-      style: TextStyle(color: theme.primaryText),
+      style: const TextStyle(color: Colors.black87),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: theme.primaryText.withOpacity(0.6)),
+        labelStyle: const TextStyle(color: Colors.black54),
         filled: true,
-        fillColor: theme.alternateColor,
+        fillColor: secondary,
         border: InputBorder.none,
         contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(7), borderSide: BorderSide.none),
@@ -240,28 +244,28 @@ class _AddRecipePageState extends State<AddRecipePage> {
     );
   }
 
-  Widget _buildSquareIconButton(RecipeAppTheme theme, IconData icon, VoidCallback onPressed) {
+  Widget _buildSquareIconButton(IconData icon, VoidCallback onPressed) {
     return Container(
       height: 50,
       width: 50,
-      decoration: BoxDecoration(color: theme.alternateColor, borderRadius: BorderRadius.circular(7)),
-      child: IconButton(icon: Icon(icon, color: theme.primaryColor, size: 24), onPressed: onPressed),
+      decoration: BoxDecoration(color: secondary, borderRadius: BorderRadius.circular(7)),
+      child: IconButton(icon: Icon(icon, color: primary, size: 24), onPressed: onPressed),
     );
   }
 
-  Widget _buildProgressCircle(RecipeAppTheme theme, bool isActive) {
+  Widget _buildProgressCircle(bool isActive) {
     return Container(
       width: 16,
       height: 16,
       decoration: BoxDecoration(
-        color: isActive ? theme.primaryColor : Colors.transparent,
-        border: Border.all(color: theme.primaryColor, width: 2),
+        color: isActive ? primary : Colors.transparent,
+        border: Border.all(color: primary, width: 2),
         borderRadius: BorderRadius.circular(7),
       ),
     );
   }
 
-  Widget _buildProgressLine(RecipeAppTheme theme) {
-    return Container(width: 20, height: 3, color: theme.primaryColor);
+  Widget _buildProgressLine() {
+    return Container(width: 20, height: 3, color: primary);
   }
 }

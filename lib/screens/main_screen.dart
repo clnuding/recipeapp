@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/base/bottom_bar.dart';
+// import 'package:recipeapp/base/bottom_bar.dart';
 import 'package:recipeapp/base/g_navbar.dart' show GButtomNavBar;
-import 'package:recipeapp/pages/meal_planning.dart';
-import 'package:recipeapp/pages/recipes.dart';
-import 'package:recipeapp/pages/groceries.dart';
-import 'package:recipeapp/pages/account.dart';
+import 'package:recipeapp/screens/meal_plan_tile_overview.dart';
+import 'package:recipeapp/screens/recipes.dart';
+// import 'package:recipeapp/pages/groceries.dart';
+// import 'package:recipeapp/pages/account.dart';
 import 'package:recipeapp/screens/account.dart';
 import 'package:recipeapp/screens/groceries.dart';
-import 'package:recipeapp/screens/recipe_details.dart';
+// import 'package:recipeapp/screens/recipe_details.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

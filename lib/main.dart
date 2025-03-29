@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/pages/main_screen.dart';
-import 'package:recipeapp/pages/add_recipe.dart' as add_recipe;
-import 'package:recipeapp/pages/add_ingredient.dart' as add_ingredient;
-import 'package:recipeapp/pages/review_recipe.dart'
+import 'package:recipeapp/screens/main_screen.dart';
+import 'package:recipeapp/screens/add_recipe.dart' as add_recipe;
+import 'package:recipeapp/screens/add_ingredient.dart' as add_ingredient;
+import 'package:recipeapp/screens/review_recipe.dart'
     as review_recipe; // ✅ Import the review page
 import 'package:recipeapp/base/theme.dart';
 import 'package:recipeapp/screens/recipe_details.dart';
