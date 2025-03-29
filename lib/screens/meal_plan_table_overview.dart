@@ -24,7 +24,7 @@ class MealPlanTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double topReservedHeight = 275; // Reserved for header/nav
+    final double topReservedHeight = 280; // Reserved for header/nav
     const double rowSpacing = 6; // Space between each row
 
     final double totalSpacing = rowSpacing * (days.length - 1);
