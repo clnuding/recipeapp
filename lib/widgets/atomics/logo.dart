@@ -3,7 +3,8 @@ import 'package:flutter_svg/svg.dart';
 
 class Logo extends StatelessWidget {
   final Color? color;
-  const Logo({super.key, this.color});
+  final double? size;
+  const Logo({super.key, this.color, this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class Logo extends StatelessWidget {
 
     return SvgPicture.asset(
       'assets/logos/spoonspark_logo.svg',
+      height: size,
       fit: BoxFit.contain,
       alignment: Alignment.center,
       colorFilter: ColorFilter.mode(color ?? defaultColor, BlendMode.srcIn),

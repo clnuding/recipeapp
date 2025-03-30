@@ -40,7 +40,7 @@ void launchOAuthURL(Uri url, ThemeData theme) async {
       customTabsOptions: CustomTabsOptions(
         colorSchemes: CustomTabsColorSchemes.defaults(
           toolbarColor: theme.colorScheme.surface,
-          navigationBarColor: theme.colorScheme.surface,
+          navigationBarColor: theme.colorScheme.onSurface,
         ),
         shareState: CustomTabsShareState.on,
         urlBarHidingEnabled: true,
@@ -48,7 +48,7 @@ void launchOAuthURL(Uri url, ThemeData theme) async {
       ),
       safariVCOptions: SafariViewControllerOptions(
         preferredBarTintColor: theme.colorScheme.surface,
-        preferredControlTintColor: theme.colorScheme.surface,
+        preferredControlTintColor: theme.colorScheme.onSurface,
         barCollapsingEnabled: true,
         entersReaderIfAvailable: false,
         modalPresentationStyle:

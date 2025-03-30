@@ -6,6 +6,7 @@ import 'package:recipeapp/api/user.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/pocketbase.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
+import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -81,11 +82,16 @@ class _AccountPageState extends State<AccountScreen> {
                   children: [
                     _buildProfileSection(),
                     SizedBox(height: SpoonSparkTheme.spacing18),
-                    _user!.premium ? SizedBox.shrink() : _buildPremiumButton(),
+                    _user!.premium
+                        ? SizedBox.shrink()
+                        : PrimaryButton(
+                          text: "Become a Premium Member",
+                          onPressed: () {},
+                        ),
                     SizedBox(height: SpoonSparkTheme.spacing18),
                     _buildSettingsSection(),
                     SizedBox(height: SpoonSparkTheme.spacing18),
-                    _buildLogoutButton(),
+                    PrimaryButton(text: "Logout", onPressed: _logout),
                   ],
                 ),
       ),
@@ -102,7 +108,7 @@ class _AccountPageState extends State<AccountScreen> {
             radius: 30,
             backgroundImage: NetworkImage(_user!.avatarUrl.toString()),
           ),
-          SizedBox(width: 15),
+          SizedBox(width: SpoonSparkTheme.spacing16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -112,23 +118,6 @@ class _AccountPageState extends State<AccountScreen> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPremiumButton() {
-    final theme = Theme.of(context);
-
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {},
-        child: Text(
-          'Become a Premium Member',
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.onPrimary,
-          ),
-        ),
       ),
     );
   }
@@ -158,21 +147,6 @@ class _AccountPageState extends State<AccountScreen> {
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildLogoutButton() {
-    final theme = Theme.of(context);
-    return Center(
-      child: ElevatedButton(
-        onPressed: _logout,
-        child: Text(
-          'Logout',
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.onPrimary,
-          ),
-        ),
-      ),
     );
   }
 }

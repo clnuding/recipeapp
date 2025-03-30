@@ -149,7 +149,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
           ],
         ),
       ),
-      floatingActionButton: const CenteredOverlayButton(),
+      // floatingActionButton: const CenteredOverlayButton(),
     );
   }
 

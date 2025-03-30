@@ -142,6 +142,7 @@ class SpoonSparkTheme {
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
+          iconSize: fontSizeLarge,
           padding: EdgeInsets.all(spacing8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusNormal),

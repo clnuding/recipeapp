@@ -18,7 +18,7 @@ class OAuthButton extends StatelessWidget {
     final theme = Theme.of(context);
 
     return OutlinedButton.icon(
-      onPressed: () => onPressed,
+      onPressed: () => onPressed(context),
       icon: _buildIcon(theme),
       label: Text(text, style: theme.textTheme.bodyMedium),
     );
