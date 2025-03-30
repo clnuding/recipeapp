@@ -1,15 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:recipeapp/theme/theme_class.dart'; // Import your custom theme
 
-class GButtomNavBar extends StatelessWidget {
+class BottomNavbar extends StatelessWidget {
   final Widget child;
   final int selectedIndex;
   final ValueChanged<int> onTap;
   final bool showNavBar;
 
-  const GButtomNavBar({
+  const BottomNavbar({
     super.key,
     required this.child,
     required this.selectedIndex,
@@ -19,7 +18,7 @@ class GButtomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = RecipeAppTheme.of(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
       extendBody: true,
@@ -40,7 +39,7 @@ class GButtomNavBar extends StatelessWidget {
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
-              color: theme.primaryBackground.withValues(alpha: 0.2),
+              color: theme.colorScheme.surface.withValues(alpha: 0.2),
             ),
           ),
           child,
@@ -50,7 +49,7 @@ class GButtomNavBar extends StatelessWidget {
           showNavBar
               ? Container(
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 15),
-                color: theme.primaryBackground,
+                color: theme.colorScheme.surface,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: _navItems(theme),
@@ -60,9 +59,11 @@ class GButtomNavBar extends StatelessWidget {
     );
   }
 
-  List<Widget> _navItems(RecipeAppTheme theme) {
-    final Color activeColor = theme.primaryText;
-    final Color inactiveColor = theme.primaryText.withValues(alpha: 0.5);
+  List<Widget> _navItems(ThemeData theme) {
+    final Color activeColor = theme.colorScheme.onSurface;
+    final Color inactiveColor = theme.colorScheme.onSurface.withValues(
+      alpha: 0.5,
+    );
 
     final List<_NavItemData> items = [
       _NavItemData(icon: MingCute.calendar_line, label: 'Meal Plan'),

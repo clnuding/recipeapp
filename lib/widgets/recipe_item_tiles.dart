@@ -56,8 +56,9 @@ class RecipeItemTiles extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    RecipeDetailScreen(recipeId: recipes[index].id),
+                builder:
+                    (context) =>
+                        RecipeDetailScreen(recipeId: recipes[index].id),
               ),
             );
           },
@@ -99,11 +100,12 @@ class RecipeCard extends StatelessWidget {
                   recipe.thumbnailUrl ?? 'https://via.placeholder.com/150',
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                    Icons.broken_image,
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                    size: 50,
-                  ),
+                  errorBuilder:
+                      (context, error, stackTrace) => Icon(
+                        Icons.broken_image,
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                        size: 50,
+                      ),
                 ),
               ),
             ),

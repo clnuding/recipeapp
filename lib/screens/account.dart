@@ -5,7 +5,7 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/user.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/pocketbase.dart';
-import 'package:recipeapp/widgets/logo_appbar.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});

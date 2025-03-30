@@ -4,7 +4,13 @@ import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/screens/signup.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/google_auth.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:recipeapp/utils/validation.dart';
+import 'package:recipeapp/widgets/atomics/divider.dart';
+import 'package:recipeapp/widgets/atomics/link_text.dart';
+import 'package:recipeapp/widgets/atomics/primary_btn.dart';
+import 'package:recipeapp/widgets/atomics/logo.dart';
+import 'package:recipeapp/widgets/atomics/oauth_button.dart';
+import 'package:recipeapp/widgets/atomics/text_form_field.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -72,13 +78,9 @@ class _SignInScreenState extends State<SignInScreen> {
               children: [
                 const SizedBox(height: SpoonSparkTheme.spacing18),
                 // Fable logo (simplified)
-                SvgPicture.asset(
-                  'assets/logos/spoonspark_logo.svg',
+                SizedBox(
                   height: 80,
-                  colorFilter: ColorFilter.mode(
-                    theme.colorScheme.primary,
-                    BlendMode.srcIn,
-                  ),
+                  child: Logo(color: theme.colorScheme.primary),
                 ),
                 const SizedBox(height: SpoonSparkTheme.spacing18),
                 Text('Welcome Back', style: theme.textTheme.headlineMedium),
@@ -86,177 +88,52 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(height: SpoonSparkTheme.spacing24),
 
                 // Email TextField
-                TextFormField(
-                  cursorColor: theme.colorScheme.onSurface,
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(
-                      r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-                    ).hasMatch(value)) {
-                      return 'Enter a valid email';
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.onSurface,
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusMedium,
-                      ),
-                    ),
-
-                    // Customize label color when focused
-                    floatingLabelStyle: TextStyle(
-                      color: theme.colorScheme.onSurface,
-                    ),
-                    label: Text('Email', style: theme.textTheme.bodyMedium),
-                    hintText: 'Enter Email',
-                    hintStyle: theme.textTheme.bodyMedium,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: theme.colorScheme.tertiary),
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusNormal,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: theme.colorScheme.tertiary),
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusNormal,
-                      ),
-                    ),
-                  ),
+                CustomTextFormField(
+                  fieldController: _emailController,
+                  label: 'Email',
+                  inputType: TextInputType.emailAddress,
+                  validator: validateEmail,
                 ),
 
                 const SizedBox(height: SpoonSparkTheme.spacing16),
-                // Password TextField
-                TextFormField(
-                  cursorColor: theme.colorScheme.onSurface,
-                  controller: _passwordController,
-                  obscureText: true,
-                  obscuringCharacter: '*',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.onSurface,
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusNormal,
-                      ),
-                    ),
 
-                    // Customize label color when focused
-                    floatingLabelStyle: TextStyle(
-                      color: theme.colorScheme.onSurface,
-                    ),
-                    label: Text('Password', style: theme.textTheme.bodyMedium),
-                    hintText: 'Enter Password',
-                    hintStyle: theme.textTheme.bodyMedium,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: theme.colorScheme.tertiary),
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusNormal,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color:
-                            theme.colorScheme.tertiary, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusNormal,
-                      ),
-                    ),
-                  ),
+                CustomTextFormField(
+                  fieldController: _passwordController,
+                  label: 'Password',
+                  validator: validatePassword,
+                  isSecret: true,
                 ),
+
                 const SizedBox(height: SpoonSparkTheme.spacing8),
+
                 // Forgot password?
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      child: Text(
-                        'Forgot password?',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                LinkText(text: 'Forgot password?'),
 
                 const SizedBox(height: SpoonSparkTheme.spacing24),
-                // Sign Up with Email Button
-                ElevatedButton(
-                  onPressed: _signIn,
-                  child: Text(
-                    'Sign in with Email',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+
+                PrimaryButton(text: 'Sign in with Email', onPressed: _signIn),
 
                 const SizedBox(height: SpoonSparkTheme.spacing16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.7,
-                        color: Colors.grey.withValues(alpha: 0.5),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: 10,
-                      ),
-                      child: Text(
-                        'or',
-                        style: TextStyle(color: theme.colorScheme.onSurface),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.7,
-                        color: Colors.grey.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  ],
-                ),
+
+                HorizontalDivider(middleText: 'or'),
+
                 const SizedBox(height: SpoonSparkTheme.spacing16),
 
                 // OAuth Buttons
-                _buildOAuthButtonBrand(
+                OAuthButton(
                   text: 'Continue with Google',
                   icon: Brands.google,
                   onPressed: signInWithGoogle,
                 ),
-                const SizedBox(height: 12),
-                _buildOAuthButtonIcon(
-                  text: 'Continue with Apple',
+                const SizedBox(height: SpoonSparkTheme.spacing12),
+                OAuthButton(
+                  text: 'Continue with Google',
                   icon: Icons.apple,
-                  onPressed: () {},
+                  onPressed: signInWithApple,
                 ),
+
                 const SizedBox(height: SpoonSparkTheme.spacing16),
+
                 // Log In Link
                 TextButton(
                   onPressed: () {
@@ -286,34 +163,6 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildOAuthButtonBrand({
-    required String text,
-    required String icon,
-    required Future<void> Function(BuildContext) onPressed,
-  }) {
-    final theme = Theme.of(context);
-
-    return OutlinedButton.icon(
-      onPressed: () => onPressed(context),
-      icon: Brand(icon, size: 20),
-      label: Text(text, style: theme.textTheme.bodyMedium),
-    );
-  }
-
-  Widget _buildOAuthButtonIcon({
-    required String text,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
-    final theme = Theme.of(context);
-
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, color: Colors.black, size: 20),
-      label: Text(text, style: theme.textTheme.bodyMedium),
     );
   }
 

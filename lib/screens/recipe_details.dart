@@ -5,8 +5,8 @@ import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
-import 'package:recipeapp/widgets/logo_appbar.dart';
-import 'package:recipeapp/widgets/on_image_tag.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
+import 'package:recipeapp/widgets/atomics/tag.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final String recipeId;
@@ -93,7 +93,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               Positioned(
                                 top: 8,
                                 right: 8,
-                                child: OnImageTag(
+                                child: Tag(
                                   icon: Icons.access_time,
                                   text: '${recipe.cookingTime} min',
                                 ),

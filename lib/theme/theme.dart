@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:recipeapp/theme/theme_old.dart';
 
 /// App theme configuration with light and dark themes
 /// All customizable colors, typography, and spacing are defined here
@@ -13,12 +12,10 @@ class SpoonSparkTheme {
 
   // Secondary colors
   static const Color _secondary = Color.fromARGB(255, 208, 200, 189);
-  static const Color _secondaryLight = Color(0xFF03DAC6);
   static const Color _secondaryVariantLight = Color(0xFF018786);
 
   // Background colors
   static const Color _backgroundLight = Color.fromARGB(255, 240, 237, 234);
-  static const Color _whiteBackground = Color.fromARGB(255, 240, 237, 234);
 
   // Surface colors
   static const Color _surfaceLight = Color(0xFFFFFFFF);
@@ -26,14 +23,6 @@ class SpoonSparkTheme {
 
   // Error colors
   static const Color _errorLight = Color(0xFFB00020);
-
-  // Additional colors
-  // static const Color _successLight = Color(0xFF4CAF50);
-  // static const Color _successDark = Color(0xFF81C784);
-  // static const Color _warningLight = Color(0xFFFFC107);
-  // static const Color _warningDark = Color(0xFFFFD54F);
-  // static const Color _infoLight = Color(0xFF2196F3);
-  // static const Color _infoDark = Color(0xFF64B5F6);
 
   // Text colors
   static const Color _textOnPrimary = Color(0xDEFFFFFF); // 87% opacity
@@ -136,6 +125,7 @@ class SpoonSparkTheme {
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50),
           backgroundColor: _primary,
+          disabledBackgroundColor: _secondary,
           padding: EdgeInsets.symmetric(
             horizontal: spacing12,
             vertical: spacing12,
@@ -226,6 +216,10 @@ class SpoonSparkTheme {
         }),
       ),
       checkboxTheme: CheckboxThemeData(
+        side: BorderSide(color: _borderMuted),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusSmall),
+        ),
         fillColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return _primaryLight;
@@ -357,92 +351,3 @@ class SpoonSparkTheme {
     );
   }
 }
-  // ==================== CUSTOM EXTENSION METHODS ====================
-  // Extension methods to easily access theme values from context
-//   static extension BuildContextThemeExtension on BuildContext {
-//     // Colors
-//     ColorScheme get colors => Theme.of(this).colorScheme;
-    
-//     // Text styles
-//     TextTheme get textStyles => Theme.of(this).textTheme;
-    
-//     // Custom colors
-//     Color get success => Theme.of(this).brightness == Brightness.light ? _successLight : _successDark;
-//     Color get warning => Theme.of(this).brightness == Brightness.light ? _warningLight : _warningDark;
-//     Color get info => Theme.of(this).brightness == Brightness.light ? _infoLight : _infoDark;
-    
-//     // Spacing
-//     double get spacing2 => AppTheme.spacing2;
-//     double get spacing4 => AppTheme.spacing4;
-//     double get spacing8 => AppTheme.spacing8;
-//     double get spacing12 => AppTheme.spacing12;
-//     double get spacing16 => AppTheme.spacing16;
-//     double get spacing24 => AppTheme.spacing24;
-//     double get spacing32 => AppTheme.spacing32;
-//     double get spacing48 => AppTheme.spacing48;
-//     double get spacing64 => AppTheme.spacing64;
-    
-//     // Border radius
-//     double get radiusSmall => AppTheme.radiusSmall;
-//     double get radiusMedium => AppTheme.radiusMedium;
-//     double get radiusLarge => AppTheme.radiusLarge;
-//     double get radiusXLarge => AppTheme.radiusXLarge;
-//   }
-// }
-
-// ==================== EXAMPLE USAGE ====================
-// How to use this theme in your main.dart:
-/*
-import 'package:flutter/material.dart';
-import 'path_to_theme/app_theme.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Your App Name',
-      theme: AppTheme.lightTheme(),
-      darkTheme: AppTheme.darkTheme(),
-      themeMode: ThemeMode.system, // Use system theme, or specify ThemeMode.light or ThemeMode.dark
-      home: HomePage(),
-    );
-  }
-}
-
-// Then in your widgets, you can use:
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(context.spacing16),
-        child: Column(
-          children: [
-            Text(
-              'Heading',
-              style: context.textStyles.headlineSmall,
-            ),
-            SizedBox(height: context.spacing16),
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(context.spacing16),
-                child: Text(
-                  'This is a card with themed styling',
-                  style: context.textStyles.bodyMedium,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/

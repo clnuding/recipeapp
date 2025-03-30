@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/theme/theme.dart';
-import 'package:recipeapp/widgets/logo_appbar.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 
 class GroceryListScreen extends StatefulWidget {
   const GroceryListScreen({super.key});

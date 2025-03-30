@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/theme/theme_old.dart';
 
 class MealPlanTableView extends StatelessWidget {
   const MealPlanTableView({super.key});
@@ -55,7 +54,9 @@ class MealPlanTableView extends StatelessWidget {
                       width: 70,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: secondary.withValues(alpha: 0.4),
+                        color: theme.colorScheme.secondary.withValues(
+                          alpha: 0.4,
+                        ),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(

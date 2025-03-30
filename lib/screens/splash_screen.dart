@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:recipeapp/screens/signin.dart';
-import 'package:recipeapp/widgets/new/logo.dart';
+import 'package:recipeapp/widgets/atomics/logo.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

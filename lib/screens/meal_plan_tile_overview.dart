@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:recipeapp/screens/weekday_plan.dart';
-import 'package:recipeapp/theme/theme_old.dart';
 import 'package:recipeapp/models/recipe.dart';
-import 'package:recipeapp/widgets/logo_appbar.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/meal_plan_tile.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';
 
@@ -68,7 +67,6 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: LogoAppbar(showBackButton: false),
-      backgroundColor: lightBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -195,11 +193,12 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
   }
 
   Widget _buildMealTile(Recipe? recipe, String label) {
+    final theme = Theme.of(context);
     return Expanded(
       child: Container(
         height: 130,
         decoration: BoxDecoration(
-          color: lightColorScheme.surface,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(7),
         ),
         child:
@@ -209,7 +208,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                   child: Text(
                     label,
                     style: TextStyle(
-                      color: lightColorScheme.onSurface.withValues(alpha: 0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

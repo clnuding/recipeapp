@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/widgets/g_navbar.dart';
+import 'package:recipeapp/widgets/atomics/navbar.dart';
 import 'package:recipeapp/screens/meal_plan_tile_overview.dart';
 import 'package:recipeapp/screens/recipes.dart';
 import 'package:recipeapp/screens/account.dart';
@@ -32,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GButtomNavBar(
+    return BottomNavbar(
       selectedIndex: _selectedIndex,
       onTap: _onItemTapped,
       child: _pages[_selectedIndex],
