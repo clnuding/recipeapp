@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/theme/theme.dart';
 
 class RecipeReviewPage extends StatelessWidget {
   const RecipeReviewPage({super.key});
@@ -21,12 +22,13 @@ class RecipeReviewPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                vertical: SpoonSparkTheme.spacing16,
+              ),
               child: Center(
                 child: Text(
                   "Step 3: Review Recipe",
@@ -53,13 +55,16 @@ class RecipeReviewPage extends StatelessWidget {
                       context,
                       title: "Ingredients",
                       content: Column(
-                        children: ingredients
-                            .map((ingredient) => _buildReviewRow(
-                                  context,
-                                  ingredient["name"]!,
-                                  ingredient["amount"]!,
-                                ))
-                            .toList(),
+                        children:
+                            ingredients
+                                .map(
+                                  (ingredient) => _buildReviewRow(
+                                    context,
+                                    ingredient["name"]!,
+                                    ingredient["amount"]!,
+                                  ),
+                                )
+                                .toList(),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -146,10 +151,7 @@ class RecipeReviewPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium,
-          ),
+          Text(title, style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
           content,
         ],
@@ -170,10 +172,7 @@ class RecipeReviewPage extends StatelessWidget {
               color: theme.colorScheme.onSurface.withOpacity(0.7),
             ),
           ),
-          Text(
-            value,
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text(value, style: theme.textTheme.bodyMedium),
         ],
       ),
     );
@@ -194,11 +193,7 @@ class RecipeReviewPage extends StatelessWidget {
 
   Widget _buildProgressLine(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      width: 20,
-      height: 3,
-      color: theme.colorScheme.primary,
-    );
+    return Container(width: 20, height: 3, color: theme.colorScheme.primary);
   }
 
   Widget _buildProgressBar(BuildContext context, int activeStep) {

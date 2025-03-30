@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/logo_appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:recipeapp/api/recipes.dart'; // ✅ API logic
-import 'package:recipeapp/models/recipe.dart'; // ✅ Recipe model
+import 'package:recipeapp/api/recipes.dart';
+import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/widgets/recipe_item_list.dart';
 import 'package:recipeapp/widgets/recipe_item_tiles.dart';
 import 'package:recipeapp/api/pb_client.dart';
@@ -93,10 +94,11 @@ class _RecipesPageState extends State<RecipesPage> {
       appBar: LogoAppbar(showBackButton: false),
       backgroundColor: theme.colorScheme.surface,
       body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16),
+        padding: const EdgeInsets.symmetric(
+          horizontal: SpoonSparkTheme.spacing16,
+        ),
         child: Column(
           children: [
-            // ✅ Top Bar: Search, Toggle, Add
             Row(
               children: [
                 Expanded(
@@ -104,7 +106,9 @@ class _RecipesPageState extends State<RecipesPage> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: theme.colorScheme.onPrimary,
-                      borderRadius: BorderRadius.circular(7.0),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusNormal,
+                      ),
                     ),
                     child: TextField(
                       controller: _searchController,
@@ -112,28 +116,36 @@ class _RecipesPageState extends State<RecipesPage> {
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 10,
-                          horizontal: 16,
+                          horizontal: SpoonSparkTheme.spacing16,
                         ),
                         hintText: "Search Recipes",
                         hintStyle: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                         border: InputBorder.none,
                         prefixIcon: Icon(
                           Icons.search,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+
+                const SizedBox(width: SpoonSparkTheme.spacing8),
+
                 Container(
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onPrimary,
-                    borderRadius: BorderRadius.circular(7.0),
+                    borderRadius: BorderRadius.circular(
+                      SpoonSparkTheme.radiusNormal,
+                    ),
                   ),
                   child: IconButton(
                     icon: Icon(
@@ -148,7 +160,7 @@ class _RecipesPageState extends State<RecipesPage> {
                     },
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: SpoonSparkTheme.spacing8),
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/create_recipe'),
                   child: Container(
@@ -156,16 +168,22 @@ class _RecipesPageState extends State<RecipesPage> {
                     width: 40,
                     decoration: BoxDecoration(
                       color: theme.colorScheme.onPrimary,
-                      borderRadius: BorderRadius.circular(7.0),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusMedium,
+                      ),
                     ),
-                    child: Icon(Icons.add, color: theme.colorScheme.onSurface, size: 28),
+                    child: Icon(
+                      Icons.add,
+                      color: theme.colorScheme.onSurface,
+                      size: SpoonSparkTheme.fontSizeXXLarge,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
 
-            // ✅ Recipe List / Grid
+            const SizedBox(width: SpoonSparkTheme.spacing8),
+
             Expanded(
               child:
                   _isGridView

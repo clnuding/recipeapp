@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/screens/signup.dart';
+import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/google_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -59,29 +60,30 @@ class _SignInScreenState extends State<SignInScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.onPrimary,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(
+            horizontal: SpoonSparkTheme.spacing24,
+          ),
           child: Form(
             key: _formSignInKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: SpoonSparkTheme.spacing18),
                 // Fable logo (simplified)
                 SvgPicture.asset(
                   'assets/logos/spoonspark_logo.svg',
                   height: 80,
-                  colorFilter: ColorFilter.mode(theme.colorScheme.primary, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(
+                    theme.colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Welcome Back',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+                const SizedBox(height: SpoonSparkTheme.spacing18),
+                Text('Welcome Back', style: theme.textTheme.headlineMedium),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: SpoonSparkTheme.spacing24),
 
                 // Email TextField
                 TextFormField(
@@ -102,35 +104,37 @@ class _SignInScreenState extends State<SignInScreen> {
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: theme.colorScheme.onSurface, // Black border when focused
-                        width:
-                            1.5, // Optional: make the border slightly thicker
+                        color: theme.colorScheme.onSurface,
+                        width: 1.5,
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusMedium,
+                      ),
                     ),
 
                     // Customize label color when focused
-                    floatingLabelStyle:  TextStyle(
-                      color: theme.colorScheme.onSurface , // Black label when floating
+                    floatingLabelStyle: TextStyle(
+                      color: theme.colorScheme.onSurface,
                     ),
-                    label: const Text('Email'),
+                    label: Text('Email', style: theme.textTheme.bodyMedium),
                     hintText: 'Enter Email',
-                    hintStyle: TextStyle(color: theme.colorScheme.onSurface),
+                    hintStyle: theme.textTheme.bodyMedium,
                     border: OutlineInputBorder(
-                      borderSide:  BorderSide(
-                        color: theme.colorScheme.onSurface, // Default border color
+                      borderSide: BorderSide(color: theme.colorScheme.tertiary),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusNormal,
                       ),
-                      borderRadius: BorderRadius.circular(10),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide:  BorderSide(
-                        color: theme.colorScheme.onSurface, // Default border color
+                      borderSide: BorderSide(color: theme.colorScheme.tertiary),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusNormal,
                       ),
-                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+
+                const SizedBox(height: SpoonSparkTheme.spacing16),
                 // Password TextField
                 TextFormField(
                   cursorColor: theme.colorScheme.onSurface,
@@ -148,36 +152,40 @@ class _SignInScreenState extends State<SignInScreen> {
                   },
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide:  BorderSide(
-                        color: theme.colorScheme.onSurface, // Black border when focused
-                        width:
-                            1.5, // Optional: make the border slightly thicker
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.onSurface,
+                        width: 1.5,
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusNormal,
+                      ),
                     ),
 
                     // Customize label color when focused
-                    floatingLabelStyle:  TextStyle(
-                      color: theme.colorScheme.onSurface, // Black label when floating
+                    floatingLabelStyle: TextStyle(
+                      color: theme.colorScheme.onSurface,
                     ),
-                    label: const Text('Password'),
+                    label: Text('Password', style: theme.textTheme.bodyMedium),
                     hintText: 'Enter Password',
-                    hintStyle:  TextStyle(color: theme.colorScheme.onSurface),
+                    hintStyle: theme.textTheme.bodyMedium,
                     border: OutlineInputBorder(
-                      borderSide:  BorderSide(
-                        color: theme.colorScheme.onSurface, // Default border color
+                      borderSide: BorderSide(color: theme.colorScheme.tertiary),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusNormal,
                       ),
-                      borderRadius: BorderRadius.circular(10),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide:  BorderSide(
-                        color: theme.colorScheme.onSurface, // Default border color
+                      borderSide: BorderSide(
+                        color:
+                            theme.colorScheme.tertiary, // Default border color
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusNormal,
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: SpoonSparkTheme.spacing8),
                 // Forgot password?
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,30 +193,28 @@ class _SignInScreenState extends State<SignInScreen> {
                     GestureDetector(
                       child: Text(
                         'Forgot password?',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                        style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.primary,
-                          fontSize: 12,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 25),
+
+                const SizedBox(height: SpoonSparkTheme.spacing24),
                 // Sign Up with Email Button
                 ElevatedButton(
                   onPressed: _signIn,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: theme.colorScheme.primary,
-                  ),
-                  child:  Text(
+                  child: Text(
                     'Sign in with Email',
-                    style: TextStyle(color: theme.colorScheme.onPrimary),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 16.0),
+                const SizedBox(height: SpoonSparkTheme.spacing16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -236,7 +242,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: SpoonSparkTheme.spacing16),
 
                 // OAuth Buttons
                 _buildOAuthButtonBrand(
@@ -250,7 +256,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   icon: Icons.apple,
                   onPressed: () {},
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: SpoonSparkTheme.spacing16),
                 // Log In Link
                 TextButton(
                   onPressed: () {
@@ -262,14 +268,13 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                       Text(
+                      Text(
                         'Don\'t have an account? ',
-                        style: TextStyle(color: theme.colorScheme.onSurface),
+                        style: theme.textTheme.bodySmall,
                       ),
-                       Text(
+                      Text(
                         'Sign Up',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                        style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.primary,
                         ),
                       ),
@@ -293,18 +298,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
     return OutlinedButton.icon(
       onPressed: () => onPressed(context),
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        side: const BorderSide(color: Colors.grey),
-      ),
-      // icon: Icon(icon, color: Colors.black),
       icon: Brand(icon, size: 20),
-      label: Text(text, style: TextStyle(color: theme.colorScheme.onSurface)),
+      label: Text(text, style: theme.textTheme.bodyMedium),
     );
   }
 
   Widget _buildOAuthButtonIcon({
-    
     required String text,
     required IconData icon,
     required VoidCallback onPressed,
@@ -313,12 +312,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
     return OutlinedButton.icon(
       onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        side: const BorderSide(color: Colors.grey),
-      ),
       icon: Icon(icon, color: Colors.black, size: 20),
-      label: Text(text, style: TextStyle(color: theme.colorScheme.primary)),
+      label: Text(text, style: theme.textTheme.bodyMedium),
     );
   }
 

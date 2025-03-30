@@ -22,6 +22,7 @@ class SpoonSparkTheme {
 
   // Surface colors
   static const Color _surfaceLight = Color(0xFFFFFFFF);
+  static const Color _borderMuted = Colors.grey;
 
   // Error colors
   static const Color _errorLight = Color(0xFFB00020);
@@ -35,6 +36,7 @@ class SpoonSparkTheme {
   // static const Color _infoDark = Color(0xFF64B5F6);
 
   // Text colors
+  static const Color _textOnPrimary = Color(0xDEFFFFFF); // 87% opacity
   static const Color _textPrimaryLight = Color(0xDE000000); // 87% opacity
   static const Color _textSecondaryLight = Color(0x99000000); // 60% opacity
   static const Color _textDisabledLight = Color(0x61000000); // 38% opacity
@@ -92,7 +94,7 @@ class SpoonSparkTheme {
       colorScheme: ColorScheme(
         brightness: Brightness.light,
         primary: _primary,
-        onPrimary: Colors.white,
+        onPrimary: _textOnPrimary,
         primaryContainer: _primaryVariantLight,
         onPrimaryContainer: Colors.white,
         secondary: _secondary,
@@ -104,6 +106,7 @@ class SpoonSparkTheme {
         surface: _backgroundLight,
         onSurface: _textPrimaryLight,
         onSurfaceVariant: Colors.white,
+        tertiary: _borderMuted,
       ),
       textTheme: _buildTextTheme(isLight: true),
       cardTheme: CardTheme(
@@ -131,6 +134,7 @@ class SpoonSparkTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 50),
           backgroundColor: _primary,
           padding: EdgeInsets.symmetric(
             horizontal: spacing12,
@@ -138,6 +142,11 @@ class SpoonSparkTheme {
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusNormal),
+          ),
+          textStyle: TextStyle(
+            color: _textOnPrimary,
+            fontSize: fontSizeNormal,
+            fontWeight: fontWeightMedium,
           ),
         ),
       ),
@@ -152,6 +161,8 @@ class SpoonSparkTheme {
       iconTheme: IconThemeData(color: _primary, size: fontSizeNormal),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: _borderMuted),
+          minimumSize: const Size(double.infinity, 50),
           padding: EdgeInsets.symmetric(
             horizontal: spacing16,
             vertical: spacing12,
@@ -270,8 +281,8 @@ class SpoonSparkTheme {
       ),
       headlineMedium: GoogleFonts.getFont(
         primaryFontFamily,
-        fontSize: 34,
-        fontWeight: FontWeight.w400,
+        fontSize: fontSizeXXLarge,
+        fontWeight: fontWeightBold,
         letterSpacing: 0.25,
         color: textPrimary,
       ),
