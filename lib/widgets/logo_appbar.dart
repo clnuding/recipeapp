@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:recipeapp/theme/theme.dart';
 
 class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
   final List<IconButton>? actions;
@@ -25,23 +26,17 @@ class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'spoon',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          const SizedBox(width: 2),
+          Text('spoon', style: theme.textTheme.headlineSmall),
+          const SizedBox(width: SpoonSparkTheme.spacing4),
           // SVG Logo
           SvgPicture.asset(
             'assets/logos/spoonspark_logo.svg',
-            height: 25,
+            height: SpoonSparkTheme.fontSizeXXLarge,
             colorFilter: ColorFilter.mode(theme.primaryColor, BlendMode.srcIn),
           ),
-          const SizedBox(width: 2),
-          const Text(
-            'spark',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          const SizedBox(width: 8),
+          const SizedBox(width: SpoonSparkTheme.spacing4),
+          Text('spark', style: theme.textTheme.headlineSmall),
+          const SizedBox(width: SpoonSparkTheme.spacing8),
         ],
       ),
       elevation: 0,

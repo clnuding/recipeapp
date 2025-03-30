@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:recipeapp/theme/theme_old.dart';
 
 /// App theme configuration with light and dark themes
 /// All customizable colors, typography, and spacing are defined here
@@ -45,7 +46,9 @@ class SpoonSparkTheme {
   static const double spacing4 = 4.0;
   static const double spacing8 = 8.0;
   static const double spacing12 = 12.0;
+  static const double spacing15 = 15.0;
   static const double spacing16 = 16.0;
+  static const double spacing18 = 18.0;
   static const double spacing24 = 24.0;
   static const double spacing32 = 32.0;
   static const double spacing48 = 48.0;
@@ -54,8 +57,10 @@ class SpoonSparkTheme {
   // ==================== RADIUS ====================
   static const double radiusSmall = 4.0;
   static const double radiusMedium = 8.0;
+  static const double radiusNormal = 10.0;
   static const double radiusLarge = 12.0;
-  static const double radiusXLarge = 16.0;
+  static const double radiusXLarge = 14.0;
+  static const double radiusXXLarge = 16.0;
 
   // ==================== FONTS ====================
   // Default font families
@@ -72,6 +77,13 @@ class SpoonSparkTheme {
   static const double fontSizeXXLarge = 24.0;
   static const double fontSizeDisplay = 34.0;
 
+  // Font weights
+  static const FontWeight fontWeightLight = FontWeight.w300;
+  static const FontWeight fontWeightNormal = FontWeight.w400;
+  static const FontWeight fontWeightMedium = FontWeight.w500;
+  static const FontWeight fontWeightSemibold = FontWeight.w600;
+  static const FontWeight fontWeightBold = FontWeight.w700;
+
   // ==================== LIGHT THEME ====================
   static ThemeData lightTheme() {
     return ThemeData(
@@ -83,7 +95,7 @@ class SpoonSparkTheme {
         onPrimary: Colors.white,
         primaryContainer: _primaryVariantLight,
         onPrimaryContainer: Colors.white,
-        secondary: _secondaryLight,
+        secondary: _secondary,
         onSecondary: Colors.black,
         secondaryContainer: _secondaryVariantLight,
         onSecondaryContainer: Colors.white,
@@ -91,7 +103,7 @@ class SpoonSparkTheme {
         onError: Colors.white,
         surface: _backgroundLight,
         onSurface: _textPrimaryLight,
-        onSurfaceVariant: _textSecondaryLight,
+        onSurfaceVariant: Colors.white,
       ),
       textTheme: _buildTextTheme(isLight: true),
       cardTheme: CardTheme(
@@ -101,17 +113,43 @@ class SpoonSparkTheme {
         ),
         clipBehavior: Clip.antiAlias,
       ),
+      listTileTheme: ListTileThemeData(
+        tileColor: Colors.white,
+        titleTextStyle: TextStyle(
+          color: _textPrimaryLight,
+          fontSize: fontSizeNormal,
+          fontWeight: fontWeightMedium,
+        ),
+        iconColor: _primary,
+        contentPadding: EdgeInsets.symmetric(horizontal: spacing16),
+        style: ListTileStyle.drawer,
+        horizontalTitleGap: spacing12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusMedium),
+        ),
+        enableFeedback: false,
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          backgroundColor: _primary,
           padding: EdgeInsets.symmetric(
-            horizontal: spacing16,
+            horizontal: spacing12,
             vertical: spacing12,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusMedium),
+            borderRadius: BorderRadius.circular(radiusNormal),
           ),
         ),
       ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          padding: EdgeInsets.all(spacing8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusNormal),
+          ),
+        ),
+      ),
+      iconTheme: IconThemeData(color: _primary, size: fontSizeNormal),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(
@@ -126,7 +164,7 @@ class SpoonSparkTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(
-            horizontal: spacing16,
+            horizontal: spacing12,
             vertical: spacing12,
           ),
         ),
@@ -142,8 +180,8 @@ class SpoonSparkTheme {
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: _backgroundLight,
-        foregroundColor: Colors.black,
         elevation: 0,
+        foregroundColor: _textPrimaryLight,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: _surfaceLight,
@@ -239,28 +277,28 @@ class SpoonSparkTheme {
       ),
       headlineSmall: GoogleFonts.getFont(
         primaryFontFamily,
-        fontSize: 24,
-        fontWeight: FontWeight.w400,
+        fontSize: fontSizeXLarge,
+        fontWeight: fontWeightSemibold,
         color: textPrimary,
       ),
       titleLarge: GoogleFonts.getFont(
         primaryFontFamily,
-        fontSize: 20,
-        fontWeight: FontWeight.w500,
+        fontSize: 18,
+        fontWeight: fontWeightSemibold,
         letterSpacing: 0.15,
         color: textPrimary,
       ),
       titleMedium: GoogleFonts.getFont(
         primaryFontFamily,
         fontSize: 16,
-        fontWeight: FontWeight.w400,
+        fontWeight: fontWeightMedium,
         letterSpacing: 0.15,
         color: textPrimary,
       ),
       titleSmall: GoogleFonts.getFont(
         primaryFontFamily,
         fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontWeight: fontWeightMedium,
         letterSpacing: 0.1,
         color: textPrimary,
       ),
@@ -292,11 +330,17 @@ class SpoonSparkTheme {
         letterSpacing: 1.25,
         color: textPrimary,
       ),
+      labelMedium: GoogleFonts.getFont(
+        primaryFontFamily,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: textPrimary,
+      ),
       labelSmall: GoogleFonts.getFont(
         secondaryFontFamily,
         fontSize: 10,
         fontWeight: FontWeight.w400,
-        letterSpacing: 1.5,
+        letterSpacing: 1.25,
         color: textDisabled,
       ),
     );

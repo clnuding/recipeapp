@@ -12,9 +12,16 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _ingredientSearchController = TextEditingController();
+  final TextEditingController _ingredientSearchController =
+      TextEditingController();
 
-  final List<String> _ingredientOptions = ['Flour', 'Sugar', 'Salt', 'Butter', 'Eggs'];
+  final List<String> _ingredientOptions = [
+    'Flour',
+    'Sugar',
+    'Salt',
+    'Butter',
+    'Eggs',
+  ];
   final List<String> _measurementOptions = ['g', 'ml', 'cup', 'tbsp', 'tsp'];
 
   String? _selectedIngredient;
@@ -38,9 +45,10 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   void _filterIngredientList() {
     final query = _ingredientSearchController.text.toLowerCase();
     setState(() {
-      _filteredIngredients = _ingredientOptions
-          .where((ingredient) => ingredient.toLowerCase().contains(query))
-          .toList();
+      _filteredIngredients =
+          _ingredientOptions
+              .where((ingredient) => ingredient.toLowerCase().contains(query))
+              .toList();
     });
   }
 
@@ -56,7 +64,10 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
             // Form Content
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -106,13 +117,19 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
             controller: _ingredientSearchController,
             style: TextStyle(color: theme.colorScheme.onSurface),
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 16,
+              ),
               hintText: "Search Ingredient",
               hintStyle: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
               border: InputBorder.none,
-              prefixIcon: Icon(Icons.search, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+              prefixIcon: Icon(
+                Icons.search,
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
             ),
           ),
         ),
@@ -124,21 +141,22 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
               borderRadius: BorderRadius.circular(7.0),
             ),
             child: Column(
-              children: _filteredIngredients.map((ingredient) {
-                return ListTile(
-                  title: Text(
-                    ingredient,
-                    style: TextStyle(color: theme.colorScheme.onSurface),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _selectedIngredient = ingredient;
-                      _ingredientSearchController.text = ingredient;
-                      _filteredIngredients = [];
-                    });
-                  },
-                );
-              }).toList(),
+              children:
+                  _filteredIngredients.map((ingredient) {
+                    return ListTile(
+                      title: Text(
+                        ingredient,
+                        style: TextStyle(color: theme.colorScheme.onSurface),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _selectedIngredient = ingredient;
+                          _ingredientSearchController.text = ingredient;
+                          _filteredIngredients = [];
+                        });
+                      },
+                    );
+                  }).toList(),
             ),
           ),
       ],
@@ -158,18 +176,21 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
           value: _selectedMeasurement,
           hint: Text(
             "Select Measurement",
-            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+            style: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
           ),
           icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onSurface),
           isExpanded: true,
           dropdownColor: theme.colorScheme.onPrimary,
           style: TextStyle(color: theme.colorScheme.onSurface),
-          items: _measurementOptions.map((String option) {
-            return DropdownMenuItem<String>(
-              value: option,
-              child: Text(option),
-            );
-          }).toList(),
+          items:
+              _measurementOptions.map((String option) {
+                return DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                );
+              }).toList(),
           onChanged: (String? newValue) {
             setState(() {
               _selectedMeasurement = newValue;
@@ -194,11 +215,16 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        labelStyle: TextStyle(
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+        ),
         filled: true,
         fillColor: theme.colorScheme.onPrimary,
         border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 16,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
           borderSide: BorderSide.none,
@@ -217,11 +243,17 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          _buildSquareIconButton(Icons.arrow_back, () => Navigator.pop(context)),
+          _buildSquareIconButton(
+            Icons.arrow_back,
+            () => Navigator.pop(context),
+          ),
           const SizedBox(width: 8),
           Expanded(child: _buildProgressBar(2)),
           const SizedBox(width: 8),
-          _buildSquareIconButton(Icons.arrow_forward, () => Navigator.pushNamed(context, '/reviewRecipe')),
+          _buildSquareIconButton(
+            Icons.arrow_forward,
+            () => Navigator.pushNamed(context, '/reviewRecipe'),
+          ),
         ],
       ),
     );

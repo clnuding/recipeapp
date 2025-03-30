@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/theme/theme.dart';
 
 class OnImageTag extends StatelessWidget {
   final IconData icon;
@@ -8,21 +9,29 @@ class OnImageTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: SpoonSparkTheme.spacing8,
+        vertical: SpoonSparkTheme.spacing4,
+      ),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusLarge),
       ),
       child: Row(
         children: [
-          const Icon(Icons.access_time, color: Colors.white, size: 16),
-          const SizedBox(width: 4),
+          Icon(
+            Icons.access_time,
+            color: Colors.white,
+            size: theme.textTheme.labelMedium?.fontSize,
+          ),
+          const SizedBox(width: SpoonSparkTheme.spacing4),
           Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),

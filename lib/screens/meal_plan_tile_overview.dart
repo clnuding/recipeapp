@@ -151,7 +151,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
           ],
         ),
       ),
-      // floatingActionButton: const CenteredOverlayButton()
+      floatingActionButton: const CenteredOverlayButton(),
     );
   }
 
@@ -237,10 +237,6 @@ class CenteredOverlayButton extends StatelessWidget {
             ),
           );
         },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: const TextStyle(fontSize: 18),
-        ),
         child: const Text('Start Meal Planning'),
       ),
     );

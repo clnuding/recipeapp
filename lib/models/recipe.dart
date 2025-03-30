@@ -31,8 +31,8 @@ class Recipe {
       description: json['description'],
       thumbnailUrl: json['thumbnail_url'],
       sourceUrl: json['source_url'],
-      prepTime: json['prep_time'],
-      cookingTime: json['cooking_time'],
+      prepTime: json['prep_time_minutes'],
+      cookingTime: json['cook_time_minutes'],
       servings: json['servings'],
       nutritionAutoCalculated: json['nutrition_auto_calculated'] ?? false,
     );

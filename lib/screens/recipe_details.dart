@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/logo_appbar.dart';
 import 'package:recipeapp/widgets/on_image_tag.dart';
@@ -19,19 +19,7 @@ class RecipeDetailScreen extends StatefulWidget {
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   late Future<Recipe> recipe;
   final String? cookingTime = "30";
-  final List<String> tags = [
-    'Vegan',
-    'Gluten-Free',
-    'Dinner',
-    'Vegan',
-    'Gluten-Free',
-    'Dinner',
-    'Vegan',
-    'Gluten-Free',
-    'Dinner',
-  ];
-  final String? description =
-      'A healthy and delicious vegan dinner recipe perfect for weeknights.';
+  final List<String> tags = ['french', 'dinner', 'vegetarian'];
 
   @override
   void initState() {
@@ -50,7 +38,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
       appBar: LogoAppbar(
         actions: [
           IconButton(icon: Icon(Icons.delete), onPressed: () {}),
@@ -67,46 +54,48 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           } else if (!snapshot.hasData) {
             return Center(
               child: Text(
-                "No details about this Manga found.",
-                style: TextStyle(color: theme.colorScheme.onPrimary),
+                "No Recipe Details Found.",
+                style: theme.textTheme.headlineSmall,
               ),
             );
           }
-          Recipe _recipe = snapshot.data!;
+          Recipe recipe = snapshot.data!;
 
           return SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: 25.0),
+              padding: EdgeInsets.only(bottom: SpoonSparkTheme.spacing24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 4.0,
+                      horizontal: SpoonSparkTheme.spacing16,
+                      vertical: SpoonSparkTheme.spacing4,
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusXXLarge,
+                      ),
                       child: AspectRatio(
                         aspectRatio: 1.9,
                         child: Stack(
                           children: [
                             // Original Image
                             Image.network(
-                              _recipe.thumbnailUrl ?? "",
+                              recipe.thumbnailUrl ?? "",
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: double.infinity,
                             ),
 
                             // Cooking Time Tag (Only shown if time is not null)
-                            if (_recipe.cookingTime != null)
+                            if (recipe.cookingTime != null)
                               Positioned(
                                 top: 8,
                                 right: 8,
                                 child: OnImageTag(
                                   icon: Icons.access_time,
-                                  text: '${_recipe.cookingTime} min',
+                                  text: '${recipe.cookingTime} min',
                                 ),
                               ),
                           ],
@@ -114,18 +103,22 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: SpoonSparkTheme.spacing16),
 
                   // Horizontally Scrollable Genres Section
                   SizedBox(
-                    height: 25,
+                    height: SpoonSparkTheme.spacing24,
                     child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: SpoonSparkTheme.spacing16,
+                      ),
                       scrollDirection: Axis.horizontal,
                       itemCount: tags.length,
                       itemBuilder: (context, index) {
                         return ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            SpoonSparkTheme.radiusMedium,
+                          ),
                           child: BackdropFilter(
                             filter: ImageFilter.blur(
                               sigmaX: 10,
@@ -136,18 +129,21 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                 color: theme.colorScheme.onPrimary.withValues(
                                   alpha: 0.8,
                                 ), // Light transparent white
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(
+                                  SpoonSparkTheme.radiusXXLarge,
+                                ),
                               ),
-                              margin: const EdgeInsets.only(right: 8),
+                              margin: const EdgeInsets.only(
+                                right: SpoonSparkTheme.spacing8,
+                              ),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 5,
+                                horizontal: SpoonSparkTheme.spacing12,
+                                vertical: SpoonSparkTheme.spacing4,
                               ),
                               child: Text(
                                 tags.isNotEmpty ? tags[index] : "N/A",
-                                style: TextStyle(
+                                style: theme.textTheme.labelSmall?.copyWith(
                                   color: theme.colorScheme.onSurface,
-                                  fontSize: 10,
                                 ),
                               ),
                             ),
@@ -157,70 +153,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     ),
                   ),
 
-                  // Expandable Summary Content Section
-                  // Padding(
-                  //   padding: const EdgeInsets.all(16.0),
-                  //   child: Container(
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.white,
-                  //       borderRadius: BorderRadius.circular(12),
-                  //       boxShadow: [
-                  //         BoxShadow(
-                  //           color: Colors.grey.withValues(alpha: 0.1),
-                  //           spreadRadius: 1,
-                  //           blurRadius: 3,
-                  //           offset: const Offset(0, 1),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     child: LayoutBuilder(
-                  //       builder: (context, constraints) {
-                  //         return Padding(
-                  //           padding: const EdgeInsets.all(12.0),
-                  //           child: Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               Text(
-                  //                 description ?? "N/A",
-                  //                 maxLines: _isExpanded ? null : 2,
-                  //                 overflow:
-                  //                     _isExpanded
-                  //                         ? TextOverflow.visible
-                  //                         : Te,xtOverflow.ellipsis,
-                  //                 style: const TextStyle(
-                  //                   fontSize: 14,
-                  //                   color: Colors.black,
-                  //                 ),
-                  //               ),
-                  //               Align(
-                  //                 alignment: Alignment.centerLeft,
-                  //                 child: GestureDetector(
-                  //                   onTap: () {
-                  //                     setState(() {
-                  //                       _isExpanded = !_isExpanded;
-                  //                     });
-                  //                   },
-                  //                   child: Container(
-                  //                     padding: const EdgeInsets.only(top: 5),
-                  //                     child: Text(
-                  //                       _isExpanded ? "less" : "more",
-                  //                       style: const TextStyle(
-                  //                         color: primary,
-                  //                         fontWeight: FontWeight.bold,
-                  //                         fontSize: 14,
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: SpoonSparkTheme.spacing24),
                   IngredientsGrid(
                     initialServings: 2,
                     ingredients: [
