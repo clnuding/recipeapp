@@ -38,13 +38,13 @@ class CustomTextFormField extends StatelessWidget {
             color: theme.colorScheme.onSurface,
             width: 1.5,
           ),
-          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusMedium),
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusS),
         ),
 
         // Customize border when not focused
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.tertiary),
-          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusNormal),
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusM),
         ),
 
         // Customize label color when focused
@@ -54,7 +54,7 @@ class CustomTextFormField extends StatelessWidget {
         hintStyle: theme.textTheme.bodyMedium,
         border: OutlineInputBorder(
           borderSide: BorderSide(color: theme.colorScheme.tertiary),
-          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusNormal),
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusM),
         ),
       ),
     );

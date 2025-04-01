@@ -63,18 +63,18 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
           return SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: SpoonSparkTheme.spacing24),
+              padding: EdgeInsets.only(bottom: SpoonSparkTheme.spacingXXL),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: SpoonSparkTheme.spacing16,
-                      vertical: SpoonSparkTheme.spacing4,
+                      horizontal: SpoonSparkTheme.spacingL,
+                      vertical: SpoonSparkTheme.spacingXS,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusXXLarge,
+                        SpoonSparkTheme.radiusXXL,
                       ),
                       child: AspectRatio(
                         aspectRatio: 1.9,
@@ -103,21 +103,21 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: SpoonSparkTheme.spacing16),
+                  const SizedBox(height: SpoonSparkTheme.spacingL),
 
                   // Horizontally Scrollable Genres Section
                   SizedBox(
-                    height: SpoonSparkTheme.spacing24,
+                    height: SpoonSparkTheme.spacingXXL,
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: SpoonSparkTheme.spacing16,
+                        horizontal: SpoonSparkTheme.spacingL,
                       ),
                       scrollDirection: Axis.horizontal,
                       itemCount: tags.length,
                       itemBuilder: (context, index) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(
-                            SpoonSparkTheme.radiusMedium,
+                            SpoonSparkTheme.radiusS,
                           ),
                           child: BackdropFilter(
                             filter: ImageFilter.blur(
@@ -130,15 +130,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                   alpha: 0.8,
                                 ), // Light transparent white
                                 borderRadius: BorderRadius.circular(
-                                  SpoonSparkTheme.radiusXXLarge,
+                                  SpoonSparkTheme.radiusXXL,
                                 ),
                               ),
                               margin: const EdgeInsets.only(
-                                right: SpoonSparkTheme.spacing8,
+                                right: SpoonSparkTheme.spacingS,
                               ),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: SpoonSparkTheme.spacing12,
-                                vertical: SpoonSparkTheme.spacing4,
+                                horizontal: SpoonSparkTheme.spacingM,
+                                vertical: SpoonSparkTheme.spacingXS,
                               ),
                               child: Text(
                                 tags.isNotEmpty ? tags[index] : "N/A",
@@ -153,7 +153,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: SpoonSparkTheme.spacing24),
+                  const SizedBox(height: SpoonSparkTheme.spacingXXL),
                   IngredientsGrid(
                     initialServings: 2,
                     ingredients: [

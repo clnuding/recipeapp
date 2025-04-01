@@ -74,7 +74,7 @@ class _AccountPageState extends State<AccountScreen> {
     return Scaffold(
       appBar: LogoAppbar(showBackButton: false),
       body: Padding(
-        padding: const EdgeInsets.all(SpoonSparkTheme.spacing24),
+        padding: const EdgeInsets.all(SpoonSparkTheme.spacingXXL),
         child:
             _user == null
                 ? Center(child: CircularProgressIndicator())
@@ -82,18 +82,18 @@ class _AccountPageState extends State<AccountScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildProfileSection(),
-                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    SizedBox(height: SpoonSparkTheme.spacingXL),
                     _user!.premium
                         ? SizedBox.shrink()
                         : PrimaryButton(
                           text: "Become a Premium Member",
                           onPressed: () {},
                         ),
-                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    SizedBox(height: SpoonSparkTheme.spacingXL),
                     _buildSettingsSection(),
-                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    SizedBox(height: SpoonSparkTheme.spacingXL),
                     PrimaryButton(text: "Logout", onPressed: _logout),
-                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    SizedBox(height: SpoonSparkTheme.spacingXL),
                     SecondaryButton(text: "Logout", onPressed: () {}),
                   ],
                 ),
@@ -104,19 +104,19 @@ class _AccountPageState extends State<AccountScreen> {
   Widget _buildProfileSection() {
     final theme = Theme.of(context);
     return Container(
-      padding: EdgeInsets.all(SpoonSparkTheme.spacing12),
+      padding: EdgeInsets.all(SpoonSparkTheme.spacingM),
       child: Row(
         children: [
           CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(_user!.avatarUrl.toString()),
           ),
-          SizedBox(width: SpoonSparkTheme.spacing16),
+          SizedBox(width: SpoonSparkTheme.spacingL),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(_user!.name, style: theme.textTheme.titleLarge),
-              SizedBox(height: SpoonSparkTheme.spacing4),
+              SizedBox(height: SpoonSparkTheme.spacingXS),
               Text(_user!.email, style: theme.textTheme.titleSmall),
             ],
           ),
@@ -131,7 +131,7 @@ class _AccountPageState extends State<AccountScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Settings', style: theme.textTheme.titleMedium),
-        SizedBox(height: SpoonSparkTheme.spacing8),
+        SizedBox(height: SpoonSparkTheme.spacingS),
         ListTile(
           leading: Icon(Icons.lock),
           title: Text('Change Password'),
@@ -139,7 +139,7 @@ class _AccountPageState extends State<AccountScreen> {
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {},
         ),
-        SizedBox(height: SpoonSparkTheme.spacing8),
+        SizedBox(height: SpoonSparkTheme.spacingS),
         ListTile(
           leading: Icon(Icons.notifications),
           title: Text('Notification Preferences'),

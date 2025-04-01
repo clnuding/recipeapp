@@ -23,7 +23,7 @@ class SecondaryButton extends StatelessWidget {
         backgroundColor: Colors.transparent,
         disabledBackgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusNormal),
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusM),
           side: BorderSide(color: defaultColor, width: 2),
         ),
       ),

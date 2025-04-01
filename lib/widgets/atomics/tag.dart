@@ -17,12 +17,12 @@ class Tag extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: SpoonSparkTheme.spacing8,
-        vertical: SpoonSparkTheme.spacing4,
+        horizontal: SpoonSparkTheme.spacingS,
+        vertical: SpoonSparkTheme.spacingXS,
       ),
       decoration: BoxDecoration(
         color: backgroundColor ?? defaultBackgroundColor,
-        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusLarge),
+        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusL),
       ),
       child: Row(
         children: [
@@ -32,7 +32,7 @@ class Tag extends StatelessWidget {
               color: theme.colorScheme.onPrimary,
               size: theme.textTheme.labelMedium?.fontSize,
             ),
-          const SizedBox(width: SpoonSparkTheme.spacing4),
+          const SizedBox(width: SpoonSparkTheme.spacingXS),
           Text(
             text,
             style: theme.textTheme.labelMedium?.copyWith(

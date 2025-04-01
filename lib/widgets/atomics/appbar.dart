@@ -27,14 +27,11 @@ class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('spoon', style: theme.textTheme.headlineSmall),
-          const SizedBox(width: SpoonSparkTheme.spacing4),
-          Logo(
-            size: SpoonSparkTheme.fontSizeXXLarge,
-            color: theme.colorScheme.primary,
-          ),
-          const SizedBox(width: SpoonSparkTheme.spacing4),
+          const SizedBox(width: SpoonSparkTheme.spacingXS),
+          Logo(size: SpoonSparkTheme.fontXXL, color: theme.colorScheme.primary),
+          const SizedBox(width: SpoonSparkTheme.spacingXS),
           Text('spark', style: theme.textTheme.headlineSmall),
-          const SizedBox(width: SpoonSparkTheme.spacing8),
+          const SizedBox(width: SpoonSparkTheme.spacingS),
         ],
       ),
       elevation: 0,

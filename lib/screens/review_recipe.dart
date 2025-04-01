@@ -27,7 +27,7 @@ class RecipeReviewPage extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: SpoonSparkTheme.spacing16,
+                vertical: SpoonSparkTheme.spacingL,
               ),
               child: Center(
                 child: Text(

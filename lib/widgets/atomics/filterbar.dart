@@ -19,12 +19,10 @@ class FilterBar extends StatelessWidget {
 
     return Container(
       height: 40,
-      padding: const EdgeInsets.symmetric(
-        horizontal: SpoonSparkTheme.spacing12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingM),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusNormal),
+        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusM),
       ),
       child: TextField(
         controller: controller,

@@ -36,15 +36,15 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
       appBar: LogoAppbar(showBackButton: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: SpoonSparkTheme.spacing8,
+          horizontal: SpoonSparkTheme.spacingS,
         ),
         child: ListView(
-          padding: EdgeInsets.all(SpoonSparkTheme.spacing8),
+          padding: EdgeInsets.all(SpoonSparkTheme.spacingS),
           children: [
             if (toGrabItems.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: SpoonSparkTheme.spacing4,
+                  vertical: SpoonSparkTheme.spacingXS,
                 ),
                 child: Text(
                   'Need'.toUpperCase(),
@@ -52,12 +52,12 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
                 ),
               ),
               ...toGrabItems.map((item) => _buildGroceryTile(item)),
-              SizedBox(height: SpoonSparkTheme.spacing24),
+              SizedBox(height: SpoonSparkTheme.spacingXXL),
             ],
             if (grabbedItems.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: SpoonSparkTheme.spacing4,
+                  vertical: SpoonSparkTheme.spacingXS,
                 ),
                 child: Text(
                   'Have'.toUpperCase(),
@@ -80,19 +80,19 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.onPrimary,
-          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusNormal),
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusM),
         ),
         child: ListTile(
           leading: GestureDetector(
             onTap: () => _toggleChecked(_groceryItems.indexOf(item)),
             child: CircleAvatar(
-              radius: SpoonSparkTheme.radiusXLarge,
+              radius: SpoonSparkTheme.radiusXL,
               backgroundColor:
                   item['checked'] ? Colors.green : theme.colorScheme.primary,
               child: Icon(
                 item['checked'] ? Icons.check : Icons.radio_button_unchecked,
                 color: theme.colorScheme.onPrimary,
-                size: SpoonSparkTheme.radiusXLarge,
+                size: SpoonSparkTheme.radiusXL,
               ),
             ),
           ),

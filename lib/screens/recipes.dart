@@ -96,7 +96,7 @@ class _RecipesPageState extends State<RecipesPage> {
       backgroundColor: theme.colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: SpoonSparkTheme.spacing16,
+          horizontal: SpoonSparkTheme.spacingL,
         ),
         child: Column(
           children: [
@@ -109,7 +109,7 @@ class _RecipesPageState extends State<RecipesPage> {
                   ),
                 ),
 
-                const SizedBox(width: SpoonSparkTheme.spacing8),
+                const SizedBox(width: SpoonSparkTheme.spacingS),
 
                 Container(
                   height: 40,
@@ -117,7 +117,7 @@ class _RecipesPageState extends State<RecipesPage> {
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onPrimary,
                     borderRadius: BorderRadius.circular(
-                      SpoonSparkTheme.radiusNormal,
+                      SpoonSparkTheme.radiusM,
                     ),
                   ),
                   child: IconButton(
@@ -133,7 +133,7 @@ class _RecipesPageState extends State<RecipesPage> {
                     },
                   ),
                 ),
-                const SizedBox(width: SpoonSparkTheme.spacing8),
+                const SizedBox(width: SpoonSparkTheme.spacingS),
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/create_recipe'),
                   child: Container(
@@ -142,20 +142,20 @@ class _RecipesPageState extends State<RecipesPage> {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.onPrimary,
                       borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusMedium,
+                        SpoonSparkTheme.radiusS,
                       ),
                     ),
                     child: Icon(
                       Icons.add,
                       color: theme.colorScheme.onSurface,
-                      size: SpoonSparkTheme.fontSizeXXLarge,
+                      size: SpoonSparkTheme.fontXXL,
                     ),
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(width: SpoonSparkTheme.spacing8),
+            const SizedBox(width: SpoonSparkTheme.spacingS),
 
             Expanded(
               child:

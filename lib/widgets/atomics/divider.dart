@@ -23,7 +23,7 @@ class HorizontalDivider extends StatelessWidget {
         if (middleText != null)
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: SpoonSparkTheme.spacing8,
+              horizontal: SpoonSparkTheme.spacingS,
             ),
             child: Text(
               middleText!,

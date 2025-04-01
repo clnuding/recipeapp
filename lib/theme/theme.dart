@@ -4,77 +4,119 @@ import 'package:google_fonts/google_fonts.dart';
 /// App theme configuration with light and dark themes
 /// All customizable colors, typography, and spacing are defined here
 class SpoonSparkTheme {
-  // ==================== COLORS ====================
-  // Primary colors
-  static const Color _primaryLight = Color(0xFF6200EE);
-  static const Color _primaryVariantLight = Color(0xFF3700B3);
-  static const Color _primary = Color.fromARGB(255, 156, 140, 117);
+  // ==================== COLOR PALETTE ====================
+  // =======================================================
 
-  // Secondary colors
-  static const Color _secondary = Color.fromARGB(255, 208, 200, 189);
-  static const Color _secondaryVariantLight = Color(0xFF018786);
+  // Primary color
+  static const Color _primary = Color.fromARGB(255, 249, 97, 103);
+  static const Color _primaryDisabled = Color.fromARGB(144, 249, 97, 103);
+  // static const Color _primaryOne = Color.fromARGB(255, 255, 178, 64);
+  // static const Color _primaryTwo = Color.fromARGB(255, 255, 168, 38);
+  // static const Color _primaryThree = Color.fromARGB(255, 0, 146, 98);
 
   // Background colors
+  static const Color _backgroundAccent = Color.fromARGB(255, 229, 222, 209);
   static const Color _backgroundLight = Color.fromARGB(255, 240, 237, 234);
 
-  // Surface colors
-  static const Color _surfaceLight = Color(0xFFFFFFFF);
-  static const Color _borderMuted = Colors.grey;
-
-  // Error colors
-  static const Color _errorLight = Color(0xFFB00020);
-
   // Text colors
-  static const Color _textOnPrimary = Color(0xDEFFFFFF); // 87% opacity
-  static const Color _textPrimaryLight = Color(0xDE000000); // 87% opacity
-  static const Color _textSecondaryLight = Color(0x99000000); // 60% opacity
-  static const Color _textDisabledLight = Color(0x61000000); // 38% opacity
-  static const Color _textPrimaryDark = Color(0xDEFFFFFF); // 87% opacity
-  static const Color _textSecondaryDark = Color(0x99FFFFFF); // 60% opacity
-  static const Color _textDisabledDark = Color(0x61FFFFFF); // 38% opacity
+  static const Color _primaryTextLight = Color.fromARGB(255, 28, 28, 28);
+  static const Color _secondaryTextLight = Color.fromARGB(117, 117, 117, 117);
+  static const Color _textOnPrimaryLight = Color.fromARGB(255, 255, 255, 255);
+  static const Color _foregroundMuted = Color.fromARGB(117, 117, 117, 117);
+  static const Color _divider = Color.fromARGB(255, 224, 224, 244);
 
-  // ==================== SPACING ====================
-  static const double spacing4 = 4.0;
-  static const double spacing8 = 8.0;
-  static const double spacing12 = 12.0;
-  static const double spacing15 = 15.0;
-  static const double spacing16 = 16.0;
-  static const double spacing18 = 18.0;
-  static const double spacing24 = 24.0;
-  static const double spacing32 = 32.0;
-  static const double spacing48 = 48.0;
-  static const double spacing64 = 64.0;
+  // Error / Success colors
+  static const Color _error = Color.fromARGB(255, 255, 90, 79);
+  // static const Color _success = Color.fromARGB(255, 50, 201, 151);
 
-  // ==================== RADIUS ====================
-  static const double radiusSmall = 4.0;
-  static const double radiusMedium = 8.0;
-  static const double radiusNormal = 10.0;
-  static const double radiusLarge = 12.0;
-  static const double radiusXLarge = 14.0;
-  static const double radiusXXLarge = 16.0;
-  static const double radiusRound = 30.0;
-
-  // ==================== FONTS ====================
-  // Default font families
-  static String primaryFontFamily = 'Urbanist';
-  static String secondaryFontFamily = 'Roboto';
-
-  // Font sizes
-  static const double fontSizeXSmall = 10.0;
-  static const double fontSizeSmall = 12.0;
-  static const double fontSizeNormal = 14.0;
-  static const double fontSizeMedium = 16.0;
-  static const double fontSizeLarge = 18.0;
-  static const double fontSizeXLarge = 20.0;
-  static const double fontSizeXXLarge = 24.0;
-  static const double fontSizeDisplay = 34.0;
+  // ==================== TYPOGRAPHY =======================
+  // =======================================================
+  // Font families
+  static String primaryFontFamily = 'Roboto';
+  // static String secondaryFontFamily = 'Urbanist';
 
   // Font weights
-  static const FontWeight fontWeightLight = FontWeight.w300;
-  static const FontWeight fontWeightNormal = FontWeight.w400;
+  static const FontWeight fontWeightRegular = FontWeight.w400;
   static const FontWeight fontWeightMedium = FontWeight.w500;
   static const FontWeight fontWeightSemibold = FontWeight.w600;
   static const FontWeight fontWeightBold = FontWeight.w700;
+
+  // Font sizes
+  static const double fontXS = 10.0;
+  static const double fontS = 14.0;
+  static const double fontM = 16.0;
+  static const double fontL = 18.0;
+  static const double fontXL = 22.0;
+  static const double fontXXL = 24.0;
+
+  // Text Styles
+  static TextStyle label = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontXS,
+    fontWeight: fontWeightRegular,
+    color: _primaryTextLight,
+  );
+
+  static TextStyle bodySmall = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontS,
+    fontWeight: fontWeightRegular,
+    color: _primaryTextLight,
+  );
+
+  static TextStyle bodyRegular = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontM,
+    fontWeight: fontWeightMedium,
+    color: _primaryTextLight,
+  );
+
+  static TextStyle bodyMedium = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontM,
+    fontWeight: fontWeightMedium,
+    color: _primaryTextLight,
+  );
+
+  static TextStyle subheading = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontL,
+    fontWeight: fontWeightSemibold,
+    color: _primaryTextLight,
+  );
+
+  static TextStyle headingRegular = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontXL,
+    fontWeight: fontWeightRegular,
+    color: _primaryTextLight,
+  );
+
+  static TextStyle heading = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontXXL,
+    fontWeight: fontWeightSemibold,
+    color: _primaryTextLight,
+  );
+
+  // ==================== SPACING ==========================
+  // =======================================================
+  static const double spacingXS = 4.0;
+  static const double spacingS = 8.0;
+  static const double spacingM = 12.0;
+  static const double spacingL = 16.0;
+  static const double spacingXL = 18.0;
+  static const double spacingXXL = 24.0;
+
+  // ==================== Radius ==========================
+  // ======================================================
+  static const double radiusXS = 4.0;
+  static const double radiusS = 8.0;
+  static const double radiusM = 10.0;
+  static const double radiusL = 12.0;
+  static const double radiusXL = 14.0;
+  static const double radiusXXL = 16.0;
+  static const double radiusR = 30.0;
 
   // ==================== LIGHT THEME ====================
   static ThemeData lightTheme() {
@@ -84,41 +126,40 @@ class SpoonSparkTheme {
       colorScheme: ColorScheme(
         brightness: Brightness.light,
         primary: _primary,
-        onPrimary: _textOnPrimary,
-        primaryContainer: _primaryVariantLight,
-        onPrimaryContainer: Colors.white,
-        secondary: _secondary,
-        onSecondary: Colors.black,
-        secondaryContainer: _secondaryVariantLight,
-        onSecondaryContainer: Colors.white,
-        error: _errorLight,
-        onError: Colors.white,
+        onPrimary: _textOnPrimaryLight,
+        secondary: _primaryTextLight,
+        onSecondary: _textOnPrimaryLight,
+        secondaryContainer: _backgroundAccent,
+        onSecondaryContainer: _textOnPrimaryLight,
+        error: _error,
+        onError: _textOnPrimaryLight,
         surface: _backgroundLight,
-        onSurface: _textPrimaryLight,
-        onSurfaceVariant: Colors.white,
-        tertiary: _borderMuted,
+        onSurface: _primaryTextLight,
+        surfaceBright: _backgroundAccent,
+        onSurfaceVariant: _primaryTextLight,
+        tertiary: _foregroundMuted,
       ),
       textTheme: _buildTextTheme(isLight: true),
       cardTheme: CardTheme(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMedium),
+          borderRadius: BorderRadius.circular(radiusS),
         ),
         clipBehavior: Clip.antiAlias,
       ),
       listTileTheme: ListTileThemeData(
-        tileColor: Colors.white,
+        tileColor: _textOnPrimaryLight,
         titleTextStyle: TextStyle(
-          color: _textPrimaryLight,
-          fontSize: fontSizeNormal,
+          color: _textOnPrimaryLight,
+          fontSize: fontS,
           fontWeight: fontWeightMedium,
         ),
         iconColor: _primary,
-        contentPadding: EdgeInsets.symmetric(horizontal: spacing16),
+        contentPadding: EdgeInsets.symmetric(horizontal: spacingL),
         style: ListTileStyle.drawer,
-        horizontalTitleGap: spacing12,
+        horizontalTitleGap: spacingM,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMedium),
+          borderRadius: BorderRadius.circular(radiusS),
         ),
         enableFeedback: false,
       ),
@@ -126,236 +167,121 @@ class SpoonSparkTheme {
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50),
           backgroundColor: _primary,
-          disabledBackgroundColor: _secondary,
+          disabledBackgroundColor: _primaryDisabled,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           // overlayColor: Colors.transparent,
           shadowColor: Colors.transparent,
           padding: EdgeInsets.symmetric(
-            horizontal: spacing12,
-            vertical: spacing12,
+            horizontal: spacingM,
+            vertical: spacingM,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusNormal),
+            borderRadius: BorderRadius.circular(radiusM),
           ),
           textStyle: TextStyle(
-            color: _textOnPrimary,
-            fontSize: fontSizeNormal,
+            color: _textOnPrimaryLight,
+            fontSize: fontS,
             fontWeight: fontWeightBold,
           ),
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          iconSize: fontSizeLarge,
-          padding: EdgeInsets.all(spacing8),
+          iconSize: fontL,
+          padding: EdgeInsets.all(spacingS),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusNormal),
+            borderRadius: BorderRadius.circular(radiusM),
           ),
         ),
       ),
-      iconTheme: IconThemeData(color: _primary, size: fontSizeNormal),
+      iconTheme: IconThemeData(color: _primary, size: fontS),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: _borderMuted),
+          side: const BorderSide(color: _foregroundMuted),
           minimumSize: const Size(double.infinity, 50),
           padding: EdgeInsets.symmetric(
-            horizontal: spacing16,
-            vertical: spacing12,
+            horizontal: spacingL,
+            vertical: spacingM,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusMedium),
+            borderRadius: BorderRadius.circular(radiusS),
           ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(
-            horizontal: spacing12,
-            vertical: spacing12,
+            horizontal: spacingM,
+            vertical: spacingM,
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        hintStyle: TextStyle(color: _textPrimaryLight),
+        hintStyle: TextStyle(color: _secondaryTextLight),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusMedium),
+          borderRadius: BorderRadius.circular(radiusS),
         ),
         contentPadding: EdgeInsets.symmetric(
-          horizontal: spacing16,
-          vertical: spacing12,
+          horizontal: spacingL,
+          vertical: spacingM,
         ),
         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: _backgroundLight,
         elevation: 0,
-        foregroundColor: _textPrimaryLight,
+        foregroundColor: _primaryTextLight,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: _surfaceLight,
-        selectedItemColor: _primaryLight,
-        unselectedItemColor: _textSecondaryLight,
-      ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: _primaryLight,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
-        ),
+        backgroundColor: _backgroundLight,
+        selectedItemColor: _primary,
+        unselectedItemColor: _secondaryTextLight,
       ),
       dividerTheme: DividerThemeData(
-        color: Colors.grey[300],
+        color: _divider,
         thickness: 1,
-        space: spacing16,
+        space: spacingL,
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return _primaryLight;
+            return _primary;
           }
           return Colors.grey[50];
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return _primaryLight.withValues(alpha: 0.5);
+            return _primary.withValues(alpha: 0.5);
           }
-          return Colors.grey[400];
+          return _divider;
         }),
       ),
       checkboxTheme: CheckboxThemeData(
-        side: BorderSide(color: _borderMuted),
+        side: BorderSide(color: _foregroundMuted),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusSmall),
+          borderRadius: BorderRadius.circular(radiusXS),
         ),
         fillColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return _primaryLight;
+            return _primary;
           }
           return null;
         }),
-      ),
-      radioTheme: RadioThemeData(
-        fillColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return _primaryLight;
-          }
-          return null;
-        }),
-      ),
-      sliderTheme: SliderThemeData(
-        activeTrackColor: _primaryLight,
-        thumbColor: _primaryLight,
-        inactiveTrackColor: _primaryLight.withValues(alpha: 0.3),
       ),
     );
   }
 
   // Build text theme based on light or dark mode
   static TextTheme _buildTextTheme({required bool isLight}) {
-    final Color textPrimary = isLight ? _textPrimaryLight : _textPrimaryDark;
-    final Color textSecondary =
-        isLight ? _textSecondaryLight : _textSecondaryDark;
-    final Color textDisabled = isLight ? _textDisabledLight : _textDisabledDark;
-
-    // You can use GoogleFonts for easy font integration
-    // Or you can use your custom fonts after adding them to pubspec.yaml
     return TextTheme(
-      displayLarge: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: 96,
-        fontWeight: FontWeight.w300,
-        letterSpacing: -1.5,
-        color: textPrimary,
-      ),
-      displayMedium: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: 60,
-        fontWeight: FontWeight.w300,
-        letterSpacing: -0.5,
-        color: textPrimary,
-      ),
-      displaySmall: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: 48,
-        fontWeight: FontWeight.w400,
-        color: textPrimary,
-      ),
-      headlineMedium: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: fontSizeXXLarge,
-        fontWeight: fontWeightBold,
-        letterSpacing: 0.25,
-        color: textPrimary,
-      ),
-      headlineSmall: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: fontSizeXLarge,
-        fontWeight: fontWeightSemibold,
-        color: textPrimary,
-      ),
-      titleLarge: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: 18,
-        fontWeight: fontWeightSemibold,
-        letterSpacing: 0.15,
-        color: textPrimary,
-      ),
-      titleMedium: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: 16,
-        fontWeight: fontWeightMedium,
-        letterSpacing: 0.15,
-        color: textPrimary,
-      ),
-      titleSmall: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: 14,
-        fontWeight: fontWeightMedium,
-        letterSpacing: 0.1,
-        color: textPrimary,
-      ),
-      bodyLarge: GoogleFonts.getFont(
-        secondaryFontFamily,
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
-        color: textPrimary,
-      ),
-      bodyMedium: GoogleFonts.getFont(
-        secondaryFontFamily,
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.25,
-        color: textPrimary,
-      ),
-      bodySmall: GoogleFonts.getFont(
-        secondaryFontFamily,
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.4,
-        color: textSecondary,
-      ),
-      labelLarge: GoogleFonts.getFont(
-        secondaryFontFamily,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 1.25,
-        color: textPrimary,
-      ),
-      labelMedium: GoogleFonts.getFont(
-        primaryFontFamily,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: textPrimary,
-      ),
-      labelSmall: GoogleFonts.getFont(
-        secondaryFontFamily,
-        fontSize: 10,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 1.25,
-        color: textDisabled,
-      ),
+      headlineLarge: heading,
+      headlineMedium: headingRegular,
+      titleLarge: subheading,
+      bodyLarge: bodyMedium,
+      bodyMedium: bodyRegular,
+      bodySmall: bodySmall,
+      labelLarge: label,
     );
   }
 }

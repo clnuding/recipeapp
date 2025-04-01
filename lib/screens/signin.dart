@@ -69,23 +69,23 @@ class _SignInScreenState extends State<SignInScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
-            horizontal: SpoonSparkTheme.spacing24,
+            horizontal: SpoonSparkTheme.spacingXXL,
           ),
           child: Form(
             key: _formSignInKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: SpoonSparkTheme.spacing18),
+                const SizedBox(height: SpoonSparkTheme.spacingXL),
                 // Fable logo (simplified)
                 SizedBox(
                   height: 80,
                   child: Logo(color: theme.colorScheme.primary),
                 ),
-                const SizedBox(height: SpoonSparkTheme.spacing18),
+                const SizedBox(height: SpoonSparkTheme.spacingXL),
                 Text('Welcome Back', style: theme.textTheme.headlineMedium),
 
-                const SizedBox(height: SpoonSparkTheme.spacing24),
+                const SizedBox(height: SpoonSparkTheme.spacingXXL),
 
                 // Email TextField
                 CustomTextFormField(
@@ -95,7 +95,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   validator: validateEmail,
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 CustomTextFormField(
                   fieldController: _passwordController,
@@ -104,20 +104,20 @@ class _SignInScreenState extends State<SignInScreen> {
                   isSecret: true,
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing8),
+                const SizedBox(height: SpoonSparkTheme.spacingS),
 
                 // Forgot password?
                 LinkText(text: 'Forgot password?'),
 
-                const SizedBox(height: SpoonSparkTheme.spacing24),
+                const SizedBox(height: SpoonSparkTheme.spacingXXL),
 
                 PrimaryButton(text: 'Sign in with Email', onPressed: _signIn),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 HorizontalDivider(middleText: 'or'),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 // OAuth Buttons
                 OAuthButton(
@@ -125,14 +125,14 @@ class _SignInScreenState extends State<SignInScreen> {
                   icon: Brands.google,
                   onPressed: signInWithGoogle,
                 ),
-                const SizedBox(height: SpoonSparkTheme.spacing12),
+                const SizedBox(height: SpoonSparkTheme.spacingM),
                 OAuthButton(
                   text: 'Continue with Google',
                   icon: Icons.apple,
                   onPressed: signInWithApple,
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 // Log In Link
                 TextButton(

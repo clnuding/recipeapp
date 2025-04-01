@@ -73,23 +73,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
-            horizontal: SpoonSparkTheme.spacing24,
+            horizontal: SpoonSparkTheme.spacingXXL,
           ),
           child: Form(
             key: _formSignupKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: SpoonSparkTheme.spacing18),
+                const SizedBox(height: SpoonSparkTheme.spacingXL),
                 SizedBox(
                   height: 80,
                   child: Logo(color: theme.colorScheme.primary),
                 ),
-                const SizedBox(height: SpoonSparkTheme.spacing18),
+                const SizedBox(height: SpoonSparkTheme.spacingXL),
 
                 Text('Create Account', style: theme.textTheme.headlineMedium),
 
-                const SizedBox(height: SpoonSparkTheme.spacing24),
+                const SizedBox(height: SpoonSparkTheme.spacingXXL),
 
                 // Email TextField
                 CustomTextFormField(
@@ -99,7 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   validator: validateEmail,
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 CustomTextFormField(
                   fieldController: _passwordController,
@@ -108,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   isSecret: true,
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 CustomTextFormField(
                   fieldController: _confirmPasswordController,
@@ -118,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   hintText: 'Confirm Password',
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing4),
+                const SizedBox(height: SpoonSparkTheme.spacingXS),
 
                 // Terms Checkbox
                 CustomCheckBox(
@@ -131,18 +131,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   label: 'I accept SpoonaSparks Terms of Service',
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing8),
+                const SizedBox(height: SpoonSparkTheme.spacingS),
                 // Sign Up with Email Button
                 PrimaryButton(
                   text: 'Sign up with Email',
                   onPressed: _acceptedTerms ? _createAccount : null,
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 HorizontalDivider(middleText: 'or'),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 // OAuth Buttons
                 OAuthButton(
@@ -150,14 +150,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   icon: Brands.google,
                   onPressed: signInWithGoogle,
                 ),
-                const SizedBox(height: SpoonSparkTheme.spacing12),
+                const SizedBox(height: SpoonSparkTheme.spacingM),
                 OAuthButton(
                   text: 'Continue with Google',
                   icon: Icons.apple,
                   onPressed: signInWithApple,
                 ),
 
-                const SizedBox(height: SpoonSparkTheme.spacing16),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
                 // Log In Link
                 TextButton(
                   onPressed: () {
