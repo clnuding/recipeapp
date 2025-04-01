@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
+import 'package:recipeapp/widgets/atomics/filterbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
@@ -53,7 +54,7 @@ class _RecipesPageState extends State<RecipesPage> {
     }
 
     try {
-      final recipes = await fetchRecipes(); // ✅ pulls from api/recipes.dart
+      final recipes = await fetchRecipes();
       setState(() {
         _allRecipes = recipes;
         _filteredRecipes = recipes;
@@ -102,37 +103,9 @@ class _RecipesPageState extends State<RecipesPage> {
             Row(
               children: [
                 Expanded(
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.onPrimary,
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusNormal,
-                      ),
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      //style: TextStyle(color: theme.primaryText),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: SpoonSparkTheme.spacing16,
-                        ),
-                        hintText: "Search Recipes",
-                        hintStyle: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.6,
-                          ),
-                        ),
-                        border: InputBorder.none,
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.6,
-                          ),
-                        ),
-                      ),
-                    ),
+                  child: FilterBar(
+                    controller: _searchController,
+                    hintText: 'Filter Recipes',
                   ),
                 ),
 

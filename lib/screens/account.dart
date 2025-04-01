@@ -7,6 +7,7 @@ import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/pocketbase.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/primary_btn.dart';
+import 'package:recipeapp/widgets/atomics/secondary_btn.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -92,6 +93,8 @@ class _AccountPageState extends State<AccountScreen> {
                     _buildSettingsSection(),
                     SizedBox(height: SpoonSparkTheme.spacing18),
                     PrimaryButton(text: "Logout", onPressed: _logout),
+                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    SecondaryButton(text: "Logout", onPressed: () {}),
                   ],
                 ),
       ),

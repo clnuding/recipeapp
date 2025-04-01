@@ -52,6 +52,7 @@ class SpoonSparkTheme {
   static const double radiusLarge = 12.0;
   static const double radiusXLarge = 14.0;
   static const double radiusXXLarge = 16.0;
+  static const double radiusRound = 30.0;
 
   // ==================== FONTS ====================
   // Default font families
@@ -126,6 +127,10 @@ class SpoonSparkTheme {
           minimumSize: const Size(double.infinity, 50),
           backgroundColor: _primary,
           disabledBackgroundColor: _secondary,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          // overlayColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           padding: EdgeInsets.symmetric(
             horizontal: spacing12,
             vertical: spacing12,
@@ -136,7 +141,7 @@ class SpoonSparkTheme {
           textStyle: TextStyle(
             color: _textOnPrimary,
             fontSize: fontSizeNormal,
-            fontWeight: fontWeightMedium,
+            fontWeight: fontWeightBold,
           ),
         ),
       ),
@@ -172,6 +177,7 @@ class SpoonSparkTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(color: _textPrimaryLight),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
         ),
@@ -179,6 +185,7 @@ class SpoonSparkTheme {
           horizontal: spacing16,
           vertical: spacing12,
         ),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: _backgroundLight,
