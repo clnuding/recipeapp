@@ -33,7 +33,7 @@ class FilterBar extends StatelessWidget {
             child: Icon(
               Icons.filter_list_rounded,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              size: SpoonSparkTheme.fontSizeXLarge,
+              size: SpoonSparkTheme.fontXL,
             ),
           ),
           hintText: 'Search...',
