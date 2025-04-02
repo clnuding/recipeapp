@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/user.dart';
 import 'package:recipeapp/theme/theme.dart';
@@ -88,13 +89,22 @@ class _AccountPageState extends State<AccountScreen> {
                         : PrimaryButton(
                           text: "Become a Premium Member",
                           onPressed: () {},
+                          icon: Icons.workspace_premium,
                         ),
                     SizedBox(height: SpoonSparkTheme.spacingXL),
                     _buildSettingsSection(),
                     SizedBox(height: SpoonSparkTheme.spacingXL),
-                    PrimaryButton(text: "Logout", onPressed: _logout),
+                    PrimaryButton(
+                      text: "Logout",
+                      onPressed: _logout,
+                      icon: Icons.login_outlined,
+                    ),
                     SizedBox(height: SpoonSparkTheme.spacingXL),
-                    SecondaryButton(text: "Logout", onPressed: () {}),
+                    SecondaryButton(
+                      text: "Settings",
+                      onPressed: () {},
+                      icon: Icons.settings,
+                    ),
                   ],
                 ),
       ),

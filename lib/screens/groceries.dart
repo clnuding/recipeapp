@@ -79,7 +79,6 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.onPrimary,
           borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusM),
         ),
         child: ListTile(
@@ -99,19 +98,13 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
           title: Text(
             item['title'],
             style: TextStyle(
-              fontSize: theme.textTheme.titleMedium?.fontSize,
               decoration:
                   item['checked']
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
             ),
           ),
-          subtitle: Text(
-            '${item['amount']} ${item['unit']}',
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
+          subtitle: Text('${item['amount']} ${item['unit']}'),
           onTap: () => _toggleChecked(_groceryItems.indexOf(item)),
         ),
       ),

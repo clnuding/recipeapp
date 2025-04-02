@@ -9,14 +9,15 @@ class SpoonSparkTheme {
 
   // Primary color
   static const Color _primary = Color.fromARGB(255, 249, 97, 103);
-  static const Color _primaryDisabled = Color.fromARGB(144, 249, 97, 103);
-  // static const Color _primaryOne = Color.fromARGB(255, 255, 178, 64);
-  // static const Color _primaryTwo = Color.fromARGB(255, 255, 168, 38);
-  // static const Color _primaryThree = Color.fromARGB(255, 0, 146, 98);
+  // static const Color _primary = Color.fromARGB(255, 255, 178, 64);
+  // static const Color _primary = Color.fromARGB(255, 255, 168, 38);
+  // static const Color _primary = Color.fromARGB(255, 0, 146, 98);
+  static final Color _primaryDisabled = _primary.withValues(alpha: 0.6);
 
   // Background colors
   static const Color _backgroundAccent = Color.fromARGB(255, 229, 222, 209);
-  static const Color _backgroundLight = Color.fromARGB(255, 240, 237, 234);
+  static const Color _backgroundMuted = Color.fromARGB(255, 240, 237, 234);
+  static const Color _backgroundLight = Color.fromARGB(255, 255, 255, 255);
 
   // Text colors
   static const Color _primaryTextLight = Color.fromARGB(255, 28, 28, 28);
@@ -43,6 +44,7 @@ class SpoonSparkTheme {
 
   // Font sizes
   static const double fontXS = 10.0;
+  static const double fontSM = 13.0;
   static const double fontS = 14.0;
   static const double fontM = 16.0;
   static const double fontL = 18.0;
@@ -53,6 +55,13 @@ class SpoonSparkTheme {
   static TextStyle label = GoogleFonts.getFont(
     primaryFontFamily,
     fontSize: fontXS,
+    fontWeight: fontWeightRegular,
+    color: _primaryTextLight,
+  );
+
+  static TextStyle labelLarge = GoogleFonts.getFont(
+    primaryFontFamily,
+    fontSize: fontSM,
     fontWeight: fontWeightRegular,
     color: _primaryTextLight,
   );
@@ -135,11 +144,12 @@ class SpoonSparkTheme {
         onError: _textOnPrimaryLight,
         surface: _backgroundLight,
         onSurface: _primaryTextLight,
-        surfaceBright: _backgroundAccent,
+        surfaceBright: _backgroundMuted,
         onSurfaceVariant: _primaryTextLight,
         tertiary: _foregroundMuted,
       ),
       textTheme: _buildTextTheme(isLight: true),
+      scaffoldBackgroundColor: _backgroundLight,
       cardTheme: CardTheme(
         elevation: 2,
         shape: RoundedRectangleBorder(
@@ -148,18 +158,17 @@ class SpoonSparkTheme {
         clipBehavior: Clip.antiAlias,
       ),
       listTileTheme: ListTileThemeData(
-        tileColor: _textOnPrimaryLight,
-        titleTextStyle: TextStyle(
-          color: _textOnPrimaryLight,
-          fontSize: fontS,
-          fontWeight: fontWeightMedium,
+        tileColor: _backgroundMuted,
+        titleTextStyle: bodySmall.copyWith(fontWeight: fontWeightSemibold),
+        subtitleTextStyle: labelLarge.copyWith(
+          color: _primaryTextLight.withValues(alpha: 0.7),
         ),
         iconColor: _primary,
         contentPadding: EdgeInsets.symmetric(horizontal: spacingL),
         style: ListTileStyle.drawer,
         horizontalTitleGap: spacingM,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusS),
+          borderRadius: BorderRadius.circular(radiusL),
         ),
         enableFeedback: false,
       ),
@@ -168,7 +177,6 @@ class SpoonSparkTheme {
           minimumSize: const Size(double.infinity, 50),
           backgroundColor: _primary,
           disabledBackgroundColor: _primaryDisabled,
-          surfaceTintColor: Colors.transparent,
           elevation: 0,
           // overlayColor: Colors.transparent,
           shadowColor: Colors.transparent,
@@ -177,38 +185,39 @@ class SpoonSparkTheme {
             vertical: spacingM,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusM),
+            side: BorderSide(color: _primary, width: 2),
+            borderRadius: BorderRadius.circular(radiusR),
           ),
-          textStyle: TextStyle(
+          textStyle: bodySmall.copyWith(
             color: _textOnPrimaryLight,
-            fontSize: fontS,
-            fontWeight: fontWeightBold,
+            fontWeight: fontWeightSemibold,
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: _primary, width: 2),
+          minimumSize: const Size(double.infinity, 50),
+          padding: EdgeInsets.symmetric(
+            horizontal: spacingM,
+            vertical: spacingM,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusR),
           ),
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          iconSize: fontL,
-          padding: EdgeInsets.all(spacingS),
+          iconSize: fontXL,
+          foregroundColor: _primaryTextLight.withValues(alpha: 0.9),
+          padding: EdgeInsets.all(spacingXS),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusM),
           ),
         ),
       ),
-      iconTheme: IconThemeData(color: _primary, size: fontS),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: _foregroundMuted),
-          minimumSize: const Size(double.infinity, 50),
-          padding: EdgeInsets.symmetric(
-            horizontal: spacingL,
-            vertical: spacingM,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusS),
-          ),
-        ),
-      ),
+      iconTheme: IconThemeData(color: _primaryTextLight, size: fontXL),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(
@@ -218,15 +227,21 @@ class SpoonSparkTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        hintStyle: TextStyle(color: _secondaryTextLight),
+        hintStyle: bodySmall.copyWith(
+          color: _primaryTextLight.withValues(alpha: 0.5),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusM),
+          borderSide: BorderSide(color: _divider),
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusS),
+          borderRadius: BorderRadius.circular(radiusM),
+          borderSide: BorderSide(color: _divider),
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: spacingL,
-          vertical: spacingM,
+          vertical: spacingS,
         ),
-        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: _backgroundLight,

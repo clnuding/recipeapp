@@ -100,59 +100,60 @@ class _RecipesPageState extends State<RecipesPage> {
         ),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: FilterBar(
-                    controller: _searchController,
-                    hintText: 'Filter Recipes',
-                  ),
-                ),
-
-                const SizedBox(width: SpoonSparkTheme.spacingS),
-
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.onPrimary,
-                    borderRadius: BorderRadius.circular(
-                      SpoonSparkTheme.radiusM,
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: SpoonSparkTheme.spacingXS,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: FilterBar(
+                      controller: _searchController,
+                      hintText: 'Filter Recipes',
                     ),
                   ),
-                  child: IconButton(
-                    icon: Icon(
-                      _isGridView ? Icons.list : Icons.grid_view,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isGridView = !_isGridView;
-                        _saveViewPreference(_isGridView);
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: SpoonSparkTheme.spacingS),
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/create_recipe'),
-                  child: Container(
-                    height: 40,
-                    width: 40,
+
+                  const SizedBox(width: SpoonSparkTheme.spacingS),
+
+                  Container(
+                    height: 35,
+                    width: 35,
                     decoration: BoxDecoration(
                       color: theme.colorScheme.onPrimary,
                       borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusS,
+                        SpoonSparkTheme.radiusR,
                       ),
                     ),
-                    child: Icon(
-                      Icons.add,
-                      color: theme.colorScheme.onSurface,
-                      size: SpoonSparkTheme.fontXXL,
+                    child: IconButton(
+                      icon: Icon(_isGridView ? Icons.list : Icons.grid_view),
+                      onPressed: () {
+                        setState(() {
+                          _isGridView = !_isGridView;
+                          _saveViewPreference(_isGridView);
+                        });
+                      },
                     ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(width: SpoonSparkTheme.spacingXS),
+
+                  Container(
+                    height: 35,
+                    width: 35,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary,
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusM,
+                      ),
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+                      onPressed:
+                          () => Navigator.pushNamed(context, '/create_recipe'),
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(width: SpoonSparkTheme.spacingS),
