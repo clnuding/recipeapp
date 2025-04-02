@@ -165,12 +165,12 @@ class SpoonSparkTheme {
         ),
         iconColor: _primary,
         contentPadding: EdgeInsets.symmetric(horizontal: spacingL),
-        style: ListTileStyle.drawer,
-        horizontalTitleGap: spacingM,
+        style: ListTileStyle.list,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusL),
         ),
         enableFeedback: false,
+        minLeadingWidth: 30,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -178,7 +178,7 @@ class SpoonSparkTheme {
           backgroundColor: _primary,
           disabledBackgroundColor: _primaryDisabled,
           elevation: 0,
-          // overlayColor: Colors.transparent,
+          overlayColor: Colors.white12,
           shadowColor: Colors.transparent,
           padding: EdgeInsets.symmetric(
             horizontal: spacingM,
@@ -296,7 +296,7 @@ class SpoonSparkTheme {
       bodyLarge: bodyMedium,
       bodyMedium: bodyRegular,
       bodySmall: bodySmall,
-      labelLarge: label,
+      labelLarge: labelLarge,
     );
   }
 }

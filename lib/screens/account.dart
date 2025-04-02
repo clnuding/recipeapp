@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/user.dart';
 import 'package:recipeapp/theme/theme.dart';
@@ -84,13 +83,7 @@ class _AccountPageState extends State<AccountScreen> {
                   children: [
                     _buildProfileSection(),
                     SizedBox(height: SpoonSparkTheme.spacingXL),
-                    _user!.premium
-                        ? SizedBox.shrink()
-                        : PrimaryButton(
-                          text: "Become a Premium Member",
-                          onPressed: () {},
-                          icon: Icons.workspace_premium,
-                        ),
+                    _user!.premium ? SizedBox.shrink() : _buildPremiumSection(),
                     SizedBox(height: SpoonSparkTheme.spacingXL),
                     _buildSettingsSection(),
                     SizedBox(height: SpoonSparkTheme.spacingXL),
@@ -160,6 +153,36 @@ class _AccountPageState extends State<AccountScreen> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildPremiumSection() {
+    final theme = Theme.of(context);
+
+    return ListTile(
+      tileColor: theme.colorScheme.primary,
+      leading: Icon(
+        Icons.workspace_premium,
+        color: theme.colorScheme.onPrimary,
+      ),
+      title: Text(
+        'Upgrade to Premium',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onPrimary,
+          fontWeight: SpoonSparkTheme.fontWeightSemibold,
+        ),
+      ),
+      subtitle: Text(
+        'Unlock all the features of Spoon Spark',
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: theme.colorScheme.onPrimary,
+        ),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        color: theme.colorScheme.onPrimary,
+      ),
+      onTap: () {},
     );
   }
 }
