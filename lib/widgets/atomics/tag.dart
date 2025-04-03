@@ -6,7 +6,7 @@ class Tag extends StatelessWidget {
   final IconData? icon;
   final Color? backgroundColor;
 
-  const Tag({super.key, required this.text, this.icon, this.backgroundColor});
+  const Tag({super.key, required this.text, this.icon, this.backgroundColor, required void Function() onTap});
 
   @override
   Widget build(BuildContext context) {

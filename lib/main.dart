@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/screens/main_screen.dart';
+import 'package:recipeapp/screens/recipe_create_screen.dart' as create_recipe;
 import 'package:recipeapp/screens/add_recipe.dart' as add_recipe;
 import 'package:recipeapp/screens/add_ingredient.dart' as add_ingredient;
 import 'package:recipeapp/screens/review_recipe.dart' as review_recipe;
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         '/signIn': (context) => const SignInScreen(),
         '/signUp': (context) => const SignUpScreen(),
         '/main': (context) => const MainScreen(),
-        '/create_recipe': (context) => const add_recipe.AddRecipePage(),
+        '/create_recipe': (context) => const create_recipe.RecipeCreateScreen(),
         '/addIngredient':
             (context) =>
                 add_ingredient.AddIngredientPage(recipeId: 'dummy_recipe_id'),
