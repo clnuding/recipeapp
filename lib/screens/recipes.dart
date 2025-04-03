@@ -5,8 +5,8 @@ import 'package:recipeapp/widgets/atomics/filterbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
-import 'package:recipeapp/widgets/recipe_item_list.dart';
-import 'package:recipeapp/widgets/recipe_item_tiles.dart';
+import 'package:recipeapp/widgets/atomics/recipe_item_list.dart';
+import 'package:recipeapp/widgets/atomics/recipe_item_tiles.dart';
 import 'package:recipeapp/api/pb_client.dart';
 
 class RecipesPage extends StatefulWidget {
