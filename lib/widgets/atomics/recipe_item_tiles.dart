@@ -43,7 +43,7 @@ class RecipeItemTiles extends StatelessWidget {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
         childAspectRatio: 0.75,
@@ -90,7 +90,7 @@ class RecipeCard extends StatelessWidget {
           children: [
             // ✅ Image section
             Expanded(
-              flex: 2,
+              flex: 5,
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(7),
@@ -112,7 +112,7 @@ class RecipeCard extends StatelessWidget {
 
             // ✅ Title section
             Expanded(
-              flex: 1,
+              flex: 2,
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Text(

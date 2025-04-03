@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:recipeapp/screens/weekday_plan.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
-import 'package:recipeapp/widgets/meal_plan_tile.dart';
+import 'package:recipeapp/widgets/atomics/meal_plan_tile.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';
 
 class MealPlanningPage extends StatefulWidget {
