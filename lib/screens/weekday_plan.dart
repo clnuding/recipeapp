@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:recipeapp/widgets/logo_appbar.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MealPlannerScreen extends StatefulWidget {

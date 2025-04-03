@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/widgets/logo_appbar.dart';
+import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 
 class GroceryListScreen extends StatefulWidget {
   const GroceryListScreen({super.key});
@@ -24,6 +25,8 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     List<Map<String, dynamic>> toGrabItems =
         _groceryItems.where((item) => !item['checked']).toList();
     List<Map<String, dynamic>> grabbedItems =
@@ -32,27 +35,33 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
     return Scaffold(
       appBar: LogoAppbar(showBackButton: false),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(
+          horizontal: SpoonSparkTheme.spacing8,
+        ),
         child: ListView(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.all(SpoonSparkTheme.spacing8),
           children: [
             if (toGrabItems.isNotEmpty) ...[
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  vertical: SpoonSparkTheme.spacing4,
+                ),
                 child: Text(
                   'Need'.toUpperCase(),
-                  style: TextStyle(fontSize: 14),
+                  style: theme.textTheme.titleSmall,
                 ),
               ),
               ...toGrabItems.map((item) => _buildGroceryTile(item)),
-              SizedBox(height: 25),
+              SizedBox(height: SpoonSparkTheme.spacing24),
             ],
             if (grabbedItems.isNotEmpty) ...[
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  vertical: SpoonSparkTheme.spacing4,
+                ),
                 child: Text(
                   'Have'.toUpperCase(),
-                  style: TextStyle(fontSize: 14),
+                  style: theme.textTheme.titleSmall,
                 ),
               ),
               ...grabbedItems.map((item) => _buildGroceryTile(item)),
@@ -64,31 +73,33 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
   }
 
   Widget _buildGroceryTile(Map<String, dynamic> item) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(10),
+          color: theme.colorScheme.onPrimary,
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusNormal),
         ),
         child: ListTile(
           leading: GestureDetector(
             onTap: () => _toggleChecked(_groceryItems.indexOf(item)),
             child: CircleAvatar(
-              radius: 14,
+              radius: SpoonSparkTheme.radiusXLarge,
               backgroundColor:
-                  item['checked'] ? Colors.green : Colors.grey.shade400,
+                  item['checked'] ? Colors.green : theme.colorScheme.primary,
               child: Icon(
                 item['checked'] ? Icons.check : Icons.radio_button_unchecked,
-                color: Colors.white,
-                size: 14,
+                color: theme.colorScheme.onPrimary,
+                size: SpoonSparkTheme.radiusXLarge,
               ),
             ),
           ),
           title: Text(
             item['title'],
             style: TextStyle(
-              fontSize: 15,
+              fontSize: theme.textTheme.titleMedium?.fontSize,
               decoration:
                   item['checked']
                       ? TextDecoration.lineThrough
@@ -97,7 +108,9 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
           ),
           subtitle: Text(
             '${item['amount']} ${item['unit']}',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
           ),
           onTap: () => _toggleChecked(_groceryItems.indexOf(item)),
         ),

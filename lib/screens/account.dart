@@ -3,8 +3,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/user.dart';
+import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/pocketbase.dart';
-import 'package:recipeapp/widgets/logo_appbar.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
+import 'package:recipeapp/widgets/atomics/primary_btn.dart';
+import 'package:recipeapp/widgets/atomics/secondary_btn.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -71,7 +74,7 @@ class _AccountPageState extends State<AccountScreen> {
     return Scaffold(
       appBar: LogoAppbar(showBackButton: false),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(SpoonSparkTheme.spacing24),
         child:
             _user == null
                 ? Center(child: CircularProgressIndicator())
@@ -79,12 +82,19 @@ class _AccountPageState extends State<AccountScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildProfileSection(),
-                    SizedBox(height: 20),
-                    _user!.premium ? Container() : _buildPremiumButton(),
-                    SizedBox(height: 20),
+                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    _user!.premium
+                        ? SizedBox.shrink()
+                        : PrimaryButton(
+                          text: "Become a Premium Member",
+                          onPressed: () {},
+                        ),
+                    SizedBox(height: SpoonSparkTheme.spacing18),
                     _buildSettingsSection(),
-                    SizedBox(height: 20),
-                    _buildLogoutButton(),
+                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    PrimaryButton(text: "Logout", onPressed: _logout),
+                    SizedBox(height: SpoonSparkTheme.spacing18),
+                    SecondaryButton(text: "Logout", onPressed: () {}),
                   ],
                 ),
       ),
@@ -92,31 +102,22 @@ class _AccountPageState extends State<AccountScreen> {
   }
 
   Widget _buildProfileSection() {
+    final theme = Theme.of(context);
     return Container(
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
+      padding: EdgeInsets.all(SpoonSparkTheme.spacing12),
       child: Row(
         children: [
           CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(_user!.avatarUrl.toString()),
           ),
-          SizedBox(width: 15),
+          SizedBox(width: SpoonSparkTheme.spacing16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                _user!.name,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 5),
-              Text(
-                _user!.email,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
+              Text(_user!.name, style: theme.textTheme.titleLarge),
+              SizedBox(height: SpoonSparkTheme.spacing4),
+              Text(_user!.email, style: theme.textTheme.titleSmall),
             ],
           ),
         ],
@@ -124,78 +125,31 @@ class _AccountPageState extends State<AccountScreen> {
     );
   }
 
-  Widget _buildPremiumButton() {
-    return Container(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          // Add premium subscription logic here
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.amber,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.symmetric(vertical: 15),
-        ),
-        child: Text(
-          'Become a Premium Member',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSettingsSection() {
-    return Container(
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Settings',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          ListTile(
-            leading: Icon(Icons.lock),
-            title: Text('Change Password'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(Icons.notifications),
-            title: Text('Notification Preferences'),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              // Navigate to notification preferences
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: _logout,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey.shade400,
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Settings', style: theme.textTheme.titleMedium),
+        SizedBox(height: SpoonSparkTheme.spacing8),
+        ListTile(
+          leading: Icon(Icons.lock),
+          title: Text('Change Password'),
+          subtitle: Text('Change your password'),
+          trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {},
         ),
-        child: Text(
-          'Logout',
-          style: TextStyle(fontSize: 16, color: Colors.black),
+        SizedBox(height: SpoonSparkTheme.spacing8),
+        ListTile(
+          leading: Icon(Icons.notifications),
+          title: Text('Notification Preferences'),
+          subtitle: Text('Manage notification settings'),
+          trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            // Navigate to notification preferences
+          },
         ),
-      ),
+      ],
     );
   }
 }
