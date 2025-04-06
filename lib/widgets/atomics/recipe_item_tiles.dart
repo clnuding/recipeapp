@@ -24,16 +24,14 @@ class RecipeItemTiles extends StatelessWidget {
     }
 
     if (error.isNotEmpty) {
-      return Center(
-        child: Text("Error: $error", style: theme.textTheme.bodyMedium),
-      );
+      return Center(child: Text("Error: $error"));
     }
 
     if (recipes.isEmpty) {
       return Center(
         child: Text(
           "No recipes found.",
-          style: TextStyle(color: theme.colorScheme.onSurface),
+          //style: TextStyle(color: theme.colorScheme.onSurface),
         ),
       );
     }
@@ -80,8 +78,8 @@ class RecipeCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.onPrimary,
-          borderRadius: BorderRadius.circular(7),
+          color: theme.colorScheme.surfaceBright,
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusS),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +99,9 @@ class RecipeCard extends StatelessWidget {
                   errorBuilder:
                       (context, error, stackTrace) => Icon(
                         Icons.broken_image,
-                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.5,
+                        ),
                         size: 50,
                       ),
                 ),

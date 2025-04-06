@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/theme/theme.dart';
 
 class RecipeItemList extends StatelessWidget {
   final List<Recipe> recipes;
@@ -23,21 +24,11 @@ class RecipeItemList extends StatelessWidget {
     }
 
     if (error.isNotEmpty) {
-      return Center(
-        child: Text(
-          "Error: $error",
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
-      );
+      return Center(child: Text("Error: $error"));
     }
 
     if (recipes.isEmpty) {
-      return Center(
-        child: Text(
-          "No recipes found.",
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
-      );
+      return Center(child: Text("No recipes found."));
     }
 
     return ListView.builder(
@@ -51,8 +42,7 @@ class RecipeItemList extends StatelessWidget {
           child: Container(
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusM),
             ),
             child: Row(
               children: [
@@ -85,7 +75,7 @@ class RecipeItemList extends StatelessWidget {
                     child: Container(
                       height: 80,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onPrimary,
+                        color: theme.colorScheme.surfaceBright,
                         border: Border.all(color: theme.colorScheme.onPrimary),
                         borderRadius: const BorderRadius.only(
                           topRight: Radius.circular(7),
@@ -96,11 +86,6 @@ class RecipeItemList extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         recipe.title,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
