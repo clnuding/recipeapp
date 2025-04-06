@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:recipeapp/screens/weekday_plan.dart';
-import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/models/recipe.dart';
-import 'package:recipeapp/widgets/meal_plan_tile.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';
+import 'package:recipeapp/widgets/atomics/meal_plan_tile.dart';
 
 class MealPlanningPage extends StatefulWidget {
   const MealPlanningPage({super.key});
@@ -34,16 +33,15 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     });
   }
 
-  final String breakfastUrl = 'https://images.unsplash.com/photo-1638813133218-4367bd8123f6';
-  final String lunchUrl = 'https://images.unsplash.com/photo-1661791839093-0b8baf8616ab';
-  final String dinnerUrl = 'https://images.unsplash.com/photo-1598532213919-078e54dd1f40';
+  final String breakfastUrl =
+      'https://images.unsplash.com/photo-1638813133218-4367bd8123f6';
+  final String lunchUrl =
+      'https://images.unsplash.com/photo-1661791839093-0b8baf8616ab';
+  final String dinnerUrl =
+      'https://images.unsplash.com/photo-1598532213919-078e54dd1f40';
 
-  Recipe _recipeWithImage(String title, String url) => Recipe(
-        id: "id",
-        title: title,
-        creatorId: "user",
-        thumbnailUrl: url,
-      );
+  Recipe _recipeWithImage(String title, String url) =>
+      Recipe(id: "id", title: title, creatorId: "user", thumbnailUrl: url);
 
   late final Map<String, Map<String, Recipe?>> weeklyMeals = {
     for (var day in [
@@ -56,44 +54,22 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
       'Sunday',
     ])
       day: {
-        'Breakfast': _recipeWithImage('Oatmeal with yogurt and berries', breakfastUrl),
+        'Breakfast': _recipeWithImage(
+          'Oatmeal with yogurt and berries',
+          breakfastUrl,
+        ),
         'Lunch': _recipeWithImage('Grilled Cheese Sandwich', lunchUrl),
         'Dinner': _recipeWithImage('Spaghetti & Meatballs', dinnerUrl),
-      }
+      },
   };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightBackground,
+      appBar: LogoAppbar(showBackButton: false),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 8),
-
-            // 🥄 Logo Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'spoon',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
-                  ),
-                  const SizedBox(width: 2),
-                  SvgPicture.asset('assets/logos/spoonspark_logo.svg', height: 25),
-                  const SizedBox(width: 2),
-                  const Text(
-                    'spark',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
             // 📅 Week Navigation + View Toggle
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -122,12 +98,20 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                       children: [
                         Text(
                           DateFormat('E, dd.MM.yyyy').format(_startOfWeek),
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const Text('–', style: TextStyle(fontSize: 8)),
                         Text(
-                          DateFormat('E, dd.MM.yyyy').format(_startOfWeek.add(const Duration(days: 6))),
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          DateFormat(
+                            'E, dd.MM.yyyy',
+                          ).format(_startOfWeek.add(const Duration(days: 6))),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
@@ -141,8 +125,11 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                         onPressed: _goToNextWeek,
                       ),
                       IconButton(
-                        icon: Icon(isGridView ? Icons.grid_view : Icons.table_chart),
-                        onPressed: () => setState(() => isGridView = !isGridView),
+                        icon: Icon(
+                          isGridView ? Icons.grid_view : Icons.table_chart,
+                        ),
+                        onPressed:
+                            () => setState(() => isGridView = !isGridView),
                       ),
                     ],
                   ),
@@ -154,12 +141,15 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
 
             // Main content area
             Expanded(
-              child: isGridView ? _buildCardStyleView() : const MealPlanTableView(),
+              child:
+                  isGridView
+                      ? _buildCardStyleView()
+                      : const MealPlanTableView(),
             ),
           ],
         ),
       ),
-      // floatingActionButton: const CenteredOverlayButton()
+      // floatingActionButton: const CenteredOverlayButton(),
     );
   }
 
@@ -167,82 +157,87 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       child: Column(
-        children: weeklyMeals.entries.map((entry) {
-          final day = entry.key;
-          final meals = entry.value;
+        children:
+            weeklyMeals.entries.map((entry) {
+              final day = entry.key;
+              final meals = entry.value;
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(day, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 12),
-                Row(
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildMealTile(meals['Breakfast'], 'Breakfast'),
-                    const SizedBox(width: 8),
-                    _buildMealTile(meals['Lunch'], 'Lunch'),
-                    const SizedBox(width: 8),
-                    _buildMealTile(meals['Dinner'], 'Dinner'),
+                    // Text(
+                    //   day,
+                    //   style: const TextStyle(
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.w600,
+                    //   ),
+                    // ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        _buildMealTile(meals['Breakfast'], 'Breakfast'),
+                        const SizedBox(width: 8),
+                        _buildMealTile(meals['Lunch'], 'Lunch'),
+                        const SizedBox(width: 8),
+                        _buildMealTile(meals['Dinner'], 'Dinner'),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
       ),
     );
   }
 
   Widget _buildMealTile(Recipe? recipe, String label) {
+    final theme = Theme.of(context);
     return Expanded(
       child: Container(
         height: 130,
         decoration: BoxDecoration(
-          color: lightColorScheme.surface,
+          color: theme.colorScheme.surfaceBright,
           borderRadius: BorderRadius.circular(7),
         ),
-        child: recipe != null
-            ? MealPlanTile(recipe: recipe)
-            : Center(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: lightColorScheme.onSurface.withOpacity(0.6),
-                    fontWeight: FontWeight.w500,
+        child:
+            recipe != null
+                ? MealPlanTile(recipe: recipe)
+                : Center(
+                  child: Text(
+                    label,
+                    // style: TextStyle(
+                    //   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    //   fontWeight: FontWeight.w500,
+                    // ),
                   ),
                 ),
-              ),
       ),
     );
   }
 }
 
 class CenteredOverlayButton extends StatelessWidget {
-   const CenteredOverlayButton({super.key});
- 
-   @override
-   Widget build(BuildContext context) {
-     // This positions the button in the center of the screen
-     return Align(
-       alignment: Alignment.center,
-       child: ElevatedButton(
-         onPressed: () {
-           Navigator.push(
-             context,
-             MaterialPageRoute(
-               builder:
-                   (context) => MealPlannerScreen(startDate: DateTime.now()),
-             ),
-           );
-         },
-         style: ElevatedButton.styleFrom(
-           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-           textStyle: const TextStyle(fontSize: 18),
-         ),
-         child: const Text('Start Meal Planning'),
-       ),
-     );
-   }
- }
+  const CenteredOverlayButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // This positions the button in the center of the screen
+    return Align(
+      alignment: Alignment.center,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => MealPlannerScreen(startDate: DateTime.now()),
+            ),
+          );
+        },
+        child: const Text('Start Meal Planning'),
+      ),
+    );
+  }
+}

@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:recipeapp/screens/signin.dart';
 import 'package:recipeapp/api/pb_client.dart';
-import 'package:recipeapp/utils/google_auth.dart';
 import 'package:recipeapp/theme/theme.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:recipeapp/utils/google_auth.dart';
+import 'package:recipeapp/utils/validation.dart';
+import 'package:recipeapp/widgets/atomics/checkbox.dart';
+import 'package:recipeapp/widgets/atomics/divider.dart';
+import 'package:recipeapp/widgets/atomics/primary_btn.dart';
+import 'package:recipeapp/widgets/atomics/logo.dart';
+import 'package:recipeapp/widgets/atomics/oauth_button.dart';
+import 'package:recipeapp/widgets/atomics/text_form_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -61,254 +67,97 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(
+            horizontal: SpoonSparkTheme.spacingXXL,
+          ),
           child: Form(
             key: _formSignupKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
-                // Fable logo (simplified)
-                SvgPicture.asset(
-                  'assets/logos/spoonspark_logo.svg',
+                const SizedBox(height: SpoonSparkTheme.spacingXL),
+                SizedBox(
                   height: 80,
-                  colorFilter: ColorFilter.mode(primary, BlendMode.srcIn),
+                  child: Logo(color: theme.colorScheme.primary),
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Create Account',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+                const SizedBox(height: SpoonSparkTheme.spacingXL),
 
-                const SizedBox(height: 25),
+                Text('Create Account', style: theme.textTheme.headlineMedium),
+
+                const SizedBox(height: SpoonSparkTheme.spacingXXL),
 
                 // Email TextField
-                TextFormField(
-                  cursorColor: Colors.black,
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(
-                      r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-                    ).hasMatch(value)) {
-                      return 'Enter a valid email';
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black, // Black border when focused
-                        width:
-                            1.5, // Optional: make the border slightly thicker
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-
-                    // Customize label color when focused
-                    floatingLabelStyle: const TextStyle(
-                      color: Colors.black, // Black label when floating
-                    ),
-                    label: const Text('Email'),
-                    hintText: 'Enter Email',
-                    hintStyle: const TextStyle(color: Colors.black26),
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                CustomTextFormField(
+                  fieldController: _emailController,
+                  label: 'Email',
+                  inputType: TextInputType.emailAddress,
+                  validator: validateEmail,
                 ),
-                const SizedBox(height: 16),
-                // Password TextField
-                TextFormField(
-                  cursorColor: Colors.black,
-                  controller: _passwordController,
-                  obscureText: true,
-                  obscuringCharacter: '*',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black, // Black border when focused
-                        width:
-                            1.5, // Optional: make the border slightly thicker
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
 
-                    // Customize label color when focused
-                    floatingLabelStyle: const TextStyle(
-                      color: Colors.black, // Black label when floating
-                    ),
-                    label: const Text('Password'),
-                    hintText: 'Enter Password',
-                    hintStyle: const TextStyle(color: Colors.black26),
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                // confirm password
-                // password
-                TextFormField(
-                  cursorColor: Colors.black,
-                  controller: _confirmPasswordController,
-                  obscureText: true,
-                  obscuringCharacter: '*',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black, // Black border when focused
-                        width:
-                            1.5, // Optional: make the border slightly thicker
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
-                    // Customize label color when focused
-                    floatingLabelStyle: const TextStyle(
-                      color: Colors.black, // Black label when floating
-                    ),
-                    label: const Text('Confirm Password'),
-                    hintText: 'Confirm Password',
-                    hintStyle: const TextStyle(color: Colors.black26),
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black12, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                CustomTextFormField(
+                  fieldController: _passwordController,
+                  label: 'Password',
+                  validator: validatePassword,
+                  isSecret: true,
                 ),
-                const SizedBox(height: 8),
+
+                const SizedBox(height: SpoonSparkTheme.spacingL),
+
+                CustomTextFormField(
+                  fieldController: _confirmPasswordController,
+                  label: 'Confirm Password',
+                  validator: validatePassword,
+                  isSecret: true,
+                  hintText: 'Confirm Password',
+                ),
+
+                const SizedBox(height: SpoonSparkTheme.spacingXS),
+
                 // Terms Checkbox
-                Row(
-                  children: [
-                    Checkbox(
-                      // activeColor: Colors.black,
-                      activeColor: primary,
-                      value: _acceptedTerms,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _acceptedTerms = value ?? false;
-                        });
-                      },
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'I accept Spoonality\'s Terms of Service and Privacy Policy',
-                        style: TextStyle(fontSize: 11),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                // Sign Up with Email Button
-                ElevatedButton(
-                  onPressed: _acceptedTerms ? _createAccount : null,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: primary,
-                    // disabledBackgroundColor: Colors.grey,
-                    disabledBackgroundColor: secondary,
-                  ),
-                  child: const Text(
-                    'Sign up with Email',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                CustomCheckBox(
+                  value: _acceptedTerms,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _acceptedTerms = value ?? false;
+                    });
+                  },
+                  label: 'I accept SpoonaSparks Terms of Service',
                 ),
 
-                const SizedBox(height: 16.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.7,
-                        color: Colors.grey.withValues(alpha: 0.5),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: 10,
-                      ),
-                      child: Text(
-                        'or',
-                        style: TextStyle(color: Colors.black45),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.7,
-                        color: Colors.grey.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: SpoonSparkTheme.spacingS),
+                // Sign Up with Email Button
+                PrimaryButton(
+                  text: 'Sign up with Email',
+                  onPressed: _acceptedTerms ? _createAccount : null,
                 ),
-                const SizedBox(height: 16.0),
+
+                const SizedBox(height: SpoonSparkTheme.spacingL),
+
+                HorizontalDivider(middleText: 'or'),
+
+                const SizedBox(height: SpoonSparkTheme.spacingL),
 
                 // OAuth Buttons
-                _buildOAuthButtonBrand(
+                OAuthButton(
                   text: 'Continue with Google',
                   icon: Brands.google,
                   onPressed: signInWithGoogle,
                 ),
-                const SizedBox(height: 12),
-                _buildOAuthButtonIcon(
-                  text: 'Continue with Apple',
+                const SizedBox(height: SpoonSparkTheme.spacingM),
+                OAuthButton(
+                  text: 'Continue with Google',
                   icon: Icons.apple,
-                  onPressed: () {},
+                  onPressed: signInWithApple,
                 ),
-                const SizedBox(height: 16),
+
+                const SizedBox(height: SpoonSparkTheme.spacingL),
                 // Log In Link
                 TextButton(
                   onPressed: () {
@@ -320,15 +169,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'Already have an account? ',
-                        style: TextStyle(color: Colors.black45),
+                        style: theme.textTheme.bodySmall,
                       ),
-                      const Text(
+                      Text(
                         'Log In',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: primary,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ],
@@ -339,39 +187,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildOAuthButtonBrand({
-    required String text,
-    required String icon,
-    required Future<void> Function(BuildContext) onPressed,
-  }) {
-    return OutlinedButton.icon(
-      onPressed: () => onPressed(context),
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        side: const BorderSide(color: Colors.grey),
-      ),
-      // icon: Icon(icon, color: Colors.black),
-      icon: Brand(icon, size: 20),
-      label: Text(text, style: const TextStyle(color: Colors.black)),
-    );
-  }
-
-  Widget _buildOAuthButtonIcon({
-    required String text,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        side: const BorderSide(color: Colors.grey),
-      ),
-      icon: Icon(icon, color: Colors.black, size: 20),
-      label: Text(text, style: const TextStyle(color: Colors.black)),
     );
   }
 

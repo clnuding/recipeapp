@@ -14,11 +14,7 @@ class MealPlanTableView extends StatelessWidget {
     'Sun',
   ];
 
-  final List<String> meals = const [
-    'Breakfast',
-    'Lunch',
-    'Dinner',
-  ];
+  final List<String> meals = const ['Breakfast', 'Lunch', 'Dinner'];
 
   String getMealContent(String day, String meal) {
     return '$meal for $day';
@@ -28,11 +24,12 @@ class MealPlanTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double topReservedHeight = 275; // Reserved for header/nav
+    final double topReservedHeight = 290; // Reserved for header/nav
     const double rowSpacing = 6; // Space between each row
 
     final double totalSpacing = rowSpacing * (days.length - 1);
-    final double availableHeight = screenHeight - topReservedHeight - totalSpacing;
+    final double availableHeight =
+        screenHeight - topReservedHeight - totalSpacing;
     final double rowHeight = availableHeight / days.length;
 
     return Padding(
@@ -45,7 +42,9 @@ class MealPlanTableView extends StatelessWidget {
             final String day = entry.value;
 
             return Padding(
-              padding: EdgeInsets.only(bottom: index != days.length - 1 ? rowSpacing : 0),
+              padding: EdgeInsets.only(
+                bottom: index != days.length - 1 ? rowSpacing : 0,
+              ),
               child: SizedBox(
                 height: rowHeight,
                 child: Row(
@@ -56,16 +55,19 @@ class MealPlanTableView extends StatelessWidget {
                       width: 70,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: secondary.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(20),
+                        color: theme.colorScheme.surfaceBright,
+                        borderRadius: BorderRadius.circular(
+                          SpoonSparkTheme.radiusS,
+                        ),
                       ),
                       child: Text(
                         day,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.black87,
-                        ),
+                        style: SpoonSparkTheme.bodyMedium,
+                        // const TextStyle(
+                        //   fontWeight: FontWeight.w600,
+                        //   fontSize: 14,
+                        //   color: Colors.black87,
+                        // ),
                       ),
                     ),
 
@@ -75,24 +77,23 @@ class MealPlanTableView extends StatelessWidget {
                         child: Container(
                           margin: const EdgeInsets.only(left: 8),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            color: theme.colorScheme.surfaceBright,
+                            borderRadius: BorderRadius.circular(
+                              SpoonSparkTheme.radiusS,
+                            ),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: Colors.black12,
+                            //     blurRadius: 4,
+                            //     offset: const Offset(0, 2),
+                            //   ),
+                            // ],
                           ),
                           child: Center(
                             child: Text(
                               getMealContent(day, meal),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontSize: 13,
-                                color: Colors.black87,
-                              ),
+                              style: theme.textTheme.bodySmall,
                             ),
                           ),
                         ),

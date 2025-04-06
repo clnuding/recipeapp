@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-// import 'package:recipeapp/base/bottom_bar.dart';
-import 'package:recipeapp/base/g_navbar.dart' show GButtomNavBar;
+import 'package:recipeapp/widgets/atomics/navbar.dart';
 import 'package:recipeapp/screens/meal_plan_tile_overview.dart';
 import 'package:recipeapp/screens/recipes.dart';
-// import 'package:recipeapp/pages/groceries.dart';
-// import 'package:recipeapp/pages/account.dart';
 import 'package:recipeapp/screens/account.dart';
 import 'package:recipeapp/screens/groceries.dart';
-// import 'package:recipeapp/screens/recipe_details.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -36,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GButtomNavBar(
+    return BottomNavbar(
       selectedIndex: _selectedIndex,
       onTap: _onItemTapped,
       child: _pages[_selectedIndex],
