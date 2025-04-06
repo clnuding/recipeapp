@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/theme/theme.dart';
 
 class MealPlanTile extends StatelessWidget {
   final Recipe recipe;
@@ -45,10 +46,8 @@ class MealPlanTile extends StatelessWidget {
                 recipe.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                  color: theme.colorScheme.onSurface,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: SpoonSparkTheme.fontWeightSemibold,
                 ),
               ),
             ),

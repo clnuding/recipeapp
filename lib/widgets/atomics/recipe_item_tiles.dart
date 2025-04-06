@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/screens/recipe_details.dart';
+import 'package:recipeapp/theme/theme.dart';
 
 class RecipeItemTiles extends StatelessWidget {
   final List<Recipe> recipes;
@@ -24,10 +25,7 @@ class RecipeItemTiles extends StatelessWidget {
 
     if (error.isNotEmpty) {
       return Center(
-        child: Text(
-          "Error: $error",
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
+        child: Text("Error: $error", style: theme.textTheme.bodyMedium),
       );
     }
 
@@ -118,8 +116,7 @@ class RecipeCard extends StatelessWidget {
                 child: Text(
                   recipe.title,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
+                    fontWeight: SpoonSparkTheme.fontWeightSemibold,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

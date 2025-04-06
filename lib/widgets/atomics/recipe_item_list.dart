@@ -67,11 +67,14 @@ class RecipeItemList extends StatelessWidget {
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.broken_image,
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
-                      size: 40,
-                    ),
+                    errorBuilder:
+                        (context, error, stackTrace) => Icon(
+                          Icons.broken_image,
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
+                          size: 40,
+                        ),
                   ),
                 ),
 

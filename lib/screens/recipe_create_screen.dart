@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
-import 'package:recipeapp/widgets/atomics/tag.dart';
 
 class RecipeCreateScreen extends StatefulWidget {
   const RecipeCreateScreen({super.key});
@@ -49,7 +48,9 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
                   vertical: SpoonSparkTheme.spacingXS,
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusXXL),
+                  borderRadius: BorderRadius.circular(
+                    SpoonSparkTheme.radiusXXL,
+                  ),
                   child: AspectRatio(
                     aspectRatio: 1.9,
                     child: GestureDetector(
@@ -61,22 +62,27 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
                             height: double.infinity,
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surfaceBright,
-                              image: (_pickedImage != null && !kIsWeb)
-                                  ? DecorationImage(
-                                      image: FileImage(File(_pickedImage!.path)),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
+                              image:
+                                  (_pickedImage != null && !kIsWeb)
+                                      ? DecorationImage(
+                                        image: FileImage(
+                                          File(_pickedImage!.path),
+                                        ),
+                                        fit: BoxFit.cover,
+                                      )
+                                      : null,
                             ),
-                            child: _pickedImage == null
-                                ? Center(
-                                    child: Icon(
-                                      Icons.add_a_photo,
-                                      size: 40,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.5),
-                                    ),
-                                  )
-                                : null,
+                            child:
+                                _pickedImage == null
+                                    ? Center(
+                                      child: Icon(
+                                        Icons.add_a_photo,
+                                        size: 40,
+                                        color: theme.colorScheme.onSurface
+                                            .withOpacity(0.5),
+                                      ),
+                                    )
+                                    : null,
                           ),
                         ],
                       ),
@@ -91,20 +97,28 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
               SizedBox(
                 height: SpoonSparkTheme.spacingXXL,
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingL),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SpoonSparkTheme.spacingL,
+                  ),
                   scrollDirection: Axis.horizontal,
                   itemCount: tags.length,
                   itemBuilder: (context, index) {
                     return ClipRRect(
-                      borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusS),
+                      borderRadius: BorderRadius.circular(
+                        SpoonSparkTheme.radiusS,
+                      ),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
                           decoration: BoxDecoration(
                             color: theme.colorScheme.onPrimary.withAlpha(80),
-                            borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusXXL),
+                            borderRadius: BorderRadius.circular(
+                              SpoonSparkTheme.radiusXXL,
+                            ),
                           ),
-                          margin: const EdgeInsets.only(right: SpoonSparkTheme.spacingS),
+                          margin: const EdgeInsets.only(
+                            right: SpoonSparkTheme.spacingS,
+                          ),
                           padding: const EdgeInsets.symmetric(
                             horizontal: SpoonSparkTheme.spacingM,
                             vertical: SpoonSparkTheme.spacingXS,
@@ -125,10 +139,7 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
               const SizedBox(height: SpoonSparkTheme.spacingXXL),
 
               // Ingredients Grid (empty)
-              IngredientsGrid(
-                initialServings: 2,
-                ingredients: [],
-              ),
+              IngredientsGrid(initialServings: 2, ingredients: []),
             ],
           ),
         ),
