@@ -12,9 +12,9 @@ class MealPlanTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(7),
+      borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusS),
       child: Container(
-        color: theme.colorScheme.onPrimary,
+        color: theme.colorScheme.surfaceBright,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

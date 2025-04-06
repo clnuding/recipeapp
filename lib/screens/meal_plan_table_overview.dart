@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/theme/theme.dart';
 
 class MealPlanTableView extends StatelessWidget {
   const MealPlanTableView({super.key});
@@ -23,7 +24,7 @@ class MealPlanTableView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double topReservedHeight = 280; // Reserved for header/nav
+    final double topReservedHeight = 290; // Reserved for header/nav
     const double rowSpacing = 6; // Space between each row
 
     final double totalSpacing = rowSpacing * (days.length - 1);
@@ -54,18 +55,19 @@ class MealPlanTableView extends StatelessWidget {
                       width: 70,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.secondary.withValues(
-                          alpha: 0.4,
+                        color: theme.colorScheme.surfaceBright,
+                        borderRadius: BorderRadius.circular(
+                          SpoonSparkTheme.radiusS,
                         ),
-                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         day,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.black87,
-                        ),
+                        style: SpoonSparkTheme.bodyMedium,
+                        // const TextStyle(
+                        //   fontWeight: FontWeight.w600,
+                        //   fontSize: 14,
+                        //   color: Colors.black87,
+                        // ),
                       ),
                     ),
 
@@ -75,24 +77,23 @@ class MealPlanTableView extends StatelessWidget {
                         child: Container(
                           margin: const EdgeInsets.only(left: 8),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            color: theme.colorScheme.surfaceBright,
+                            borderRadius: BorderRadius.circular(
+                              SpoonSparkTheme.radiusS,
+                            ),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: Colors.black12,
+                            //     blurRadius: 4,
+                            //     offset: const Offset(0, 2),
+                            //   ),
+                            // ],
                           ),
                           child: Center(
                             child: Text(
                               getMealContent(day, meal),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontSize: 13,
-                                color: Colors.black87,
-                              ),
+                              style: theme.textTheme.bodySmall,
                             ),
                           ),
                         ),

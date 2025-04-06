@@ -167,13 +167,13 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      day,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    // Text(
+                    //   day,
+                    //   style: const TextStyle(
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.w600,
+                    //   ),
+                    // ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -198,7 +198,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
       child: Container(
         height: 130,
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: theme.colorScheme.surfaceBright,
           borderRadius: BorderRadius.circular(7),
         ),
         child:
@@ -207,10 +207,10 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                 : Center(
                   child: Text(
                     label,
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      fontWeight: FontWeight.w500,
-                    ),
+                    // style: TextStyle(
+                    //   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    //   fontWeight: FontWeight.w500,
+                    // ),
                   ),
                 ),
       ),

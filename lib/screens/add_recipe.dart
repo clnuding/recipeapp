@@ -60,8 +60,11 @@ class _AddRecipePageState extends State<AddRecipePage> {
         return Wrap(
           children: [
             ListTile(
-              leading:  Icon(Icons.camera_alt, color:theme.colorScheme.onSurface),
-              title:  Text(
+              leading: Icon(
+                Icons.camera_alt,
+                color: theme.colorScheme.onSurface,
+              ),
+              title: Text(
                 "Take a Photo",
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
@@ -71,8 +74,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
               },
             ),
             ListTile(
-              leading:  Icon(Icons.image, color: theme.colorScheme.onSurface),
-              title:  Text(
+              leading: Icon(Icons.image, color: theme.colorScheme.onSurface),
+              title: Text(
                 "Choose from Gallery",
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
@@ -112,7 +115,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Center(
+                    Center(
                       child: Text(
                         'Step 1: Add Recipe',
                         style: TextStyle(
@@ -150,9 +153,11 @@ class _AddRecipePageState extends State<AddRecipePage> {
                           value: _selectedRecipeType,
                           hint: Text(
                             "Select Recipe Type",
-                            style: TextStyle(color: theme.colorScheme.onSurface),
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                            ),
                           ),
-                          icon:  Icon(
+                          icon: Icon(
                             Icons.arrow_drop_down,
                             color: theme.colorScheme.onSurface,
                           ),
@@ -196,7 +201,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
                                     SizedBox(height: 4),
                                     Text(
                                       "Add Picture (Optional)",
-                                      style: TextStyle(color: theme.colorScheme.onSurface),
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface,
+                                      ),
                                     ),
                                   ],
                                 )
@@ -216,7 +223,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     _buildInputField(
                       controller: _descriptionController,
                       label: "Description (Optional)",
-                      maxLines: 3                    ),
+                      maxLines: 3,
+                    ),
                   ],
                 ),
               ),

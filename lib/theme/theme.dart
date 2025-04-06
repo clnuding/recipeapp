@@ -136,7 +136,7 @@ class SpoonSparkTheme {
         brightness: Brightness.light,
         primary: _primary,
         onPrimary: _textOnPrimaryLight,
-        secondary: _primaryTextLight,
+        secondary: const Color.fromARGB(255, 28, 28, 28),
         onSecondary: _textOnPrimaryLight,
         secondaryContainer: _backgroundAccent,
         onSecondaryContainer: _textOnPrimaryLight,
