@@ -57,7 +57,6 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
       body: SafeArea(
         child: Column(
           children: [

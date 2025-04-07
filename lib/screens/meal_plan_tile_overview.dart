@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:recipeapp/screens/weekday_plan.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';
 import 'package:recipeapp/widgets/atomics/meal_plan_tile.dart';
+import 'package:recipeapp/widgets/card_stack.dart';
+import 'package:recipeapp/widgets/date_range_selector.dart';
 
 class MealPlanningPage extends StatefulWidget {
   const MealPlanningPage({super.key});
@@ -65,79 +67,46 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: LogoAppbar(showBackButton: false),
+      appBar: LogoAppbar(
+        showBackButton: false,
+        actions: [
+          IconButton(
+            icon: Icon(isGridView ? Icons.list : Icons.grid_view),
+            onPressed: () => setState(() => isGridView = !isGridView),
+          ),
+          IconButton(
+            icon: const Icon(Icons.calendar_month_outlined),
+            color: theme.colorScheme.onPrimary,
+            style: IconButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SwipeCardStackScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
             // 📅 Week Navigation + View Toggle
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  // Left controls
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          // TODO: Add meal action
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.chevron_left),
-                        onPressed: _goToPreviousWeek,
-                      ),
-                    ],
-                  ),
-
-                  // Center week display
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          DateFormat('E, dd.MM.yyyy').format(_startOfWeek),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const Text('–', style: TextStyle(fontSize: 8)),
-                        Text(
-                          DateFormat(
-                            'E, dd.MM.yyyy',
-                          ).format(_startOfWeek.add(const Duration(days: 6))),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Right controls
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        onPressed: _goToNextWeek,
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          isGridView ? Icons.grid_view : Icons.table_chart,
-                        ),
-                        onPressed:
-                            () => setState(() => isGridView = !isGridView),
-                      ),
-                    ],
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: DateRangeSelector(
+                startDate: _startOfWeek,
+                onDropdownTap: () {},
+                onPrevious: _goToPreviousWeek,
+                onNext: _goToNextWeek,
               ),
             ),
 
-            const SizedBox(height: 4),
+            const SizedBox(height: SpoonSparkTheme.spacingXS),
 
             // Main content area
             Expanded(
@@ -167,13 +136,13 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Text(
-                    //   day,
-                    //   style: const TextStyle(
-                    //     fontSize: 16,
-                    //     fontWeight: FontWeight.w600,
-                    //   ),
-                    // ),
+                    Text(
+                      day,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       children: [

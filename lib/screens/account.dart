@@ -3,13 +3,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/user.dart';
-import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/utils/pocketbase.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 import 'package:recipeapp/widgets/atomics/secondary_btn.dart';
-import 'package:recipeapp/widgets/recipe_card_stack.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -97,42 +95,7 @@ class _AccountPageState extends State<AccountScreen> {
                     SizedBox(height: SpoonSparkTheme.spacingXL),
                     SecondaryButton(
                       text: "Settings",
-                      onPressed:
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => RecipeSwipeCardStack(
-                                    recipes: [
-                                      Recipe(
-                                        id: "w2233",
-                                        title: "test1",
-                                        creatorId: "123456",
-                                      ),
-                                      Recipe(
-                                        id: "w2234",
-                                        title: "test2",
-                                        creatorId: "123456",
-                                      ),
-                                      Recipe(
-                                        id: "w2235",
-                                        title: "test3",
-                                        creatorId: "123456",
-                                      ),
-                                      Recipe(
-                                        id: "w2236",
-                                        title: "test4",
-                                        creatorId: "123456",
-                                      ),
-                                      Recipe(
-                                        id: "w2237",
-                                        title: "test5",
-                                        creatorId: "123456",
-                                      ),
-                                    ],
-                                  ),
-                            ),
-                          ),
+                      onPressed: () {},
                       icon: Icons.settings,
                     ),
                   ],

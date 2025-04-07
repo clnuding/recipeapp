@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:recipeapp/theme/theme.dart';
 
 class Tag extends StatelessWidget {
-  final String text;
+  final Text text;
   final IconData? icon;
   final Color? backgroundColor;
 
-  const Tag({super.key, required this.text, this.icon, this.backgroundColor, required void Function() onTap});
+  const Tag({
+    super.key,
+    required this.text,
+    this.icon,
+    this.backgroundColor,
+    required void Function() onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +39,7 @@ class Tag extends StatelessWidget {
               size: theme.textTheme.labelMedium?.fontSize,
             ),
           const SizedBox(width: SpoonSparkTheme.spacingXS),
-          Text(
-            text,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          text,
         ],
       ),
     );
