@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:recipeapp/theme/theme.dart';
-import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/text_form_field.dart';
 
@@ -15,9 +14,12 @@ class RecipeCreateScreen extends StatefulWidget {
   _RecipeCreateScreenState createState() => _RecipeCreateScreenState();
 }
 
-class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
+class _RecipeCreateScreenState extends State<RecipeCreateScreen>
+    with SingleTickerProviderStateMixin {
   XFile? _pickedImage;
   final _titleController = TextEditingController();
+  final _instructionsController = TextEditingController();
+  int _servings = 2;
 
   final List<String> mealOccasions = [
     'Wähle den Anlass',
@@ -46,9 +48,17 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
   final GlobalKey _tagKey1 = GlobalKey();
   final GlobalKey _tagKey2 = GlobalKey();
 
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
   Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() => _pickedImage = image);
     }
@@ -133,7 +143,9 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
   @override
   void dispose() {
     _titleController.dispose();
+    _instructionsController.dispose();
     _dropdownOverlay?.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -151,6 +163,7 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 🖼 Image Picker
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: SpoonSparkTheme.spacingL,
@@ -199,7 +212,10 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: SpoonSparkTheme.spacingL),
+
+                // 📝 Rezeptname
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: SpoonSparkTheme.spacingL,
@@ -209,13 +225,16 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
                     fieldController: _titleController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Bitte trage einen Rezeptnamen';
+                        return 'Bitte trage einen Rezeptnamen ein';
                       }
                       return null;
                     },
                   ),
                 ),
+
                 const SizedBox(height: SpoonSparkTheme.spacingL),
+
+                // 🔽 Dropdowns
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: SpoonSparkTheme.spacingL,
@@ -235,43 +254,9 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
                                     () => selectedMealOccasion = value,
                                   ),
                                 ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: SpoonSparkTheme.spacingM,
-                                vertical: SpoonSparkTheme.spacingS,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surfaceBright,
-                                borderRadius: BorderRadius.circular(
-                                  SpoonSparkTheme.radiusS,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      selectedMealOccasion,
-                                      style: theme.textTheme.labelMedium
-                                          ?.copyWith(
-                                            color: theme.colorScheme.onSurface,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: SpoonSparkTheme.spacingXS,
-                                  ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: theme.colorScheme.onSurface,
-                                    size:
-                                        theme.textTheme.labelSmall?.fontSize ??
-                                        14,
-                                  ),
-                                ],
-                              ),
+                            child: _buildDropdownTag(
+                              theme,
+                              selectedMealOccasion,
                             ),
                           ),
                         ),
@@ -289,56 +274,142 @@ class _RecipeCreateScreenState extends State<RecipeCreateScreen> {
                                   (value) =>
                                       setState(() => selectedMealType = value),
                                 ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: SpoonSparkTheme.spacingM,
-                                vertical: SpoonSparkTheme.spacingS,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surfaceBright,
-                                borderRadius: BorderRadius.circular(
-                                  SpoonSparkTheme.radiusS,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      selectedMealType,
-                                      style: theme.textTheme.labelMedium
-                                          ?.copyWith(
-                                            color: theme.colorScheme.onSurface,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: SpoonSparkTheme.spacingXS,
-                                  ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: theme.colorScheme.onSurface,
-                                    size:
-                                        theme.textTheme.labelSmall?.fontSize ??
-                                        14,
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: _buildDropdownTag(theme, selectedMealType),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: SpoonSparkTheme.spacingXXL),
-                IngredientsGrid(initialServings: 2, ingredients: []),
+
+                const SizedBox(height: SpoonSparkTheme.spacingL),
+
+                // 📑 Tabs
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SpoonSparkTheme.spacingL,
+                  ),
+                  child: Column(
+                    children: [
+                      TabBar(
+                        controller: _tabController,
+                        labelColor: theme.colorScheme.primary,
+                        unselectedLabelColor: theme.colorScheme.onSurface
+                            .withOpacity(0.6),
+                        indicatorColor: theme.colorScheme.primary,
+                        tabs: const [
+                          Tab(text: 'Zutaten'),
+                          Tab(text: 'Zubereitung'),
+                        ],
+                      ),
+                      const SizedBox(height: SpoonSparkTheme.spacingM),
+                      SizedBox(
+                        height: 350,
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            // 🧾 Zutaten Tab
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.remove),
+                                      onPressed: () {
+                                        if (_servings > 1) {
+                                          setState(() => _servings--);
+                                        }
+                                      },
+                                    ),
+                                    Text(
+                                      '$_servings Portionen',
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed:
+                                          () => setState(() => _servings++),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                Center(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      // TODO: Zutaten hinzufügen
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Zutat hinzufügen'),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            // ✍️ Zubereitung Tab
+                            Padding(
+                              padding: const EdgeInsets.all(
+                                SpoonSparkTheme.spacingL,
+                              ),
+                              child: TextFormField(
+                                controller: _instructionsController,
+                                maxLines: 10,
+                                decoration: InputDecoration(
+                                  labelText: 'Zubereitungsschritte',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      SpoonSparkTheme.radiusM,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDropdownTag(ThemeData theme, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SpoonSparkTheme.spacingM,
+        vertical: SpoonSparkTheme.spacingS,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceBright,
+        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusS),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              value,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: SpoonSparkTheme.spacingXS),
+          Icon(
+            Icons.keyboard_arrow_down,
+            color: theme.colorScheme.onSurface,
+            size: theme.textTheme.labelSmall?.fontSize ?? 14,
+          ),
+        ],
       ),
     );
   }
