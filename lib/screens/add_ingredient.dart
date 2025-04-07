@@ -150,7 +150,6 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [

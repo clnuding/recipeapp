@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/widgets/atomics/action_row.dart';
 import 'package:recipeapp/widgets/atomics/logo.dart';
 
 class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
-  final List<IconButton>? actions;
+  final List<Widget> actions;
   final bool showBackButton;
-  const LogoAppbar({super.key, this.actions, this.showBackButton = true});
+  const LogoAppbar({
+    super.key,
+    this.actions = const [],
+    this.showBackButton = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,7 @@ class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
                   Navigator.pop(context);
                 },
               ),
-      actions: actions ?? [],
+      actions: [TightActionRow(actions: actions)],
       centerTitle: true,
       title: Row(
         mainAxisSize: MainAxisSize.min,

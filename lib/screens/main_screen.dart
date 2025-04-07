@@ -19,7 +19,6 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     MealPlanningPage(), // Default page
     RecipesPage(),
-    // RecipeDetailScreen(),
     GroceryListScreen(),
     AccountScreen(), // Your Account page (create this or use a placeholder)
   ];

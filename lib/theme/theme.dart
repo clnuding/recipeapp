@@ -43,13 +43,15 @@ class SpoonSparkTheme {
   static const FontWeight fontWeightBold = FontWeight.w700;
 
   // Font sizes
+  static const double fontXXS = 8.0;
   static const double fontXS = 10.0;
-  static const double fontSM = 13.0;
+  static const double fontSM = 12.0;
   static const double fontS = 14.0;
   static const double fontM = 16.0;
   static const double fontL = 18.0;
   static const double fontXL = 22.0;
   static const double fontXXL = 24.0;
+  static const double fontIcons = 20.0;
 
   // Text Styles
   static TextStyle label = GoogleFonts.getFont(
@@ -211,12 +213,13 @@ class SpoonSparkTheme {
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          iconSize: fontXL,
+          iconSize: fontIcons,
           foregroundColor: _primaryTextLight.withValues(alpha: 0.9),
           padding: EdgeInsets.all(spacingXS),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusM),
           ),
+          minimumSize: Size(32, 32),
         ),
       ),
       iconTheme: IconThemeData(color: _primaryTextLight, size: fontXL),
@@ -299,6 +302,7 @@ class SpoonSparkTheme {
       bodyMedium: bodyRegular,
       bodySmall: bodySmall,
       labelLarge: labelLarge,
+      labelMedium: label,
     );
   }
 }
