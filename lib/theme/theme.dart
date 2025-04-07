@@ -28,7 +28,7 @@ class SpoonSparkTheme {
 
   // Error / Success colors
   static const Color _error = Color.fromARGB(255, 255, 90, 79);
-  // static const Color _success = Color.fromARGB(255, 50, 201, 151);
+  static const Color _success = Color.fromARGB(255, 50, 201, 151);
 
   // ==================== TYPOGRAPHY =======================
   // =======================================================
@@ -147,6 +147,8 @@ class SpoonSparkTheme {
         surfaceBright: _backgroundMuted,
         onSurfaceVariant: _primaryTextLight,
         tertiary: _foregroundMuted,
+        tertiaryFixed: _success,
+        onTertiaryFixed: _textOnPrimaryLight,
       ),
       textTheme: _buildTextTheme(isLight: true),
       scaffoldBackgroundColor: _backgroundLight,
