@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipeapp/screens/main_screen.dart';
 import 'package:recipeapp/screens/recipe_create_screen.dart' as create_recipe;
 import 'package:recipeapp/screens/add_recipe.dart' as add_recipe;
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: FToastBuilder(),
       debugShowCheckedModeBanner: false,
       title: 'Recipe App',
       theme: SpoonSparkTheme.lightTheme(),
