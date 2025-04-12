@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 
 class AddRecipePage extends StatefulWidget {
   const AddRecipePage({super.key});
@@ -14,10 +15,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _portionsController = TextEditingController();
-
   File? _image;
 
-  // 🥗 Anlass Dropdown
   String? _selectedRecipeType;
   final List<String> _mealTypes = [
     'Frühstück',
@@ -27,7 +26,6 @@ class _AddRecipePageState extends State<AddRecipePage> {
     'Snack',
   ];
 
-  // 🍝 Kategorie Dropdown
   String? _selectedRecipeCategory;
   final List<String> _recipeCategories = [
     'Nudeln',
@@ -38,7 +36,6 @@ class _AddRecipePageState extends State<AddRecipePage> {
     'Eintöpfe/Suppen',
   ];
 
-  // 🍝 Saison Dropdown
   String? _selectedRecipeSeason;
   final List<String> _recipeSeasons = [
     'Frühjahr',
@@ -51,9 +48,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() => _image = File(pickedFile.path));
-    }
+    if (pickedFile != null) setState(() => _image = File(pickedFile.path));
   }
 
   Future<void> _showImageSourceDialog() async {
@@ -64,37 +59,36 @@ class _AddRecipePageState extends State<AddRecipePage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
-      builder: (context) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: Icon(
-                Icons.camera_alt,
-                color: theme.colorScheme.onSurface,
+      builder:
+          (context) => Wrap(
+            children: [
+              ListTile(
+                leading: Icon(
+                  Icons.camera_alt,
+                  color: theme.colorScheme.onSurface,
+                ),
+                title: Text(
+                  "Foto aufnehmen",
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
               ),
-              title: Text(
-                "Foto aufnehmen",
-                style: TextStyle(color: theme.colorScheme.onSurface),
+              ListTile(
+                leading: Icon(Icons.image, color: theme.colorScheme.onSurface),
+                title: Text(
+                  "Aus Galerie wählen",
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
               ),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.camera);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.image, color: theme.colorScheme.onSurface),
-              title: Text(
-                "Aus Galerie wählen",
-                style: TextStyle(color: theme.colorScheme.onSurface),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-          ],
-        );
-      },
+            ],
+          ),
     );
   }
 
@@ -109,30 +103,31 @@ class _AddRecipePageState extends State<AddRecipePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Text(
-                        'Schritt 1: Rezept anlegen',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
 
+    return Scaffold(
+      appBar: LogoAppbar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: () => Navigator.pushNamed(context, '/addIngredient'),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: SpoonSparkTheme.spacingL),
+
+              _buildStepper(theme),
+              const SizedBox(height: SpoonSparkTheme.spacingL),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(labelText: "Name"),
@@ -146,56 +141,60 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 🥗 Anlass Dropdown
                     DropdownButtonFormField<String>(
                       isExpanded: true,
                       value: _selectedRecipeType,
                       hint: const Text("Art wählen"),
                       decoration: const InputDecoration(labelText: "Art"),
                       items:
-                          _mealTypes.map((type) {
-                            return DropdownMenuItem(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
+                          _mealTypes
+                              .map(
+                                (type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                ),
+                              )
+                              .toList(),
                       onChanged:
                           (value) =>
                               setState(() => _selectedRecipeType = value),
                     ),
                     const SizedBox(height: 16),
 
-                    // 🍝 Typ Dropdown
                     DropdownButtonFormField<String>(
                       isExpanded: true,
                       value: _selectedRecipeCategory,
                       hint: const Text("Kategorie wählen"),
                       decoration: const InputDecoration(labelText: "Kategorie"),
                       items:
-                          _recipeCategories.map((type) {
-                            return DropdownMenuItem(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
+                          _recipeCategories
+                              .map(
+                                (type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                ),
+                              )
+                              .toList(),
                       onChanged:
                           (value) =>
                               setState(() => _selectedRecipeCategory = value),
                     ),
                     const SizedBox(height: 16),
-                    // 🍝 Typ Dropdown
+
                     DropdownButtonFormField<String>(
                       isExpanded: true,
                       value: _selectedRecipeSeason,
                       hint: const Text("Saison wählen"),
                       decoration: const InputDecoration(labelText: "Saison"),
                       items:
-                          _recipeSeasons.map((type) {
-                            return DropdownMenuItem(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
+                          _recipeSeasons
+                              .map(
+                                (type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                ),
+                              )
+                              .toList(),
                       onChanged:
                           (value) =>
                               setState(() => _selectedRecipeSeason = value),
@@ -258,83 +257,88 @@ class _AddRecipePageState extends State<AddRecipePage> {
                   ],
                 ),
               ),
-            ),
-
-            // 🟡 Footer with minimal progress bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  _buildSquareIconButton(
-                    Icons.close,
-                    () => Navigator.pop(context),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Container(
-                      height: 6,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).colorScheme.surfaceBright,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: LinearProgressIndicator(
-                          value: 0.33, // 🔄 Adjust this dynamically if needed
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).colorScheme.primary,
-                          ),
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.surface.withOpacity(0.3),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildSquareIconButton(Icons.arrow_forward, () {
-                    Navigator.pushNamed(context, '/addIngredient');
-                  }),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSquareIconButton(IconData icon, VoidCallback onPressed) {
-    final theme = Theme.of(context);
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.onPrimary,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: theme.colorScheme.onSurface),
-        onPressed: onPressed,
+  Widget _buildStepper(ThemeData theme) {
+    const stepLabels = ["Rezept", "Zutaten", "Prüfen"];
+    const int activeIndex = 0;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingL),
+      child: Column(
+        children: [
+          Row(
+            children: List.generate(3, (index) {
+              final isActive = index == activeIndex;
+              final isCompleted = index < activeIndex;
+              final Color barColor =
+                  isActive
+                      ? theme.colorScheme.primary
+                      : isCompleted
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.surfaceBright;
+
+              BorderRadius borderRadius = BorderRadius.zero;
+              if (index == 0) {
+                borderRadius = const BorderRadius.horizontal(
+                  left: Radius.circular(12),
+                );
+              } else if (index == 2) {
+                borderRadius = const BorderRadius.horizontal(
+                  right: Radius.circular(12),
+                );
+              }
+
+              return Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: index < 2 ? 4 : 0),
+                      child: Container(
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: barColor,
+                          borderRadius: borderRadius,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          stepLabels[index],
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color:
+                                isActive
+                                    ? theme.colorScheme.onSurface
+                                    : theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        if (isCompleted)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4),
+                            child: Icon(
+                              Icons.check,
+                              size: 12,
+                              color: theme.colorScheme.primary.withOpacity(0.7),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+        ],
       ),
     );
-  }
-
-  Widget _buildProgressCircle(bool isActive) {
-    final theme = Theme.of(context);
-    return Container(
-      width: 16,
-      height: 16,
-      decoration: BoxDecoration(
-        color: isActive ? theme.colorScheme.primary : Colors.transparent,
-        border: Border.all(color: theme.colorScheme.primary, width: 2),
-        borderRadius: BorderRadius.circular(8),
-      ),
-    );
-  }
-
-  Widget _buildProgressLine() {
-    final theme = Theme.of(context);
-    return Container(width: 20, height: 3, color: theme.colorScheme.primary);
   }
 }

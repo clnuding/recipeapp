@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
 
 class AddIngredientPage extends StatefulWidget {
   final String recipeId;
@@ -150,10 +152,19 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      appBar: LogoAppbar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: () => Navigator.pushNamed(context, '/reviewRecipe'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // 🧾 Content
+            const SizedBox(height: SpoonSparkTheme.spacingL),
+            _buildStepper(theme),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -163,15 +174,6 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Text(
-                        'Schritt 2: Zutaten hinzufügen',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _ingredientSearchController,
                       decoration: const InputDecoration(
@@ -217,35 +219,43 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                                     (_, __) => const SizedBox(height: 12),
                                 itemBuilder: (context, index) {
                                   final item = _selectedIngredients[index];
-                                  return ListTile(
-                                    tileColor: theme.colorScheme.surfaceBright,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                  return Material(
+                                    elevation: 2,
+                                    borderRadius: BorderRadius.circular(
+                                      SpoonSparkTheme.radiusS,
                                     ),
-                                    title: Text('${item['name']}'),
-                                    subtitle: Text(
-                                      '${item['amount']} ${item['unit']}',
-                                    ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.edit),
-                                          onPressed:
-                                              () => _showAddDialog(
-                                                item['name']!,
-                                                indexToEdit: index,
-                                              ),
+                                    child: ListTile(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          SpoonSparkTheme.radiusS,
                                         ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete),
-                                          onPressed:
-                                              () => setState(
-                                                () => _selectedIngredients
-                                                    .removeAt(index),
-                                              ),
-                                        ),
-                                      ],
+                                      ),
+                                      tileColor: theme.colorScheme.onPrimary,
+                                      title: Text('${item['name']}'),
+                                      subtitle: Text(
+                                        '${item['amount']} ${item['unit']}',
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit),
+                                            onPressed:
+                                                () => _showAddDialog(
+                                                  item['name']!,
+                                                  indexToEdit: index,
+                                                ),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete),
+                                            onPressed:
+                                                () => setState(
+                                                  () => _selectedIngredients
+                                                      .removeAt(index),
+                                                ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -255,47 +265,86 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
 
-            // ⏳ Progress Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  _buildSquareIconButton(
-                    Icons.arrow_back,
-                    () => Navigator.pop(context),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Container(
-                      height: 6,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: theme.colorScheme.surfaceBright,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: LinearProgressIndicator(
-                          value: 0.66,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            theme.colorScheme.primary,
-                          ),
-                          backgroundColor: theme.colorScheme.surface
-                              .withOpacity(0.3),
+  Widget _buildStepper(ThemeData theme) {
+    const stepLabels = ["Rezept", "Zutaten", "Prüfen"];
+    const int activeIndex = 1;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingL),
+      child: Column(
+        children: [
+          Row(
+            children: List.generate(3, (index) {
+              final isActive = index == activeIndex;
+              final isCompleted = index < activeIndex;
+              final Color barColor =
+                  isActive
+                      ? theme.colorScheme.primary
+                      : isCompleted
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.surfaceBright;
+
+              BorderRadius borderRadius = BorderRadius.zero;
+              if (index == 0) {
+                borderRadius = const BorderRadius.horizontal(
+                  left: Radius.circular(12),
+                );
+              } else if (index == 2) {
+                borderRadius = const BorderRadius.horizontal(
+                  right: Radius.circular(12),
+                );
+              }
+
+              return Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: index < 2 ? 4 : 0),
+                      child: Container(
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: barColor,
+                          borderRadius: borderRadius,
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildSquareIconButton(
-                    Icons.arrow_forward,
-                    () => Navigator.pushNamed(context, '/reviewRecipe'),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          stepLabels[index],
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color:
+                                isActive
+                                    ? theme.colorScheme.onSurface
+                                    : theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        if (isCompleted)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4),
+                            child: Icon(
+                              Icons.check,
+                              size: 12,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }
