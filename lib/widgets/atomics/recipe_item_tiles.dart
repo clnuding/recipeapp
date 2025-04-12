@@ -76,20 +76,24 @@ class RecipeCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceBright,
           borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusS),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 234, 234, 234),
+              blurRadius: 4,
+              spreadRadius: 1,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ✅ Image section
-            Expanded(
-              flex: 5,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(7),
-                  topRight: Radius.circular(7),
-                ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusS),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ✅ Image section
+              Expanded(
+                flex: 5,
                 child: Image.network(
                   recipe.thumbnailUrl ?? 'https://via.placeholder.com/150',
                   width: double.infinity,
@@ -97,31 +101,31 @@ class RecipeCard extends StatelessWidget {
                   errorBuilder:
                       (context, error, stackTrace) => Icon(
                         Icons.broken_image,
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.5,
-                        ),
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
                         size: 50,
                       ),
                 ),
               ),
-            ),
 
-            // ✅ Title section
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Text(
-                  recipe.title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: SpoonSparkTheme.fontWeightSemibold,
+              // ✅ Title section
+              Expanded(
+                flex: 2,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(4.0),
+                  width: double.infinity,
+                  child: Text(
+                    recipe.title,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: SpoonSparkTheme.fontWeightSemibold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
+//import 'package:recipeapp/theme/theme.dart';
 
 class IngredientsGrid extends StatefulWidget {
   final List<Map<String, dynamic>> ingredients;
@@ -24,204 +24,138 @@ class _IngredientsGridState extends State<IngredientsGrid> {
     _servings = widget.initialServings;
   }
 
-  // Format number smartly
   String _formatNumber(double value) {
     return value % 1 == 0 ? value.toInt().toString() : value.toString();
   }
 
-  // Map ingredient groups to default icons
-  IconData _getIconForGroup(String group) {
-    switch (group.toLowerCase()) {
-      case 'vegetables':
-        return FontAwesome.leaf_solid;
-      case 'meat':
-        return Icons.kebab_dining;
-      case 'dairy':
-        return Icons.egg;
-      case 'grains':
-        return Icons.grain;
-      case 'spices':
-        return Icons.spa;
-      default:
-        return Icons.restaurant;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    final theme = Theme.of(context);
+    return DefaultTabController(
+      length: 2,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Ingredients Header with Serving Size Selector
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Zutaten',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  // Decrement Serving Size Button
-                  GestureDetector(
-                    onTap: () {
-                      if (_servings > 0) {
-                        setState(() {
-                          _servings--;
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Icon(
-                        Icons.remove,
-                        color: _servings > 0 ? Colors.black : Colors.grey,
-                        size: 24,
-                      ),
-                    ),
+          PreferredSize(
+            preferredSize: const Size.fromHeight(10),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: TabBar(
+                tabs: const [Tab(text: 'Zutaten'), Tab(text: 'Zubereitung')],
+                labelColor: theme.colorScheme.primary,
+                unselectedLabelColor: Colors.black54,
+                indicator: UnderlineTabIndicator(
+                  borderSide: BorderSide(
+                    width: 3,
+                    color: theme.colorScheme.primary,
                   ),
-
-                  // Serving Size Display
-                  Container(
-                    width: 50,
-                    height: 35,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '$_servings',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  // Increment Serving Size Button
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _servings++;
-                      });
-                    },
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.black,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  height: 35,
-                  width: 35,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Icon(Icons.add, color: Colors.black, size: 24),
+                  insets: const EdgeInsets.symmetric(horizontal: 0),
                 ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                dividerColor: theme.dividerColor.withValues(alpha: 0.2),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Ingredients Grid
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
             ),
-            itemCount: widget.ingredients.length,
-            itemBuilder: (context, index) {
-              final ingredient = widget.ingredients[index];
+          ),
 
-              // Adjust measurement based on servings
-              final adjustedMeasurement =
-                  (ingredient['measurement'] as double) * _servings;
+          const SizedBox(height: 1),
+          SizedBox(
+            height: 350, // Adjust height as needed
+            child: TabBarView(
+              children: [
+                // Zutaten Tab
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 12),
 
-              return Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade100,
-                      blurRadius: 4,
-                      spreadRadius: 1,
-                    ),
-                  ],
+                      // Zutaten + Portionen Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text('Portionen: 4', style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Ingredients Grid
+                      Expanded(
+                        child: GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                childAspectRatio: 0.7,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                              ),
+                          itemCount: widget.ingredients.length,
+                          itemBuilder: (context, index) {
+                            final ingredient = widget.ingredients[index];
+                            final adjustedMeasurement =
+                                (ingredient['measurement'] as double) *
+                                _servings;
+
+                            return Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color.fromARGB(
+                                      255,
+                                      234,
+                                      234,
+                                      234,
+                                    ),
+                                    blurRadius: 4,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    ingredient['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                  Text(
+                                    '${_formatNumber(adjustedMeasurement)} ${ingredient['measurementName']}',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Group Icon
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _getIconForGroup(ingredient['group']),
-                        size: 20,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
 
-                    // Ingredient Name
-                    Text(
-                      ingredient['name'],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-
-                    // Measurement with smart formatting
-                    Text(
-                      '${_formatNumber(adjustedMeasurement)} ${ingredient['measurementName']}',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
+                // Zubereitung Tab (Placeholder for now)
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Hier steht die Zubereitungsbeschreibung...',
+                    style: TextStyle(fontSize: 14),
+                  ),
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ],
       ),

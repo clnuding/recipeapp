@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
-import 'package:recipeapp/widgets/atomics/tag.dart';
+//import 'package:recipeapp/widgets/atomics/tag.dart';
 import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 
 class RecipeReviewPage extends StatelessWidget {
@@ -16,7 +16,7 @@ class RecipeReviewPage extends StatelessWidget {
     final String imageUrl =
         "https://images.unsplash.com/photo-1512058564366-18510be2db19";
 
-    final List<String> tags = ['hausgemacht', 'italienisch', 'pasta'];
+    final List<String> tags = ['Hauptgericht', 'Salate', 'Ganzjährig'];
     final int portions = 4;
 
     final List<Map<String, String>> ingredients = [
@@ -60,11 +60,76 @@ class RecipeReviewPage extends StatelessWidget {
                   ),
                   child: AspectRatio(
                     aspectRatio: 1.9,
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
+                    child: Stack(
+                      children: [
+                        // Background image
+                        Positioned.fill(
+                          child: Image.network(
+                            imageUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+
+                        // Title banner (bottom-left)
+                        Positioned(
+                          bottom: 16,
+                          left: 16,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(
+                                255,
+                                252,
+                                251,
+                                251,
+                              ).withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              "Bulgur Buddha Bowl", // 👈 Replace with dynamic title if needed
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.copyWith(
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Duration badge (top-right)
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(
+                                255,
+                                255,
+                                255,
+                                255,
+                              ).withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              "30 Min.",
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.copyWith(
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -89,7 +154,7 @@ class RecipeReviewPage extends StatelessWidget {
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                            color: theme.colorScheme.surfaceBright,
                             borderRadius: BorderRadius.circular(
                               SpoonSparkTheme.radiusXXL,
                             ),
