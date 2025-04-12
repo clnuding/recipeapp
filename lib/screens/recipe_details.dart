@@ -99,14 +99,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                     '${recipe.cookingTime} min',
                                     style: theme.textTheme.labelMedium
                                         ?.copyWith(
-                                          color:
-                                              theme
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                          fontWeight: FontWeight.bold,
+                                          color: theme.colorScheme.onPrimary,
+                                          fontWeight:
+                                              SpoonSparkTheme
+                                                  .fontWeightSemibold,
                                         ),
                                   ),
-                                  onTap: () {},
                                 ),
                               ),
                           ],

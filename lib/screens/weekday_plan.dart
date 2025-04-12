@@ -1,45 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:recipeapp/widgets/atomics/legend_item.dart';
+import 'package:recipeapp/widgets/atomics/primary_btn.dart';
+import 'package:recipeapp/widgets/card_stack.dart';
+import 'package:recipeapp/widgets/three_tap_button.dart';
 
-class MealPlannerScreen extends StatefulWidget {
+class WeekdayPlanScreen extends StatefulWidget {
   final DateTime startDate;
 
-  const MealPlannerScreen({super.key, required this.startDate});
+  const WeekdayPlanScreen({super.key, required this.startDate});
 
   @override
-  State<MealPlannerScreen> createState() => _MealPlannerScreenState();
+  State<WeekdayPlanScreen> createState() => _WeekdayPlanScreenState();
 }
 
-class _MealPlannerScreenState extends State<MealPlannerScreen> {
+class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
   late List<DateTime> _weekDates;
-  late Map<String, int> buttonStates;
-  bool _showModal = false;
-  bool _dontShowAgain = false;
+  late Map<String, Map<String, int>> buttonStates = {};
 
   @override
   void initState() {
     super.initState();
     _initDates();
     _initButtonStates();
-    _checkModalPreference();
-  }
-
-  Future<void> _checkModalPreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    final showModal = prefs.getBool('weekday_selection_modal') ?? true;
-
-    if (showModal) {
-      // Delay to ensure the screen is built before showing modal
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (mounted) {
-          setState(() {
-            _showModal = true;
-          });
-        }
-      });
-    }
   }
 
   void _initDates() {
@@ -50,12 +35,15 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
   }
 
   void _initButtonStates() {
-    buttonStates = {};
-    for (int i = 0; i < 7; i++) {
-      final dateStr = DateFormat('yyyy-MM-dd').format(_weekDates[i]);
-      for (String meal in ['breakfast', 'lunch', 'dinner', 'snack']) {
-        buttonStates['$dateStr-$meal'] = 0;
-      }
+    // For each date, initialize meal buttons with default state.
+    for (var date in _weekDates) {
+      final dateKey = DateFormat('yyyy-MM-dd').format(date);
+      // Default state for all meals is "primary" (which is index 1)
+      buttonStates[dateKey] = {
+        "breakfast": ButtonState.primary.index,
+        "lunch": ButtonState.primary.index,
+        "dinner": ButtonState.primary.index,
+      };
     }
   }
 
@@ -63,45 +51,12 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
     return DateFormat('E, MMM d yyyy').format(date); // e.g. "Mon, Jan 15"
   }
 
-  void _handleTap(String key) {
-    setState(() {
-      // Toggle between normal and "disabled look"
-      if (buttonStates[key] == 0) {
-        buttonStates[key] = 1;
-      } else if (buttonStates[key] == 1) {
-        buttonStates[key] = 0;
-      } else if (buttonStates[key] == 2) {
-        buttonStates[key] = 0;
-      }
-    });
-  }
-
-  void _handleDoubleTap(String key) {
-    setState(() {
-      // Toggle between normal and "custom" (yellow)
-      if (buttonStates[key] == 2) {
-        buttonStates[key] = 0;
-      } else {
-        buttonStates[key] = 2;
-      }
-    });
-  }
-
-  Future<void> _handleModalClose() async {
-    setState(() {
-      _showModal = false;
-    });
-
-    if (_dontShowAgain) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('weekday_selection_modal', false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: LogoAppbar(showBackButton: false),
+      appBar: LogoAppbar(showBackButton: true),
       body: Stack(
         children: [
           SafeArea(
@@ -110,93 +65,65 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Plan your meals for the week',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    'Plane wann du kochen möchtest',
+                    style: theme.textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      LegendItem(
+                        color: theme.colorScheme.primary,
+                        label: 'geplant (0 Tap)',
+                      ),
+                      LegendItem(
+                        color: theme.colorScheme.secondary.withValues(
+                          alpha: 0.2,
+                        ),
+                        label: 'nicht geplant (1 Tap)',
+                      ),
+                      LegendItem(
+                        color: const Color.fromARGB(255, 255, 226, 146),
+                        label: 'plane später (2 Taps)',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: SpoonSparkTheme.spacingXL),
                   Expanded(
-                    child: ListView.separated(
+                    child: ListView.builder(
                       itemCount: 7,
-                      separatorBuilder: (context, index) => const Divider(),
+                      // separatorBuilder: (context, index) => const Divider(),
                       itemBuilder: (context, index) {
                         final date = _weekDates[index];
                         final dateStr = DateFormat('yyyy-MM-dd').format(date);
+                        final mealTypes = ["breakfast", "lunch", "dinner"];
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
+                                vertical: 6.0,
                               ),
                               child: Text(
                                 _formatDate(date),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
+                                style: theme.textTheme.labelLarge,
                               ),
                             ),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children:
-                                  [
-                                    'breakfast',
-                                    'lunch',
-                                    'dinner',
-                                    'snack',
-                                  ].map((meal) {
-                                    final key = '$dateStr-$meal';
-                                    final state = buttonStates[key] ?? 0;
-
-                                    return GestureDetector(
-                                      onTap: () => _handleTap(key),
-                                      onDoubleTap: () => _handleDoubleTap(key),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 8,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              state == 0
-                                                  ? Theme.of(
-                                                    context,
-                                                  ).primaryColor
-                                                  : state == 1
-                                                  ? Colors.grey[300]
-                                                  : Colors.yellow,
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          border: Border.all(
-                                            color:
-                                                state == 1
-                                                    ? Colors.grey[400]!
-                                                    : Colors.transparent,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          state == 2 ? 'custom' : meal,
-                                          style: TextStyle(
-                                            color:
-                                                state == 0
-                                                    ? Colors.white
-                                                    : state == 1
-                                                    ? Colors.grey[600]
-                                                    : Colors.black,
-                                            fontWeight:
-                                                state == 1
-                                                    ? FontWeight.normal
-                                                    : FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
+                            ActionButtonsRow(
+                              // Pass the date string so the callback can update the correct day
+                              dayKey: dateStr,
+                              // Callback receives the meal button index and the new state.
+                              onButtonStateChanged: (buttonIndex, newState) {
+                                setState(() {
+                                  // Use the mealTypes list to map index to meal type.
+                                  buttonStates[dateStr]![mealTypes[buttonIndex]] =
+                                      newState.index;
+                                });
+                              },
                             ),
+                            const SizedBox(height: 16),
                           ],
                         );
                       },
@@ -207,75 +134,31 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
             ),
           ),
 
-          // Modal Overlay
-          if (_showModal)
-            Container(
-              color: Colors.black.withValues(alpha: 0.5),
-              child: Center(
-                child: Card(
-                  margin: const EdgeInsets.all(24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'How to Use',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'Use this meal planner to organize your weekly meals:',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          '• A single tap on a meal will remove it from the plan (shows as greyed out)',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          '• A double tap lets you customize the meal after planning is finished (shows as yellow)',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _dontShowAgain,
-                              onChanged: (value) {
-                                setState(() {
-                                  _dontShowAgain = value ?? false;
-                                });
-                              },
-                            ),
-                            const Text("Don't show this again"),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Align(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            onPressed: _handleModalClose,
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(120, 44),
-                            ),
-                            child: const Text('OK'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+          Positioned(
+            bottom: 30,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: SizedBox(
+                width: 230,
+                child: PrimaryButton(
+                  text: "Speichern und Weiter",
+                  onPressed: () {
+                    // Print the buttonStates map
+                    print(buttonStates);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SwipeCardStackScreen(),
+                      ),
+                    );
+                  },
+                  icon: Icons.arrow_forward,
+                  iconAlignment: IconAlignment.end,
                 ),
               ),
             ),
+          ),
         ],
       ),
     );

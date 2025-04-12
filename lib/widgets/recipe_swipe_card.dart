@@ -48,11 +48,13 @@ class RecipeSwipeCard extends StatelessWidget {
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(SpoonSparkTheme.radiusM),
+        ),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
+            color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
             spreadRadius: 3,
             blurRadius: 7,
             offset: const Offset(0, 3),
@@ -74,19 +76,12 @@ class RecipeSwipeCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.all(SpoonSparkTheme.spacingXL),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  recipe.title,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 8),
+                Text(recipe.title, style: theme.textTheme.titleLarge),
+                const SizedBox(height: SpoonSparkTheme.spacingS),
                 Row(
                   children: [
                     Tag(
@@ -96,10 +91,9 @@ class RecipeSwipeCard extends StatelessWidget {
                           fontSize: SpoonSparkTheme.fontXS,
                         ),
                       ),
-                      onTap: () {},
                       backgroundColor: theme.colorScheme.tertiary,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: SpoonSparkTheme.spacingS),
                     Tag(
                       text: Text(
                         "Vegan".toLowerCase(),
@@ -107,7 +101,6 @@ class RecipeSwipeCard extends StatelessWidget {
                           fontSize: SpoonSparkTheme.fontXS,
                         ),
                       ),
-                      onTap: () {},
                       backgroundColor: theme.colorScheme.tertiary,
                     ),
                   ],

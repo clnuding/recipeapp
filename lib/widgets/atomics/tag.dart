@@ -4,15 +4,19 @@ import 'package:recipeapp/theme/theme.dart';
 class Tag extends StatelessWidget {
   final Text text;
   final IconData? icon;
+  final Color? iconColor;
+  final double iconSize;
   final Color? backgroundColor;
-  final VoidCallback? onTap;
+  final double? radius;
 
   const Tag({
     super.key,
     required this.text,
     this.icon,
     this.backgroundColor,
-    required void Function() onTap,
+    this.radius = SpoonSparkTheme.radiusL,
+    this.iconColor = SpoonSparkTheme.textOnPrimaryLight,
+    this.iconSize = SpoonSparkTheme.fontXS,
   });
 
   @override
@@ -27,16 +31,11 @@ class Tag extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: backgroundColor ?? defaultBackgroundColor,
-        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusL),
+        borderRadius: BorderRadius.circular(radius!),
       ),
       child: Row(
         children: [
-          if (icon != null)
-            Icon(
-              icon,
-              color: theme.colorScheme.onPrimary,
-              size: theme.textTheme.labelMedium?.fontSize,
-            ),
+          if (icon != null) Icon(icon, color: iconColor, size: iconSize),
           const SizedBox(width: SpoonSparkTheme.spacingXS),
           text,
         ],

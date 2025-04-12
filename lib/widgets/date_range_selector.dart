@@ -7,7 +7,7 @@ class DateRangeSelector extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onDropdownTap;
   final DateTime startDate;
-  final num duration = 6;
+  final int duration;
 
   const DateRangeSelector({
     super.key,
@@ -15,6 +15,7 @@ class DateRangeSelector extends StatelessWidget {
     required this.onNext,
     required this.onDropdownTap,
     required this.startDate,
+    this.duration = 6,
   });
 
   @override
@@ -24,8 +25,8 @@ class DateRangeSelector extends StatelessWidget {
     return Container(
       height: 30,
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
+        color: theme.colorScheme.surfaceBright,
+        borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusR),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -35,9 +36,17 @@ class DateRangeSelector extends StatelessWidget {
           GestureDetector(
             onTap: onDropdownTap,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4),
+              padding: EdgeInsets.symmetric(
+                horizontal: SpoonSparkTheme.spacingXS,
+              ),
               child: Row(
                 children: [
+                  Text(
+                    'Aktuell,  ',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.secondary,
+                    ),
+                  ),
                   Text(
                     DateFormat('E, dd.MM').format(startDate),
                     style: theme.textTheme.labelLarge?.copyWith(
@@ -48,19 +57,22 @@ class DateRangeSelector extends StatelessWidget {
                     padding: EdgeInsets.symmetric(
                       horizontal: SpoonSparkTheme.spacingS,
                     ),
-                    child: Text('–', style: TextStyle(fontSize: 10)),
+                    child: Text('–', style: theme.textTheme.labelMedium),
                   ),
 
                   Text(
                     DateFormat(
                       'E, dd.MM',
-                    ).format(startDate.add(const Duration(days: 6))),
+                    ).format(startDate.add(Duration(days: duration))),
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: theme.colorScheme.secondary,
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.keyboard_arrow_down, size: 18),
+                  const SizedBox(width: SpoonSparkTheme.spacingXS),
+                  const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: SpoonSparkTheme.fontXL,
+                  ),
                 ],
               ),
             ),
@@ -74,7 +86,7 @@ class DateRangeSelector extends StatelessWidget {
 
   Widget _iconButton(ThemeData theme, IconData icon, VoidCallback onTap) {
     return IconButton(
-      icon: Icon(icon, size: 20, color: theme.colorScheme.secondary),
+      icon: Icon(icon, color: theme.colorScheme.secondary),
       onPressed: onTap,
     );
   }
@@ -83,7 +95,7 @@ class DateRangeSelector extends StatelessWidget {
     return Container(
       height: 16,
       width: 1,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      margin: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingXS),
       color: theme.colorScheme.secondary.withValues(alpha: 0.2),
     );
   }

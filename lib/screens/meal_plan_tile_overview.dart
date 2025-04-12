@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/screens/weekday_plan.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/screens/weekday_plan.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';
@@ -86,7 +86,10 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SwipeCardStackScreen()),
+                MaterialPageRoute(
+                  builder:
+                      (context) => WeekdayPlanScreen(startDate: _startOfWeek),
+                ),
               );
             },
           ),
@@ -182,30 +185,6 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                     // ),
                   ),
                 ),
-      ),
-    );
-  }
-}
-
-class CenteredOverlayButton extends StatelessWidget {
-  const CenteredOverlayButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // This positions the button in the center of the screen
-    return Align(
-      alignment: Alignment.center,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => MealPlannerScreen(startDate: DateTime.now()),
-            ),
-          );
-        },
-        child: const Text('Start Meal Planning'),
       ),
     );
   }

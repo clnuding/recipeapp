@@ -13,6 +13,7 @@ class SpoonSparkTheme {
   // static const Color _primary = Color.fromARGB(255, 255, 168, 38);
   // static const Color _primary = Color.fromARGB(255, 0, 146, 98);
   static final Color _primaryDisabled = _primary.withValues(alpha: 0.6);
+  static const Color highlight = Color.fromARGB(255, 255, 240, 200);
 
   // Background colors
   static const Color _backgroundAccent = Color.fromARGB(255, 229, 222, 209);
@@ -22,7 +23,7 @@ class SpoonSparkTheme {
   // Text colors
   static const Color _primaryTextLight = Color.fromARGB(255, 28, 28, 28);
   static const Color _secondaryTextLight = Color.fromARGB(117, 117, 117, 117);
-  static const Color _textOnPrimaryLight = Color.fromARGB(255, 255, 255, 255);
+  static const Color textOnPrimaryLight = Color.fromARGB(255, 255, 255, 255);
   static const Color _foregroundMuted = Color.fromARGB(117, 117, 117, 117);
   static const Color _divider = Color.fromARGB(255, 224, 224, 244);
 
@@ -137,20 +138,20 @@ class SpoonSparkTheme {
       colorScheme: ColorScheme(
         brightness: Brightness.light,
         primary: _primary,
-        onPrimary: _textOnPrimaryLight,
+        onPrimary: textOnPrimaryLight,
         secondary: const Color.fromARGB(255, 28, 28, 28),
-        onSecondary: _textOnPrimaryLight,
+        onSecondary: textOnPrimaryLight,
         secondaryContainer: _backgroundAccent,
-        onSecondaryContainer: _textOnPrimaryLight,
+        onSecondaryContainer: textOnPrimaryLight,
         error: _error,
-        onError: _textOnPrimaryLight,
+        onError: textOnPrimaryLight,
         surface: _backgroundLight,
         onSurface: _primaryTextLight,
         surfaceBright: _backgroundMuted,
         onSurfaceVariant: _primaryTextLight,
         tertiary: _foregroundMuted,
         tertiaryFixed: _success,
-        onTertiaryFixed: _textOnPrimaryLight,
+        onTertiaryFixed: textOnPrimaryLight,
       ),
       textTheme: _buildTextTheme(isLight: true),
       scaffoldBackgroundColor: _backgroundLight,
@@ -193,7 +194,7 @@ class SpoonSparkTheme {
             borderRadius: BorderRadius.circular(radiusR),
           ),
           textStyle: bodySmall.copyWith(
-            color: _textOnPrimaryLight,
+            color: textOnPrimaryLight,
             fontWeight: fontWeightSemibold,
           ),
         ),
