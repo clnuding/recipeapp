@@ -1,5 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:recipeapp/theme/theme.dart';
+import 'package:recipeapp/widgets/ingredients_grid.dart';
+import 'package:recipeapp/widgets/atomics/appbar.dart';
+import 'package:recipeapp/widgets/atomics/tag.dart';
 
 class RecipeReviewPage extends StatelessWidget {
   const RecipeReviewPage({super.key});
@@ -9,70 +14,140 @@ class RecipeReviewPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     final String recipeName = "Homemade Pasta";
-    final String recipeType = "Main Course";
+    final String recipeType = "Hauptgang";
     final int portions = 4;
     final String imageUrl =
         "https://images.unsplash.com/photo-1512058564366-18510be2db19";
 
+    final List<String> tags = ['hausgemacht', 'italienisch', 'pasta'];
+
     final List<Map<String, String>> ingredients = [
-      {"name": "Flour", "amount": "500g"},
-      {"name": "Eggs", "amount": "3"},
-      {"name": "Salt", "amount": "1 tsp"},
-      {"name": "Olive Oil", "amount": "2 tbsp"},
+      {"name": "Mehl", "amount": "500g"},
+      {"name": "Eier", "amount": "3"},
+      {"name": "Salz", "amount": "1 TL"},
+      {"name": "Olivenöl", "amount": "2 EL"},
     ];
 
     return Scaffold(
+      appBar: const LogoAppbar(actions: []),
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: SpoonSparkTheme.spacingL,
-              ),
+              padding: const EdgeInsets.only(top: SpoonSparkTheme.spacingL),
               child: Center(
                 child: Text(
-                  "Step 3: Review Recipe",
+                  "Schritt 3: Rezept prüfen",
                   style: theme.textTheme.titleLarge,
                 ),
               ),
             ),
+            const SizedBox(height: SpoonSparkTheme.spacingM),
 
-            _buildRecipeHeader(
-              context,
-              imageUrl,
-              recipeName,
-              recipeType,
-              portions,
-            ),
-
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildReviewSection(
-                      context,
-                      title: "Ingredients",
-                      content: Column(
-                        children:
-                            ingredients
-                                .map(
-                                  (ingredient) => _buildReviewRow(
-                                    context,
-                                    ingredient["name"]!,
-                                    ingredient["amount"]!,
-                                  ),
-                                )
-                                .toList(),
+            // Image
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: SpoonSparkTheme.spacingL,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(SpoonSparkTheme.radiusXXL),
+                child: AspectRatio(
+                  aspectRatio: 1.9,
+                  child: Stack(
+                    children: [
+                      Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
 
+            const SizedBox(height: SpoonSparkTheme.spacingL),
+
+            // Tags
+            SizedBox(
+              height: SpoonSparkTheme.spacingXXL,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SpoonSparkTheme.spacingL,
+                ),
+                scrollDirection: Axis.horizontal,
+                itemCount: tags.length,
+                itemBuilder: (context, index) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      SpoonSparkTheme.radiusS,
+                    ),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(
+                            SpoonSparkTheme.radiusXXL,
+                          ),
+                        ),
+                        margin: const EdgeInsets.only(
+                          right: SpoonSparkTheme.spacingS,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: SpoonSparkTheme.spacingM,
+                          vertical: SpoonSparkTheme.spacingXS,
+                        ),
+                        child: Text(
+                          tags[index],
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: SpoonSparkTheme.spacingL),
+
+            // Ingredients
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: SpoonSparkTheme.spacingL,
+              ),
+              child: IngredientsGrid(
+                initialServings: portions,
+                ingredients:
+                    ingredients
+                        .map(
+                          (e) => {
+                            'name': e['name']!,
+                            'measurement':
+                                double.tryParse(
+                                  e['amount']!.replaceAll(
+                                    RegExp(r'[^\d.]'),
+                                    '',
+                                  ),
+                                ) ??
+                                0,
+                            'measurementName': e['amount']!.replaceAll(
+                              RegExp(r'[\d\s]'),
+                              '',
+                            ),
+                            'group': 'misc',
+                          },
+                        )
+                        .toList(),
+              ),
+            ),
+
+            const SizedBox(height: SpoonSparkTheme.spacingL),
+
+            // Progress bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
@@ -83,7 +158,26 @@ class RecipeReviewPage extends StatelessWidget {
                     () => Navigator.pop(context),
                   ),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildProgressBar(context, 3)),
+                  Expanded(
+                    child: Container(
+                      height: 6,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: theme.colorScheme.surfaceBright,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: LinearProgressIndicator(
+                          value: 1.0,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            theme.colorScheme.primary,
+                          ),
+                          backgroundColor: theme.colorScheme.surface
+                              .withOpacity(0.3),
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   _buildSquareIconButton(
                     context,
@@ -99,124 +193,6 @@ class RecipeReviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRecipeHeader(
-    BuildContext context,
-    String imageUrl,
-    String name,
-    String type,
-    int portions,
-  ) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(7),
-            child: Image.network(
-              imageUrl,
-              height: 120,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildReviewRow(context, "Name:", name),
-          _buildReviewRow(context, "Type:", type),
-          _buildReviewRow(context, "Portions:", "$portions"),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReviewSection(
-    BuildContext context, {
-    required String title,
-    required Widget content,
-  }) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          content,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReviewRow(BuildContext context, String label, String value) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-          Text(value, style: theme.textTheme.bodyMedium),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressCircle(BuildContext context, bool isActive) {
-    final theme = Theme.of(context);
-    return Container(
-      width: 16,
-      height: 16,
-      decoration: BoxDecoration(
-        color: isActive ? theme.colorScheme.primary : Colors.transparent,
-        border: Border.all(color: theme.colorScheme.primary, width: 2),
-        borderRadius: BorderRadius.circular(7),
-      ),
-    );
-  }
-
-  Widget _buildProgressLine(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(width: 20, height: 3, color: theme.colorScheme.primary);
-  }
-
-  Widget _buildProgressBar(BuildContext context, int activeStep) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildProgressCircle(context, activeStep >= 1),
-          _buildProgressLine(context),
-          _buildProgressCircle(context, activeStep >= 2),
-          _buildProgressLine(context),
-          _buildProgressCircle(context, activeStep >= 3),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSquareIconButton(
     BuildContext context,
     IconData icon,
@@ -227,11 +203,11 @@ class RecipeReviewPage extends StatelessWidget {
       height: 50,
       width: 50,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(7),
       ),
       child: IconButton(
-        icon: Icon(icon, color: theme.colorScheme.primary, size: 24),
+        icon: Icon(icon, color: theme.colorScheme.onSurface),
         onPressed: onPressed,
       ),
     );

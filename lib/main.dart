@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         '/signIn': (context) => const SignInScreen(),
         '/signUp': (context) => const SignUpScreen(),
         '/main': (context) => const MainScreen(),
-        '/create_recipe': (context) => const create_recipe.RecipeCreateScreen(),
+        '/create_recipe': (context) => const add_recipe.AddRecipePage(),
         '/addIngredient':
             (context) =>
                 add_ingredient.AddIngredientPage(recipeId: 'dummy_recipe_id'),
