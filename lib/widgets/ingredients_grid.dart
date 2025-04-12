@@ -59,7 +59,7 @@ class _IngredientsGridState extends State<IngredientsGrid> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Ingredients',
+                'Zutaten',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Row(
