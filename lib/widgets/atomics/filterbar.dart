@@ -27,7 +27,10 @@ class FilterBar extends StatelessWidget {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
-          suffixIcon: Icon(MingCute.settings_6_line),
+          suffixIcon: IconButton(
+            icon: Icon(MingCute.settings_6_line),
+            onPressed: () {},
+          ),
           suffixIconColor: theme.colorScheme.primary,
           hintText: 'Search...',
         ),

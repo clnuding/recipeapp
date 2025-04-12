@@ -5,6 +5,7 @@ class PrimaryButton extends StatelessWidget {
   final String text;
   final Color? color;
   final IconData? icon;
+  final IconAlignment? iconAlignment;
   final void Function()? onPressed;
 
   const PrimaryButton({
@@ -13,6 +14,7 @@ class PrimaryButton extends StatelessWidget {
     this.icon,
     this.color,
     this.onPressed,
+    this.iconAlignment = IconAlignment.start,
   });
 
   @override
@@ -22,6 +24,7 @@ class PrimaryButton extends StatelessWidget {
 
     if (icon != null) {
       return ElevatedButton.icon(
+        iconAlignment: iconAlignment,
         icon: Icon(icon, color: defaultColor),
         onPressed: onPressed,
         label: Text(

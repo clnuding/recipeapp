@@ -95,8 +95,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                 right: 8,
                                 child: Tag(
                                   icon: Icons.access_time,
-                                  text: '${recipe.cookingTime} min',
-                                  onTap: () {},
+                                  text: Text(
+                                    '${recipe.cookingTime} min',
+                                    style: theme.textTheme.labelMedium
+                                        ?.copyWith(
+                                          color: theme.colorScheme.onPrimary,
+                                          fontWeight:
+                                              SpoonSparkTheme
+                                                  .fontWeightSemibold,
+                                        ),
+                                  ),
                                 ),
                               ),
                           ],
