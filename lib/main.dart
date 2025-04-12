@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipeapp/screens/main_screen.dart';
-import 'package:recipeapp/screens/recipe_create_screen.dart' as create_recipe;
 import 'package:recipeapp/screens/add_ingredient.dart' as add_ingredient;
+import 'package:recipeapp/screens/add_recipe.dart' as add_recipe;
 import 'package:recipeapp/screens/review_recipe.dart' as review_recipe;
 import 'package:recipeapp/screens/signin.dart';
 import 'package:recipeapp/screens/signup.dart';
