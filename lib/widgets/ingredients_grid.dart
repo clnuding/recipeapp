@@ -70,11 +70,41 @@ class _IngredientsGridState extends State<IngredientsGrid> {
                     children: [
                       const SizedBox(height: 12),
 
-                      // Zutaten + Portionen Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text('Portionen: 4', style: TextStyle(fontSize: 16)),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Portionen:',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   borderRadius: BorderRadius.circular(8),
+                            //   boxShadow: const [
+                            //     BoxShadow(
+                            //       color: Color.fromARGB(255, 234, 234, 234),
+                            //       blurRadius: 4,
+                            //       spreadRadius: 1,
+                            //     ),
+                            //   ],
+                            // ),
+                            child: Text(
+                              '$_servings',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ],
                       ),
 

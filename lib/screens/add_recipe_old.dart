@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'dart:io';
+import 'package:provider/provider.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/api/pb_client.dart';
+import 'package:recipeapp/state/recipe_wizard_state.dart';
 
 class AddRecipePage extends StatefulWidget {
   const AddRecipePage({super.key});
@@ -19,16 +19,11 @@ class AddRecipePage extends StatefulWidget {
 class _AddRecipePageState extends State<AddRecipePage> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-
-  File? _image;
+  final _hourController = TextEditingController(text: '00');
+  final _minuteController = TextEditingController(text: '30');
 
   int _portions = 2;
-  final TextEditingController _hourController = TextEditingController(
-    text: '00',
-  );
-  final TextEditingController _minuteController = TextEditingController(
-    text: '30',
-  );
+  File? _image;
 
   String? _selectedRecipeType;
   String? _selectedRecipeCategory;
@@ -44,6 +39,15 @@ class _AddRecipePageState extends State<AddRecipePage> {
   void initState() {
     super.initState();
     _loadTags();
+    final state = context.read<RecipeWizardState>();
+    _nameController.text = state.name ?? '';
+    _descriptionController.text = state.description ?? '';
+    _portions = state.servings;
+    _hourController.text = (state.prepMinutes ~/ 60).toString().padLeft(2, '0');
+    _minuteController.text = (state.prepMinutes % 60).toString().padLeft(
+      2,
+      '0',
+    );
   }
 
   Future<void> _loadTags() async {
@@ -105,16 +109,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
   }
 
   Future<void> _submitRecipe() async {
-    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
-
-    // ✅ If recipe already exists, skip re-creating it
-    if (wizard.recipeId != null) {
-      Navigator.pushNamed(context, '/addIngredient');
-      return;
-    }
+    final state = context.read<RecipeWizardState>();
 
     final name = _nameController.text.trim();
-    final instructions = _descriptionController.text.trim();
+    final description = _descriptionController.text.trim();
     final servings = _portions;
     final prepMinutes =
         (int.tryParse(_hourController.text) ?? 0) * 60 +
@@ -142,54 +140,42 @@ class _AddRecipePageState extends State<AddRecipePage> {
               .id,
         ].where((id) => id.isNotEmpty).toList();
 
-    // ✅ Save the current state to the wizard (even before backend call)
-    wizard.setRecipeInfo(
-      title: name,
-      description: instructions,
-      image: _image,
+    state.updateRecipeData(
+      name: name,
+      description: description,
       servings: servings,
-      prepTimeMinutes: prepMinutes,
+      prepMinutes: prepMinutes,
       tagIds: tagIds,
+      imageFile: _image,
     );
 
-    // ✅ Prepare backend fields
-    final userId = pb.authStore.model?.id;
-    final householdId = pb.authStore.model?.getStringValue('household_id');
+    if (state.recipeId == null) {
+      final userId = pb.authStore.model?.id;
+      final householdId = pb.authStore.model?.getStringValue('household_id');
 
-    try {
-      final recipeRecord = await pb
+      final newRecipe = await pb
           .collection('recipes')
           .create(
             body: {
               'name': name,
-              'instructions': instructions,
+              'instructions': description,
               'servings': servings,
               'prep_time_minutes': prepMinutes,
               'tag_id': tagIds,
               'user_id': userId,
               'household_id': householdId,
             },
-            // // ✅ (Optional) Handle image upload
-            // files:
-            //     _image != null
-            //         ? [
-            //           MultipartFile.fromFileSync(
-            //             _image!.path,
-            //             filename: 'thumbnail.jpg',
-            //           ),
-            //         ]
-            //         : null,
           );
 
-      // ✅ Save the new recipe ID to wizard state
-      wizard.setRecipeId(recipeRecord.id);
+      state.recipeId = newRecipe.id;
+    }
 
-      if (mounted) {
-        Navigator.pushNamed(context, '/addIngredient');
-      }
-    } catch (e) {
-      print('❌ Failed to create recipe: $e');
-      // You could show a toast/snackbar here
+    if (mounted) {
+      Navigator.pushNamed(
+        context,
+        '/addIngredient',
+        arguments: {'recipeId': state.recipeId},
+      );
     }
   }
 

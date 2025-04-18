@@ -6,10 +6,13 @@ import 'package:recipeapp/widgets/atomics/logo.dart';
 class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> actions;
   final bool showBackButton;
+  final Widget? leading;
+
   const LogoAppbar({
     super.key,
     this.actions = const [],
     this.showBackButton = true,
+    this.leading,
   });
 
   @override
@@ -18,14 +21,13 @@ class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       leading:
-          !showBackButton
-              ? null
-              : IconButton(
+          leading ??
+          (showBackButton
+              ? IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+                onPressed: () => Navigator.pop(context),
+              )
+              : null),
       actions: [TightActionRow(actions: actions)],
       centerTitle: true,
       title: Row(

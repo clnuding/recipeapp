@@ -1,218 +1,206 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
-//import 'package:recipeapp/widgets/atomics/tag.dart';
 import 'package:recipeapp/widgets/atomics/primary_btn.dart';
+import 'package:recipeapp/api/pb_client.dart';
+import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/models/recipeingredients.dart';
+import 'package:recipeapp/models/ingredient.dart';
+import 'package:recipeapp/models/measurements.dart';
+import 'package:recipeapp/api/recipes.dart';
+import 'package:recipeapp/api/recipeingredients.dart';
+import 'package:recipeapp/api/ingredients.dart';
+import 'package:recipeapp/api/measurements.dart';
 
-class RecipeReviewPage extends StatelessWidget {
+class RecipeReviewPage extends StatefulWidget {
   const RecipeReviewPage({super.key});
+
+  @override
+  State<RecipeReviewPage> createState() => _RecipeReviewPageState();
+}
+
+class _RecipeReviewPageState extends State<RecipeReviewPage> {
+  Recipe? _recipe;
+  List<Recipeingredients> _ingredients = [];
+  List<Ingredient> _allIngredients = [];
+  List<Measurements> _allMeasurements = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecipeData();
+  }
+
+  Future<void> _loadRecipeData() async {
+    print('📦 Loading recipe from wizard state...');
+    try {
+      final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+      final recipe = Recipe(
+        id: wizard.recipeId!,
+        title: wizard.title ?? 'Unbenannt',
+        description: wizard.description,
+        servings: wizard.servings,
+        thumbnailUrl: wizard.image?.path,
+        creatorId: pb.authStore.model?.id ?? '',
+        householdId: pb.authStore.model?.getStringValue('household_id'),
+        tagId: wizard.tagIds,
+        prepTime: wizard.prepTimeMinutes,
+        nutritionAutoCalculated: false,
+      );
+
+      // ✅ Fetch details for names
+      final allIngredients = await fetchIngredients();
+      final allMeasurements = await fetchMeasurements();
+      _allIngredients = allIngredients;
+      _allMeasurements = allMeasurements;
+
+      final enrichedIngredients =
+          wizard.ingredients.map((entry) {
+            final name =
+                allIngredients
+                    .firstWhere(
+                      (ing) => ing.id == entry.ingredientId,
+                      orElse: () => Ingredient(id: '', name: 'Unbekannt'),
+                    )
+                    .name;
+
+            final unit =
+                allMeasurements
+                    .firstWhere(
+                      (m) => m.id == entry.measurementId,
+                      orElse:
+                          () =>
+                              Measurements(id: '', name: '?', abbreviation: ''),
+                    )
+                    .name;
+
+            return Recipeingredients(
+              id: entry.id,
+              userId: entry.userId,
+              householdId: entry.householdId,
+              recipeId: entry.recipeId,
+              ingredientId: name, // 🔁 Replace ID with name for display
+              measurementId: unit, // 🔁 Replace ID with name for display
+              quantity: entry.quantity,
+            );
+          }).toList();
+
+      setState(() {
+        _recipe = recipe;
+        _ingredients = enrichedIngredients;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('❌ Failed to load data from wizard: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final wizard = Provider.of<RecipeWizardState>(
+      context,
+    ); // Access wizard state
 
-    final String imageUrl =
-        "https://images.unsplash.com/photo-1512058564366-18510be2db19";
-
-    final List<String> tags = ['Hauptgericht', 'Salate', 'Ganzjährig'];
-    final int portions = 4;
-
-    final List<Map<String, String>> ingredients = [
-      {"name": "Mehl", "amount": "500g"},
-      {"name": "Eier", "amount": "3"},
-      {"name": "Salz", "amount": "1 TL"},
-      {"name": "Olivenöl", "amount": "2 EL"},
-    ];
-
-    return Scaffold(
-      appBar: const LogoAppbar(actions: []),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 45),
-        child: PrimaryButton(
-          text: "Rezept erstellen",
-          onPressed: () {
-            // Your final submit action
-            Navigator.pushNamed(context, '/main');
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(context, '/addIngredient');
+        return false;
+      },
+      child: Scaffold(
+        appBar: LogoAppbar(
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/addIngredient');
+            },
+          ),
+          actions: [],
         ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 100),
-          child: Column(
-            children: [
-              const SizedBox(height: SpoonSparkTheme.spacingL),
-
-              // 🔄 Stepper progress bar
-              _buildStepper(theme),
-              const SizedBox(height: SpoonSparkTheme.spacingL),
-
-              // 🖼️ Image
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: SpoonSparkTheme.spacingL,
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                    SpoonSparkTheme.radiusXXL,
-                  ),
-                  child: AspectRatio(
-                    aspectRatio: 1.9,
-                    child: Stack(
+        body:
+            _isLoading || _recipe == null
+                ? const Center(child: CircularProgressIndicator())
+                : SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Background image
-                        Positioned.fill(
-                          child: Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
+                        const SizedBox(height: SpoonSparkTheme.spacingL),
+                        _buildStepper(theme),
+                        const SizedBox(height: SpoonSparkTheme.spacingL),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: SpoonSparkTheme.spacingL,
                           ),
-                        ),
-
-                        // Title banner (bottom-left)
-                        Positioned(
-                          bottom: 16,
-                          left: 16,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              SpoonSparkTheme.radiusXXL,
                             ),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(
-                                255,
-                                252,
-                                251,
-                                251,
-                              ).withOpacity(0.8),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              "Bulgur Buddha Bowl", // 👈 Replace with dynamic title if needed
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleSmall?.copyWith(
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                              ),
+                            child: AspectRatio(
+                              aspectRatio: 1.9,
+                              child:
+                                  wizard.image != null
+                                      ? Image.file(
+                                        wizard.image!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      )
+                                      : Container(
+                                        color: theme.colorScheme.surfaceBright,
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.image,
+                                            size: 48,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ),
                             ),
                           ),
                         ),
-
-                        // Duration badge (top-right)
-                        Positioned(
-                          top: 16,
-                          right: 16,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
+                        const SizedBox(height: SpoonSparkTheme.spacingM),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: SpoonSparkTheme.spacingL,
+                          ),
+                          child: Text(
+                            _recipe!.title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
                             ),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(
-                                255,
-                                255,
-                                255,
-                                255,
-                              ).withOpacity(0.8),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              "30 Min.",
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleSmall?.copyWith(
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                              ),
-                            ),
+                          ),
+                        ),
+                        const SizedBox(height: SpoonSparkTheme.spacingL),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: SpoonSparkTheme.spacingL,
+                          ),
+                          child: IngredientsGrid(
+                            initialServings: _recipe!.servings ?? 1,
+                            ingredients:
+                                _ingredients
+                                    .map(
+                                      (e) => {
+                                        'name': e.ingredientId,
+                                        'measurement': e.quantity,
+                                        'measurementName': e.measurementId,
+                                        'group': 'misc',
+                                      },
+                                    )
+                                    .toList(),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: SpoonSparkTheme.spacingL),
-
-              // 🏷️ Tags
-              SizedBox(
-                height: SpoonSparkTheme.spacingXXL,
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: SpoonSparkTheme.spacingL,
-                  ),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: tags.length,
-                  itemBuilder: (context, index) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                        SpoonSparkTheme.radiusS,
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceBright,
-                            borderRadius: BorderRadius.circular(
-                              SpoonSparkTheme.radiusXXL,
-                            ),
-                          ),
-                          margin: const EdgeInsets.only(
-                            right: SpoonSparkTheme.spacingS,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: SpoonSparkTheme.spacingM,
-                            vertical: SpoonSparkTheme.spacingXS,
-                          ),
-                          child: Text(
-                            tags[index],
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: SpoonSparkTheme.spacingL),
-
-              // 🧾 Ingredients
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: SpoonSparkTheme.spacingL,
-                ),
-                child: IngredientsGrid(
-                  initialServings: portions,
-                  ingredients:
-                      ingredients
-                          .map(
-                            (e) => {
-                              'name': e['name']!,
-                              'measurement':
-                                  double.tryParse(
-                                    e['amount']!.replaceAll(
-                                      RegExp(r'[^\d.]'),
-                                      '',
-                                    ),
-                                  ) ??
-                                  0,
-                              'measurementName': e['amount']!.replaceAll(
-                                RegExp(r'[\d\s]'),
-                                '',
-                              ),
-                              'group': 'misc',
-                            },
-                          )
-                          .toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -225,15 +213,12 @@ class RecipeReviewPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingL),
       child: Column(
         children: [
-          // Container für Progress Bar
           Row(
             children: List.generate(3, (index) {
               final isActive = index == activeIndex;
               final isCompleted = index < activeIndex;
               final Color barColor =
-                  isActive
-                      ? theme.colorScheme.primary
-                      : isCompleted
+                  isActive || isCompleted
                       ? theme.colorScheme.primary
                       : theme.colorScheme.surfaceBright;
 
@@ -248,12 +233,10 @@ class RecipeReviewPage extends StatelessWidget {
                 );
               }
 
-              // Jedes Segment
               return Expanded(
                 child: Column(
                   children: [
                     Padding(
-                      // Abstandsbreite zwischen den Segmenten
                       padding: EdgeInsets.only(right: index < 2 ? 6 : 0),
                       child: Container(
                         height: 8,
@@ -264,7 +247,6 @@ class RecipeReviewPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // Label mit optionalem Häkchen
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
@@ -272,13 +254,9 @@ class RecipeReviewPage extends StatelessWidget {
                         Text(
                           stepLabels[index],
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color:
-                                isActive
-                                    ? theme.colorScheme.onSurface
-                                    : theme.colorScheme.onSurface,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
-                        // Häkchen für abgeschlossene Schritte
                         if (isCompleted)
                           Padding(
                             padding: const EdgeInsets.only(left: 4),
