@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/legend_item.dart';
@@ -59,29 +60,6 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
 
   String _formatDate(DateTime date) {
     return DateFormat('E, MMM d yyyy').format(date); // e.g. "Mon, Jan 15"
-  }
-
-  Future<void> _saveMealPlanSelections() async {
-    print(buttonStates.entries);
-    // // Save each meal selection for the current user in the database.
-    // for (var entry in buttonStates.entries) {
-    //   final dateStr = entry.key;
-    //   final meals = entry.value; // { "breakfast": state, ... }
-    //   meals.forEach((mealType, stateIndex) async {
-    //     // A state of 0 or 1 could be interpreted as "selected"/"not selected",
-    //     // or you can use an enum conversion. Here assume:
-    //     // primary (index 0) means planned, secondary (index 1) means not planned,
-    //     // tertiary (index 2) means plan later.
-    //     // In our DB, we'll save a Boolean flag that is true for a planned meal.
-    //     final bool planned = stateIndex == ButtonState.primary.index;
-    //     mpService.insertMealPlanSelection(
-    //       widget.userId,
-    //       dateStr,
-    //       mealType,
-    //       planned,
-    //     );
-    //   });
-    // }
   }
 
   @override
@@ -182,7 +160,7 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
                           child: PrimaryButton(
                             text: 'Weiter',
                             onPressed: () {
-                              _saveMealPlanSelections();
+                              mpService.insertMealDaySelection(buttonStates);
                               // Navigate to the date selection screen
                               Navigator.push(
                                 context,
