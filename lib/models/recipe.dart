@@ -1,12 +1,12 @@
-import 'package:pocketbase/pocketbase.dart';
-import 'package:recipeapp/api/pb_client.dart';
+// User model
+import 'package:recipeapp/models/tags.dart';
 
 class Recipe {
   final String id;
   final String title;
   final String creatorId;
   final String? householdId;
-  final List? tagId;
+  final List tags;
   final String? description;
   final String? thumbnail; // ✅ Raw filename from PB
   final String? thumbnailUrl; // ✅ Full URL to image
@@ -21,7 +21,7 @@ class Recipe {
     required this.title,
     required this.creatorId,
     this.householdId,
-    this.tagId,
+    this.tags = const [],
     this.description,
     this.thumbnail,
     this.thumbnailUrl,
@@ -41,20 +41,23 @@ class Recipe {
             : null;
 
     return Recipe(
-      id: record.id,
-      title: record.getStringValue('name'),
-      creatorId: record.getStringValue('user_id'),
-      householdId: record.getStringValue('household_id'),
-      tagId: record.data['tag_id'] as List?,
-      description: record.getStringValue('instructions'),
-      thumbnail: thumbnailField, // ✅ Save raw filename
-      thumbnailUrl: thumbnailUrl, // ✅ Save URL
-      sourceUrl: record.getStringValue('source_url'),
-      prepTime: record.getIntValue('prep_time_minutes'),
-      cookingTime: record.getIntValue('cook_time_minutes'),
-      servings: record.getIntValue('servings'),
-      nutritionAutoCalculated:
-          record.getBoolValue('nutrition_auto_calculated') ?? false,
+      id: json['id'],
+      title: json['name'],
+      creatorId: json['user_id'],
+      householdId: json['household_id'],
+      tags:
+          json['expand']["tag_id"] == null
+              ? []
+              : json['expand']["tag_id"]
+                  .map((tag) => Tags.fromJson(tag))
+                  .toList(),
+      description: json['description'],
+      thumbnailUrl: json['thumbnail_url'],
+      sourceUrl: json['source_url'],
+      prepTime: json['prep_time_minutes'],
+      cookingTime: json['cook_time_minutes'],
+      servings: json['servings'],
+      nutritionAutoCalculated: json['nutrition_auto_calculated'] ?? false,
     );
   }
 
@@ -64,8 +67,9 @@ class Recipe {
       'name': title,
       'creator_id': creatorId,
       'household_id': householdId,
-      'tag_id': tagId,
-      'instructions': description,
+      'tag_id': tags,
+      'description': description,
+      'thumbnail_url': thumbnailUrl,
       'source_url': sourceUrl,
       'prep_time_minutes': prepTime,
       'cook_time_minutes': cookingTime,

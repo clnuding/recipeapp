@@ -46,8 +46,15 @@ Future<RecordModel> updateRecipe(Recipe recipe, {File? imageFile}) async {
 }
 
 Future<List<Recipe>> fetchRecipes() async {
-  final records = await pb.collection('recipes').getFullList();
-  return records.map((r) => Recipe.fromRecord(r)).toList();
+  List<RecordModel> records = await pb
+      .collection('recipes')
+      .getFullList(expand: "tag_id");
+
+  print(records[0].toJson());
+  List<Recipe> recipes =
+      records.map((record) => Recipe.fromJson(record.toJson())).toList();
+
+  return recipes;
 }
 
 Future<Recipe> fetchRecipeById(String id) async {

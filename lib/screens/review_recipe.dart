@@ -122,6 +122,21 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
   Future<void> _loadRecipeData() async {
     try {
       final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+      final recipe = Recipe(
+        id: "12345", //wizard.recipeId!,
+        title: wizard.title ?? 'Unbenannt',
+        description: wizard.description,
+        servings: wizard.servings,
+        thumbnailUrl: wizard.image?.path,
+        creatorId: pb.authStore.model?.id ?? '',
+        householdId: pb.authStore.model?.getStringValue('household_id'),
+        // tags: "12345",//wizard.tagIds,
+        prepTime: wizard.prepTimeMinutes,
+        nutritionAutoCalculated: false,
+      );
+
+      // ✅ Fetch details for names
       final allIngredients = await fetchIngredients();
       final allMeasurements = await fetchMeasurements();
       final allTags = await fetchTags();

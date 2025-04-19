@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:recipeapp/api/pb_client.dart';
+import 'package:recipeapp/api/recipes.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/screens/main_screen.dart';
 import 'package:recipeapp/theme/theme.dart';
@@ -26,12 +28,15 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
   Set<Recipe> chosenRecipes = {};
   Set<Recipe> rejectedRecipes = {};
 
-  final cards = recipes.map(RecipeSwipeCard.new).toList();
+  late final List<RecipeSwipeCard> cards;
   late bool cardsEmpty;
+  bool _isLoading = true;
+  String _error = '';
 
   @override
   void initState() {
     super.initState();
+    _loadRecipeCards();
     cardsEmpty = false;
   }
 
@@ -39,6 +44,30 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadRecipeCards() async {
+    if (!pb.authStore.isValid) {
+      setState(() {
+        _error = 'User not authenticated.';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final recipes = await fetchRecipes();
+      print(recipes[0].toJson());
+      setState(() {
+        cards = recipes.map(RecipeSwipeCard.new).toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   // // Save recipe selections for the current user.
@@ -70,6 +99,18 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error.isNotEmpty) {
+      return Center(child: Text("Error: $_error"));
+    }
+
+    if (cards.isEmpty) {
+      return Center(child: Text("No recipes found."));
+    }
 
     return Scaffold(
       appBar: LogoAppbar(showBackButton: true),
