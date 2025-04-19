@@ -27,7 +27,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     recipe = _fetchRecipeById();
   }
 
-  // Async function to fetch manga details
   Future<Recipe> _fetchRecipeById() async {
     final recipe = await fetchRecipeById(widget.recipeId);
     return recipe;
@@ -50,7 +49,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Text('Error: \${snapshot.error}');
           } else if (!snapshot.hasData) {
             return Center(
               child: Text(
@@ -63,14 +62,19 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
           return SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: SpoonSparkTheme.spacingXXL),
+              padding: const EdgeInsets.only(bottom: 100),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: SpoonSparkTheme.spacingL),
+
+                  // 🔄 Stepper progress bar
+                  //_buildStepper(theme),
+                  //const SizedBox(height: SpoonSparkTheme.spacingL),
+
+                  // 🖼️ Image
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: SpoonSparkTheme.spacingL,
-                      vertical: SpoonSparkTheme.spacingXS,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(
@@ -80,33 +84,67 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         aspectRatio: 1.9,
                         child: Stack(
                           children: [
-                            // Original Image
-                            Image.network(
-                              recipe.thumbnailUrl ?? "",
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
+                            // Background image
+                            Positioned.fill(
+                              child: Image.network(
+                                recipe.thumbnailUrl ?? '',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
                             ),
-
-                            // Cooking Time Tag (Only shown if time is not null)
-                            if (recipe.cookingTime != null)
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: Tag(
-                                  icon: Icons.access_time,
-                                  text: Text(
-                                    '${recipe.cookingTime} min',
-                                    style: theme.textTheme.labelMedium
-                                        ?.copyWith(
-                                          color: theme.colorScheme.onPrimary,
-                                          fontWeight:
-                                              SpoonSparkTheme
-                                                  .fontWeightSemibold,
-                                        ),
+                            // Title banner (bottom-left)
+                            Positioned(
+                              bottom: 16,
+                              left: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    252,
+                                    251,
+                                    251,
+                                  ).withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  recipe.title,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
                                   ),
                                 ),
                               ),
+                            ),
+                            // Duration badge (top-right)
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    255,
+                                    255,
+                                    255,
+                                  ).withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${recipe.cookingTime ?? "-"} Min.',
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -114,7 +152,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   ),
                   const SizedBox(height: SpoonSparkTheme.spacingL),
 
-                  // Horizontally Scrollable Genres Section
+                  // 🏷️ Tags
                   SizedBox(
                     height: SpoonSparkTheme.spacingXXL,
                     child: ListView.builder(
@@ -129,15 +167,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                             SpoonSparkTheme.radiusS,
                           ),
                           child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: 10,
-                              sigmaY: 10,
-                            ), // Glass effect
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.onPrimary.withValues(
-                                  alpha: 0.8,
-                                ), // Light transparent white
+                                color: theme.colorScheme.surfaceBright,
                                 borderRadius: BorderRadius.circular(
                                   SpoonSparkTheme.radiusXXL,
                                 ),
@@ -150,7 +183,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                 vertical: SpoonSparkTheme.spacingXS,
                               ),
                               child: Text(
-                                tags.isNotEmpty ? tags[index] : "N/A",
+                                tags[index],
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: theme.colorScheme.onSurface,
                                 ),
@@ -161,48 +194,54 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(height: SpoonSparkTheme.spacingL),
 
-                  const SizedBox(height: SpoonSparkTheme.spacingXXL),
-                  IngredientsGrid(
-                    initialServings: 2,
-                    ingredients: [
-                      {
-                        'name': 'Tomato',
-                        'measurement': 2.0,
-                        'measurementName': 'pcs',
-                        'group': 'vegetables',
-                      },
-                      {
-                        'name': 'Chicken Breast',
-                        'measurement': 150.0,
-                        'measurementName': 'g',
-                        'group': 'meat',
-                      },
-                      {
-                        'name': 'Cheese',
-                        'measurement': 50.0,
-                        'measurementName': 'g',
-                        'group': 'dairy',
-                      },
-                      {
-                        'name': 'Tomato',
-                        'measurement': 2.0,
-                        'measurementName': 'pcs',
-                        'group': 'vegetables',
-                      },
-                      {
-                        'name': 'Chicken Breast',
-                        'measurement': 150.0,
-                        'measurementName': 'g',
-                        'group': 'meat',
-                      },
-                      {
-                        'name': 'Brauner Champignon',
-                        'measurement': 50.0,
-                        'measurementName': 'g',
-                        'group': 'dairy',
-                      },
-                    ],
+                  // 🧾 Ingredients
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SpoonSparkTheme.spacingL,
+                    ),
+                    child: IngredientsGrid(
+                      initialServings: 2,
+                      ingredients: [
+                        {
+                          'name': 'Tomato',
+                          'measurement': 2.0,
+                          'measurementName': 'pcs',
+                          'group': 'vegetables',
+                        },
+                        {
+                          'name': 'Chicken Breast',
+                          'measurement': 150.0,
+                          'measurementName': 'g',
+                          'group': 'meat',
+                        },
+                        {
+                          'name': 'Cheese',
+                          'measurement': 50.0,
+                          'measurementName': 'g',
+                          'group': 'dairy',
+                        },
+                        {
+                          'name': 'Tomato',
+                          'measurement': 2.0,
+                          'measurementName': 'pcs',
+                          'group': 'vegetables',
+                        },
+                        {
+                          'name': 'Chicken Breast',
+                          'measurement': 150.0,
+                          'measurementName': 'g',
+                          'group': 'meat',
+                        },
+                        {
+                          'name': 'Brauner Champignon',
+                          'measurement': 50.0,
+                          'measurementName': 'g',
+                          'group': 'dairy',
+                        },
+                      ],
+                    ),
                   ),
                 ],
               ),

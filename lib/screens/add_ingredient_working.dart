@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/api/ingredients.dart';
@@ -12,7 +10,8 @@ import 'package:recipeapp/models/recipeingredients.dart';
 import 'package:recipeapp/api/pb_client.dart';
 
 class AddIngredientPage extends StatefulWidget {
-  const AddIngredientPage({super.key});
+  final String recipeId;
+  const AddIngredientPage({super.key, required this.recipeId});
 
   @override
   State<AddIngredientPage> createState() => _AddIngredientPageState();
@@ -32,19 +31,6 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     super.initState();
     _loadIngredients();
     _ingredientSearchController.addListener(_filterIngredientList);
-
-    // ✅ Load previously added ingredients from wizard state
-    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
-    _selectedIngredients =
-        wizard.ingredients.map((entry) {
-          return {
-            'id': entry.ingredientId,
-            'name': '', // We'll populate name after loading
-            'amount': entry.quantity.toString(),
-            'unit_id': entry.measurementId,
-            'unit': '', // We'll populate unit after loading
-          };
-        }).toList();
   }
 
   Future<void> _loadIngredients() async {
@@ -54,26 +40,6 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       _allIngredients = ingredients;
       _filteredIngredients = ingredients;
       _allMeasurements = measurements;
-
-      // 🔁 Fill in missing names & units
-      for (var item in _selectedIngredients) {
-        item['name'] =
-            _allIngredients
-                .firstWhere(
-                  (ing) => ing.id == item['id'],
-                  orElse: () => Ingredient(id: '', name: 'Unbekannt'),
-                )
-                .name;
-
-        item['unit'] =
-            _allMeasurements
-                .firstWhere(
-                  (m) => m.id == item['unit_id'],
-                  orElse:
-                      () => Measurements(id: '', name: '?', abbreviation: ''),
-                )
-                .name;
-      }
     });
   }
 
@@ -167,9 +133,8 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                             _allMeasurements
                                 .firstWhere((m) => m.id == selectedUnitId)
                                 .name,
-                        'unit_id': selectedUnitId!,
+                        'unit_id': selectedUnitId,
                       };
-
                       setState(() {
                         if (indexToEdit != null) {
                           _selectedIngredients[indexToEdit] = data;
@@ -194,36 +159,49 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     );
   }
 
-  void _submitIngredients() {
-    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+  void _submitIngredients() async {
+    if (_submitted) return; // Prevent duplicate submission
+    _submitted = true;
+
+    if (!pb.authStore.isValid) {
+      print("❌ User not authenticated.");
+      return;
+    }
+
+    final userId = pb.authStore.model?.id;
+    final householdId = pb.authStore.model?.getStringValue('household_id');
+    if (userId == null || householdId == null) return;
 
     for (var item in _selectedIngredients) {
       final quantity = double.tryParse(item['amount'] ?? '') ?? 0.0;
       if (quantity <= 0) continue;
 
-      final alreadyExists = wizard.ingredients.any(
-        (i) =>
-            i.ingredientId == item['id'] &&
-            i.measurementId == item['unit_id'] &&
-            i.quantity == quantity,
-      );
-
-      if (alreadyExists) continue;
-
-      final newIngredient = Recipeingredients(
-        id: '', // not used yet
-        userId: '', // not used yet
-        householdId: '',
-        recipeId: '',
+      final recipeIngredient = Recipeingredients(
+        id: '',
+        userId: userId,
+        householdId: householdId,
+        recipeId: widget.recipeId,
         ingredientId: item['id']!,
         measurementId: item['unit_id']!,
         quantity: quantity,
       );
 
-      wizard.addIngredient(newIngredient);
+      try {
+        await pb
+            .collection('recipeIngredients')
+            .create(body: recipeIngredient.toJson()..remove("id"));
+      } catch (e) {
+        print("❌ Failed to save ingredient: $e");
+      }
     }
 
-    Navigator.pushReplacementNamed(context, '/reviewRecipe');
+    if (mounted) {
+      Navigator.pushReplacementNamed(
+        context,
+        '/reviewRecipe',
+        arguments: {'recipeId': widget.recipeId},
+      );
+    }
   }
 
   @override

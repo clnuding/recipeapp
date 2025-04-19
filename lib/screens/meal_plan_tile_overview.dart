@@ -42,8 +42,13 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
   final String dinnerUrl =
       'https://images.unsplash.com/photo-1598532213919-078e54dd1f40';
 
-  Recipe _recipeWithImage(String title, String url) =>
-      Recipe(id: "id", title: title, creatorId: "user", thumbnailUrl: url);
+  Recipe _recipeWithImage(String title, String url) => Recipe(
+    id: "id",
+    title: title,
+    creatorId: "user",
+    thumbnailUrl: url,
+    householdId: "12345",
+  );
 
   late final Map<String, Map<String, Recipe?>> weeklyMeals = {
     for (var day in [
