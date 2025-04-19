@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
 
 class RecipeWizardState extends ChangeNotifier {
-  String? _recipeId; // Will exist after creation
   String? _title;
   String? _description;
   File? _image;
@@ -15,7 +13,6 @@ class RecipeWizardState extends ChangeNotifier {
   List<Recipeingredients> _ingredients = [];
 
   // Getters
-  String? get recipeId => _recipeId;
   String? get title => _title;
   String? get description => _description;
   File? get image => _image;
@@ -24,7 +21,7 @@ class RecipeWizardState extends ChangeNotifier {
   List<String> get tagIds => _tagIds;
   List<Recipeingredients> get ingredients => _ingredients;
 
-  // Setters
+  // Set recipe info from AddRecipePage
   void setRecipeInfo({
     required String title,
     String? description,
@@ -42,28 +39,27 @@ class RecipeWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRecipeId(String id) {
-    _recipeId = id;
-    notifyListeners();
-  }
-
-  Set<String> _submittedIngredientIds = {};
-
+  // Prevent duplicates using hash
   void addIngredient(Recipeingredients ingredient) {
-    if (!_submittedIngredientIds.contains(ingredient.id)) {
+    final isDuplicate = _ingredients.any(
+      (i) =>
+          i.ingredientId == ingredient.ingredientId &&
+          i.measurementId == ingredient.measurementId &&
+          i.quantity == ingredient.quantity,
+    );
+
+    if (!isDuplicate) {
       _ingredients.add(ingredient);
-      _submittedIngredientIds.add(ingredient.id);
       notifyListeners();
     }
   }
 
-  void removeIngredient(String id) {
-    _ingredients.removeWhere((ing) => ing.id == id);
+  void removeIngredient(String ingredientId) {
+    _ingredients.removeWhere((i) => i.ingredientId == ingredientId);
     notifyListeners();
   }
 
   void clear() {
-    _recipeId = null;
     _title = null;
     _description = null;
     _image = null;
@@ -72,6 +68,5 @@ class RecipeWizardState extends ChangeNotifier {
     _tagIds = [];
     _ingredients = [];
     notifyListeners();
-    _submittedIngredientIds.clear();
   }
 }

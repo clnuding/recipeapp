@@ -107,14 +107,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
   Future<void> _submitRecipe() async {
     final wizard = Provider.of<RecipeWizardState>(context, listen: false);
 
-    // ✅ If recipe already exists, skip re-creating it
-    if (wizard.recipeId != null) {
-      Navigator.pushNamed(context, '/addIngredient');
-      return;
-    }
-
     final name = _nameController.text.trim();
-    final instructions = _descriptionController.text.trim();
+    final description = _descriptionController.text.trim();
     final servings = _portions;
     final prepMinutes =
         (int.tryParse(_hourController.text) ?? 0) * 60 +
@@ -142,55 +136,16 @@ class _AddRecipePageState extends State<AddRecipePage> {
               .id,
         ].where((id) => id.isNotEmpty).toList();
 
-    // ✅ Save the current state to the wizard (even before backend call)
     wizard.setRecipeInfo(
       title: name,
-      description: instructions,
+      description: description,
       image: _image,
       servings: servings,
       prepTimeMinutes: prepMinutes,
       tagIds: tagIds,
     );
 
-    // ✅ Prepare backend fields
-    final userId = pb.authStore.model?.id;
-    final householdId = pb.authStore.model?.getStringValue('household_id');
-
-    try {
-      final recipeRecord = await pb
-          .collection('recipes')
-          .create(
-            body: {
-              'name': name,
-              'instructions': instructions,
-              'servings': servings,
-              'prep_time_minutes': prepMinutes,
-              'tag_id': tagIds,
-              'user_id': userId,
-              'household_id': householdId,
-            },
-            // // ✅ (Optional) Handle image upload
-            // files:
-            //     _image != null
-            //         ? [
-            //           MultipartFile.fromFileSync(
-            //             _image!.path,
-            //             filename: 'thumbnail.jpg',
-            //           ),
-            //         ]
-            //         : null,
-          );
-
-      // ✅ Save the new recipe ID to wizard state
-      wizard.setRecipeId(recipeRecord.id);
-
-      if (mounted) {
-        Navigator.pushNamed(context, '/addIngredient');
-      }
-    } catch (e) {
-      print('❌ Failed to create recipe: $e');
-      // You could show a toast/snackbar here
-    }
+    Navigator.pushReplacementNamed(context, '/addIngredient');
   }
 
   @override

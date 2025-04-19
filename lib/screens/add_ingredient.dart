@@ -167,8 +167,9 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                             _allMeasurements
                                 .firstWhere((m) => m.id == selectedUnitId)
                                 .name,
-                        'unit_id': selectedUnitId,
+                        'unit_id': selectedUnitId!,
                       };
+
                       setState(() {
                         if (indexToEdit != null) {
                           _selectedIngredients[indexToEdit] = data;
@@ -193,26 +194,8 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     );
   }
 
-  void _submitIngredients() async {
-    if (_submitted) return; // ✅ Prevent double-tap
-    _submitted = true;
-
+  void _submitIngredients() {
     final wizard = Provider.of<RecipeWizardState>(context, listen: false);
-
-    // ✅ Check user + household
-    if (!pb.authStore.isValid) {
-      print("❌ User not authenticated.");
-      return;
-    }
-
-    final userId = pb.authStore.model?.id;
-    final householdId = pb.authStore.model?.getStringValue('household_id');
-    final recipeId = wizard.recipeId;
-
-    if (userId == null || householdId == null || recipeId == null) {
-      print("❌ Missing user, household, or recipe ID.");
-      return;
-    }
 
     for (var item in _selectedIngredients) {
       final quantity = double.tryParse(item['amount'] ?? '') ?? 0.0;
@@ -225,38 +208,22 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
             i.quantity == quantity,
       );
 
-      if (alreadyExists) {
-        print("⚠️ Skipping duplicate ingredient: ${item['name']}");
-        continue;
-      }
+      if (alreadyExists) continue;
 
       final newIngredient = Recipeingredients(
-        id: '', // Let PocketBase assign it
-        userId: userId,
-        householdId: householdId,
-        recipeId: recipeId,
+        id: '', // not used yet
+        userId: '', // not used yet
+        householdId: '',
+        recipeId: '',
         ingredientId: item['id']!,
         measurementId: item['unit_id']!,
         quantity: quantity,
       );
 
-      try {
-        final created = await pb
-            .collection('recipeIngredients')
-            .create(body: newIngredient.toJson()..remove('id'));
-
-        final createdIngredient = Recipeingredients.fromJson(created.toJson());
-
-        // ✅ Store in wizard state (de-duped there too)
-        wizard.addIngredient(createdIngredient);
-      } catch (e) {
-        print("❌ Failed to save ingredient ${item['name']}: $e");
-      }
+      wizard.addIngredient(newIngredient);
     }
 
-    if (mounted) {
-      Navigator.pushReplacementNamed(context, '/reviewRecipe');
-    }
+    Navigator.pushReplacementNamed(context, '/reviewRecipe');
   }
 
   @override
