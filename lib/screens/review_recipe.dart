@@ -42,14 +42,14 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
       final wizard = Provider.of<RecipeWizardState>(context, listen: false);
 
       final recipe = Recipe(
-        id: wizard.recipeId!,
+        id: "12345", //wizard.recipeId!,
         title: wizard.title ?? 'Unbenannt',
         description: wizard.description,
         servings: wizard.servings,
         thumbnailUrl: wizard.image?.path,
         creatorId: pb.authStore.model?.id ?? '',
         householdId: pb.authStore.model?.getStringValue('household_id'),
-        tagId: wizard.tagIds,
+        // tags: "12345",//wizard.tagIds,
         prepTime: wizard.prepTimeMinutes,
         nutritionAutoCalculated: false,
       );

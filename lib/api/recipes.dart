@@ -9,7 +9,11 @@ Future<RecordModel> createRecipe(Recipe recipe) async {
 }
 
 Future<List<Recipe>> fetchRecipes() async {
-  List<RecordModel> records = await pb.collection('recipes').getFullList();
+  List<RecordModel> records = await pb
+      .collection('recipes')
+      .getFullList(expand: "tag_id");
+
+  print(records[0].toJson());
   List<Recipe> recipes =
       records.map((record) => Recipe.fromJson(record.toJson())).toList();
 

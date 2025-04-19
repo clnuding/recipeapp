@@ -1,9 +1,12 @@
+// User model
+import 'package:recipeapp/models/tags.dart';
+
 class Recipe {
   final String id;
   final String title;
   final String creatorId;
   final String? householdId;
-  final List? tagId;
+  final List tags;
   final String? description;
   final String? thumbnailUrl;
   final String? sourceUrl;
@@ -17,7 +20,7 @@ class Recipe {
     required this.title,
     required this.creatorId,
     this.householdId,
-    this.tagId,
+    this.tags = const [],
     this.description,
     this.thumbnailUrl,
     this.sourceUrl,
@@ -33,7 +36,12 @@ class Recipe {
       title: json['name'],
       creatorId: json['user_id'],
       householdId: json['household_id'],
-      tagId: json['tag_id'],
+      tags:
+          json['expand']["tag_id"] == null
+              ? []
+              : json['expand']["tag_id"]
+                  .map((tag) => Tags.fromJson(tag))
+                  .toList(),
       description: json['description'],
       thumbnailUrl: json['thumbnail_url'],
       sourceUrl: json['source_url'],
@@ -50,7 +58,7 @@ class Recipe {
       'title': title,
       'creator_id': creatorId,
       'household_id': householdId,
-      'tag_id': tagId,
+      'tag_id': tags,
       'description': description,
       'thumbnail_url': thumbnailUrl,
       'source_url': sourceUrl,
