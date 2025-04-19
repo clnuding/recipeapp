@@ -6,7 +6,7 @@ class Recipe {
   final String title;
   final String creatorId;
   final String? householdId;
-  final List tags;
+  final List<Tags> tags;
   final String? description;
   final String? thumbnailUrl;
   final String? sourceUrl;
@@ -31,16 +31,18 @@ class Recipe {
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
+    final rawTags = json['expand']?['tag_id'] as List<dynamic>?;
+
     return Recipe(
       id: json['id'],
       title: json['name'],
       creatorId: json['user_id'],
       householdId: json['household_id'],
       tags:
-          json['expand']["tag_id"] == null
-              ? []
-              : json['expand']["tag_id"]
-                  .map((tag) => Tags.fromJson(tag))
+          rawTags == null
+              ? <Tags>[]
+              : rawTags
+                  .map((tag) => Tags.fromJson(tag as Map<String, dynamic>))
                   .toList(),
       description: json['description'],
       thumbnailUrl: json['thumbnail_url'],
@@ -58,7 +60,7 @@ class Recipe {
       'title': title,
       'creator_id': creatorId,
       'household_id': householdId,
-      'tag_id': tags,
+      'tag_id': tags.map((tag) => tag.id).toList(),
       'description': description,
       'thumbnail_url': thumbnailUrl,
       'source_url': sourceUrl,
