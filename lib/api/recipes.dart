@@ -50,7 +50,6 @@ Future<List<Recipe>> fetchRecipes() async {
       .collection('recipes')
       .getFullList(expand: "tag_id");
 
-  print(records[0].toJson());
   List<Recipe> recipes =
       records.map((record) => Recipe.fromJson(record.toJson())).toList();
 
