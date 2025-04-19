@@ -8,7 +8,14 @@ import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 import 'package:recipeapp/widgets/recipe_swipe_card.dart';
 
 class SwipeCardStackScreen extends StatefulWidget {
-  const SwipeCardStackScreen({super.key});
+  final String userId;
+  final String householdId;
+
+  const SwipeCardStackScreen({
+    super.key,
+    required this.userId,
+    required this.householdId,
+  });
 
   @override
   State<SwipeCardStackScreen> createState() => _SwipeCardStackScreenState();
@@ -34,6 +41,32 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
     super.dispose();
   }
 
+  // // Save recipe selections for the current user.
+  // Future<void> _saveRecipeSelections() async {
+  //   for (final recipe in chosenRecipes) {
+  //     await DatabaseHelper.instance.insertRecipeSelection(
+  //       widget.userId,
+  //       recipe.id,
+  //       true,
+  //     );
+  //   }
+  //   for (final recipe in rejectedRecipes) {
+  //     await DatabaseHelper.instance.insertRecipeSelection(
+  //       widget.userId,
+  //       recipe.id,
+  //       false,
+  //     );
+  //   }
+
+  //   // After saving individual selections, check if all household users have completed their selection.
+  //   // If so, create the final meal plan.
+  //   bool householdCompleted = await DatabaseHelper.instance
+  //       .checkHouseholdSelectionsCompleted(widget.householdId);
+  //   if (householdCompleted) {
+  //     await DatabaseHelper.instance.finalizeMealPlan(widget.householdId);
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -47,7 +80,7 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
                   children: [
                     Center(
                       child: Text(
-                        "Alle Rezepte geswiplant!",
+                        "Du bist durch alle Rezepte durch!",
                         style: theme.textTheme.bodyLarge,
                       ),
                     ),
@@ -78,6 +111,10 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
                 : SafeArea(
                   child: Column(
                     children: [
+                      Text(
+                        '2. Wähle deine Rezepte',
+                        style: theme.textTheme.headlineMedium,
+                      ),
                       Flexible(
                         child: CardSwiper(
                           controller: controller,
@@ -85,10 +122,12 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
                           isLoop: false,
                           onSwipe: _onSwipe,
                           onUndo: _onUndo,
-                          onEnd:
-                              () => setState(() {
-                                cardsEmpty = true;
-                              }),
+                          onEnd: () async {
+                            // await _saveRecipeSelections();
+                            setState(() {
+                              cardsEmpty = true;
+                            });
+                          },
                           allowedSwipeDirection:
                               AllowedSwipeDirection.symmetric(horizontal: true),
                           numberOfCardsDisplayed: 4,
