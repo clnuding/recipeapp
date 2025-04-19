@@ -7,6 +7,7 @@ import 'package:recipeapp/api/utils.dart';
 class MealPlannerService {
   late final ShoppingListService _shoppingListService;
   late String mealPlanId;
+  late String startDateString;
 
   MealPlannerService() {
     _shoppingListService = ShoppingListService();
@@ -24,6 +25,7 @@ class MealPlannerService {
 
     if (existingId != null) {
       this.mealPlanId = existingId;
+      this.startDateString = startDateString;
       return;
     }
 
@@ -63,43 +65,50 @@ class MealPlannerService {
     }
     print("created Mealplan with id: $mealPlanId");
     this.mealPlanId = mealPlanId;
-    // return mealPlanId;
+    this.startDateString = startDateString;
   }
 
   // Inserts a meal plan selection for one meal for the given user.
-  Future<void> insertMealTimeSelection(
+  Future<void> insertMealDaySelection(
     Map<String, Map<String, int>> selectedMeals,
   ) async {
+    final existingId = await findExistingId(
+      collectionName: 'mealPlanDaySelections',
+      filters: {'meal_plan_id': mealPlanId, 'date': startDateString},
+    );
+
+    if (existingId != null) {
+      return;
+    }
+
     final batch = pb.createBatch();
     for (var entry in selectedMeals.entries) {
       final dateStr = entry.key;
       final meals = entry.value; // { "breakfast": state, ... }
       batch
-          .collection('mealPlanSelections')
+          .collection('mealPlanDaySelections')
           .create(
             body: {
-              'userId': entry.key,
-              'mealPlanId': mealPlanId,
+              'meal_plan_id': mealPlanId,
+              'user_id': pb.authStore.record?.id,
               'date': dateStr,
-              'breakfast': meals['breakfast'],
-              'lunch': meals['lunch'],
-              'dinner': meals['dinner'],
-              'planned': entry.value['breakfast'] == 0 ? false : true,
+              'breakfast': meals['breakfast'] == 0 ? false : true,
+              'lunch': meals['lunch'] == 0 ? false : true,
+              'dinner': meals['dinner'] == 0 ? false : true,
             },
           );
     }
-    final result = await batch.send();
-    print(result);
+    await batch.send();
   }
 
   // Inserts a recipe selection (accepted or rejected) for the given user.
   Future<void> insertRecipeSelection(
-    String userId,
     String mealPlanId,
     String recipeId,
     bool selected,
   ) async {
     // Check if a record already exists
+    final userId = pb.authStore.record?.id;
     final existingRecords = await pb
         .collection('recipe_selections')
         .getList(
