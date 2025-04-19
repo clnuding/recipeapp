@@ -1,6 +1,5 @@
-import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'package:recipeapp/theme/theme.dart';
@@ -8,14 +7,14 @@ import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 import 'package:recipeapp/api/pb_client.dart';
+import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
 import 'package:recipeapp/models/ingredient.dart';
 import 'package:recipeapp/models/measurements.dart';
+import 'package:recipeapp/api/recipes.dart';
+import 'package:recipeapp/api/recipeingredients.dart';
 import 'package:recipeapp/api/ingredients.dart';
 import 'package:recipeapp/api/measurements.dart';
-import 'package:recipeapp/widgets/atomics/primary_btn.dart';
-
-// ... (all your imports stay the same)
 
 class RecipeReviewPage extends StatefulWidget {
   const RecipeReviewPage({super.key});
@@ -25,11 +24,11 @@ class RecipeReviewPage extends StatefulWidget {
 }
 
 class _RecipeReviewPageState extends State<RecipeReviewPage> {
+  Recipe? _recipe;
   List<Recipeingredients> _ingredients = [];
   List<Ingredient> _allIngredients = [];
   List<Measurements> _allMeasurements = [];
   bool _isLoading = true;
-  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -38,9 +37,24 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
   }
 
   Future<void> _loadRecipeData() async {
+    print('📦 Loading recipe from wizard state...');
     try {
       final wizard = Provider.of<RecipeWizardState>(context, listen: false);
 
+      final recipe = Recipe(
+        id: wizard.recipeId!,
+        title: wizard.title ?? 'Unbenannt',
+        description: wizard.description,
+        servings: wizard.servings,
+        thumbnailUrl: wizard.image?.path,
+        creatorId: pb.authStore.model?.id ?? '',
+        householdId: pb.authStore.model?.getStringValue('household_id'),
+        tagId: wizard.tagIds,
+        prepTime: wizard.prepTimeMinutes,
+        nutritionAutoCalculated: false,
+      );
+
+      // ✅ Fetch details for names
       final allIngredients = await fetchIngredients();
       final allMeasurements = await fetchMeasurements();
       _allIngredients = allIngredients;
@@ -71,89 +85,28 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               userId: entry.userId,
               householdId: entry.householdId,
               recipeId: entry.recipeId,
-              ingredientId: name,
-              measurementId: unit,
+              ingredientId: name, // 🔁 Replace ID with name for display
+              measurementId: unit, // 🔁 Replace ID with name for display
               quantity: entry.quantity,
             );
           }).toList();
 
       setState(() {
+        _recipe = recipe;
         _ingredients = enrichedIngredients;
         _isLoading = false;
       });
     } catch (e) {
-      print('❌ Failed to load data: $e');
-    }
-  }
-
-  Future<void> _submitRecipe() async {
-    if (_isSubmitting) return;
-    setState(() => _isSubmitting = true);
-
-    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
-    final userId = pb.authStore.model?.id;
-    final householdId = pb.authStore.model?.getStringValue('household_id');
-
-    if (userId == null || householdId == null) {
-      print('❌ Missing user or household');
-      return;
-    }
-
-    try {
-      final recipeRecord = await pb
-          .collection('recipes')
-          .create(
-            body: {
-              'name': wizard.title,
-              'instructions': wizard.description,
-              'servings': wizard.servings,
-              'prep_time_minutes': wizard.prepTimeMinutes,
-              'tag_id': wizard.tagIds,
-              'user_id': userId,
-              'household_id': householdId,
-            },
-            files:
-                wizard.image != null
-                    ? [
-                      MultipartFile.fromBytes(
-                        'thumbnail',
-                        File(wizard.image!.path).readAsBytesSync(),
-                        filename: 'thumbnail.jpg',
-                      ),
-                    ]
-                    : [],
-          );
-
-      for (final ing in wizard.ingredients) {
-        await pb
-            .collection('recipeIngredients')
-            .create(
-              body: {
-                'user_id': userId,
-                'household_id': householdId,
-                'recipe_id': recipeRecord.id,
-                'ingredient_id': ing.ingredientId,
-                'measurement_id': ing.measurementId,
-                'quantity': ing.quantity,
-              },
-            );
-      }
-
-      wizard.clear();
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/recipes');
-      }
-    } catch (e) {
-      print('❌ Error submitting recipe: $e');
-    } finally {
-      setState(() => _isSubmitting = false);
+      print('❌ Failed to load data from wizard: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final wizard = Provider.of<RecipeWizardState>(context);
+    final wizard = Provider.of<RecipeWizardState>(
+      context,
+    ); // Access wizard state
 
     return WillPopScope(
       onWillPop: () async {
@@ -167,9 +120,10 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               Navigator.pushReplacementNamed(context, '/addIngredient');
             },
           ),
+          actions: [],
         ),
         body:
-            _isLoading
+            _isLoading || _recipe == null
                 ? const Center(child: CircularProgressIndicator())
                 : SafeArea(
                   child: SingleChildScrollView(
@@ -195,6 +149,8 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                                       ? Image.file(
                                         wizard.image!,
                                         fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
                                       )
                                       : Container(
                                         color: theme.colorScheme.surfaceBright,
@@ -215,7 +171,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                             horizontal: SpoonSparkTheme.spacingL,
                           ),
                           child: Text(
-                            wizard.title ?? '',
+                            _recipe!.title,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -227,7 +183,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                             horizontal: SpoonSparkTheme.spacingL,
                           ),
                           child: IngredientsGrid(
-                            initialServings: wizard.servings,
+                            initialServings: _recipe!.servings ?? 1,
                             ingredients:
                                 _ingredients
                                     .map(
@@ -239,26 +195,12 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                                       },
                                     )
                                     .toList(),
-                            description: wizard.description ?? '',
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-
-        // ✅ Floating action button here
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SizedBox(
-            width: double.infinity,
-            child: PrimaryButton(
-              text: "Rezept erstellen",
-              onPressed: _isSubmitting ? null : _submitRecipe,
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -275,7 +217,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
             children: List.generate(3, (index) {
               final isActive = index == activeIndex;
               final isCompleted = index < activeIndex;
-              final barColor =
+              final Color barColor =
                   isActive || isCompleted
                       ? theme.colorScheme.primary
                       : theme.colorScheme.surfaceBright;
@@ -307,6 +249,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                     const SizedBox(height: 4),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           stepLabels[index],

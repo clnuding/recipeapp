@@ -241,6 +241,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           'group': 'dairy',
                         },
                       ],
+                      description: 'Keine Zubereitungsbeschreibung vorhanden',
                     ),
                   ),
                 ],

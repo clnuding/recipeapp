@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:recipeapp/screens/main_screen.dart';
 import 'package:recipeapp/screens/add_ingredient.dart' as add_ingredient;
 import 'package:recipeapp/screens/add_recipe.dart' as add_recipe;
+import 'package:recipeapp/screens/recipes.dart';
 import 'package:recipeapp/screens/review_recipe.dart' as review_recipe;
 import 'package:recipeapp/screens/signin.dart';
 import 'package:recipeapp/screens/signup.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/addIngredient': (context) => const add_ingredient.AddIngredientPage(),
 
         '/reviewRecipe': (context) => const review_recipe.RecipeReviewPage(),
+        '/recipes': (context) => const RecipesPage(),
       },
     );
   }

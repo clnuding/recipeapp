@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
 
 class RecipeWizardState extends ChangeNotifier {
+  String? _recipeId;
   String? _title;
   String? _description;
   File? _image;
@@ -13,6 +13,7 @@ class RecipeWizardState extends ChangeNotifier {
   List<Recipeingredients> _ingredients = [];
 
   // Getters
+  String? get recipeId => _recipeId;
   String? get title => _title;
   String? get description => _description;
   File? get image => _image;
@@ -21,7 +22,13 @@ class RecipeWizardState extends ChangeNotifier {
   List<String> get tagIds => _tagIds;
   List<Recipeingredients> get ingredients => _ingredients;
 
-  // Set recipe info from AddRecipePage
+  // Set recipe ID after backend creation
+  void setRecipeId(String id) {
+    _recipeId = id;
+    notifyListeners();
+  }
+
+  // Set general recipe info
   void setRecipeInfo({
     required String title,
     String? description,
@@ -39,27 +46,31 @@ class RecipeWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Prevent duplicates using hash
+  // Add or replace an ingredient (prevent duplicate with same ID + unit)
   void addIngredient(Recipeingredients ingredient) {
-    final isDuplicate = _ingredients.any(
+    final index = _ingredients.indexWhere(
       (i) =>
           i.ingredientId == ingredient.ingredientId &&
-          i.measurementId == ingredient.measurementId &&
-          i.quantity == ingredient.quantity,
+          i.measurementId == ingredient.measurementId,
     );
 
-    if (!isDuplicate) {
+    if (index != -1) {
+      _ingredients[index] = ingredient;
+    } else {
       _ingredients.add(ingredient);
-      notifyListeners();
     }
+    notifyListeners();
   }
 
+  // Remove by ingredient ID (e.g., on delete tap)
   void removeIngredient(String ingredientId) {
     _ingredients.removeWhere((i) => i.ingredientId == ingredientId);
     notifyListeners();
   }
 
+  // Reset state after successful creation or cancel
   void clear() {
+    _recipeId = null;
     _title = null;
     _description = null;
     _image = null;

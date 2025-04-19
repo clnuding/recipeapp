@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'package:recipeapp/theme/theme.dart';
@@ -10,6 +11,7 @@ import 'package:recipeapp/models/ingredient.dart';
 import 'package:recipeapp/models/measurements.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
 import 'package:recipeapp/api/pb_client.dart';
+import 'package:recipeapp/widgets/atomics/ingredient_tile.dart';
 
 class AddIngredientPage extends StatefulWidget {
   const AddIngredientPage({super.key});
@@ -83,7 +85,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       _filteredIngredients =
           _allIngredients
               .where(
-                (ingredient) => ingredient.name.toLowerCase().contains(query),
+                (ingredient) => ingredient.name.toLowerCase().startsWith(query),
               )
               .toList();
     });
@@ -151,9 +153,17 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: amountController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d{0,5}(,\d{0,2})?$'),
+                    ),
+                  ],
                   decoration: const InputDecoration(labelText: "Menge"),
                 ),
+
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
@@ -229,95 +239,110 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: LogoAppbar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_forward),
-            onPressed: _submitIngredients,
+    return WillPopScope(
+      onWillPop: () async {
+        _saveToWizard(); // 👈 auch hier speichern
+        Navigator.pushReplacementNamed(context, '/create_recipe');
+        return false;
+      },
+
+      child: Scaffold(
+        appBar: LogoAppbar(
+          leading: BackButton(
+            onPressed: () {
+              _saveToWizard(); // 👈 Speichern bevor zurück
+              Navigator.pushReplacementNamed(context, '/create_recipe');
+            },
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: SpoonSparkTheme.spacingL),
-            _buildStepper(theme),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: _ingredientSearchController,
-                      decoration: const InputDecoration(
-                        labelText: "Zutat suchen",
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (_ingredientSearchController.text.isNotEmpty &&
-                        _filteredIngredients.isNotEmpty)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.onPrimary,
-                          borderRadius: BorderRadius.circular(7.0),
+
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.arrow_forward),
+              onPressed: _submitIngredients,
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: SpoonSparkTheme.spacingL),
+              _buildStepper(theme),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        controller: _ingredientSearchController,
+                        decoration: const InputDecoration(
+                          labelText: "Zutat suchen",
+                          prefixIcon: Icon(Icons.search),
                         ),
-                        child: ListView(
+                      ),
+                      const SizedBox(height: 8),
+                      if (_ingredientSearchController.text.isNotEmpty &&
+                          _filteredIngredients.isNotEmpty)
+                        GridView.builder(
                           shrinkWrap: true,
-                          children:
-                              _filteredIngredients.map((ingredient) {
-                                return ListTile(
-                                  title: Text(ingredient.name),
-                                  onTap: () => _showAddDialog(ingredient),
-                                );
-                              }).toList(),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _filteredIngredients.take(5).length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                childAspectRatio: 0.7,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                              ),
+                          itemBuilder: (context, index) {
+                            final ingredient = _filteredIngredients[index];
+                            return GestureDetector(
+                              onTap: () => _showAddDialog(ingredient),
+                              child: IngredientTile(name: ingredient.name),
+                            );
+                          },
                         ),
-                      ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child:
-                          _selectedIngredients.isEmpty
-                              ? Center(
-                                child: Text(
-                                  'Noch keine Zutaten ausgewählt',
-                                  style: TextStyle(
-                                    color: theme.colorScheme.onSurface
-                                        .withOpacity(0.6),
-                                  ),
-                                ),
-                              )
-                              : ListView.separated(
-                                itemCount: _selectedIngredients.length,
-                                separatorBuilder:
-                                    (_, __) => const SizedBox(height: 12),
-                                itemBuilder: (context, index) {
-                                  final item = _selectedIngredients[index];
-                                  return Material(
-                                    elevation: 2,
-                                    borderRadius: BorderRadius.circular(
-                                      SpoonSparkTheme.radiusS,
+
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child:
+                            _selectedIngredients.isEmpty
+                                ? Center(
+                                  child: Text(
+                                    'Noch keine Zutaten ausgewählt',
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.6),
                                     ),
-                                    child: ListTile(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          SpoonSparkTheme.radiusS,
-                                        ),
+                                  ),
+                                )
+                                : GridView.builder(
+                                  itemCount: _selectedIngredients.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 4,
+                                        childAspectRatio: 0.7,
+                                        crossAxisSpacing: 10,
+                                        mainAxisSpacing: 10,
                                       ),
-                                      tileColor: theme.colorScheme.onPrimary,
-                                      title: Text(item['name']!),
-                                      subtitle: Text(
-                                        '${item['amount']} ${item['unit']}',
+                                  itemBuilder: (context, index) {
+                                    final item = _selectedIngredients[index];
+                                    return IngredientTile(
+                                      name: item['name']!,
+                                      amount: double.tryParse(
+                                        item['amount'] ?? '',
                                       ),
+                                      unit: item['unit'],
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
                                             icon: const Icon(Icons.edit),
+                                            iconSize: 16,
+                                            padding: EdgeInsets.zero,
                                             onPressed:
                                                 () => _showAddDialog(
                                                   _allIngredients.firstWhere(
@@ -329,24 +354,27 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                                           ),
                                           IconButton(
                                             icon: const Icon(Icons.delete),
+                                            iconSize: 16,
+                                            padding: EdgeInsets.zero,
                                             onPressed:
-                                                () => setState(
-                                                  () => _selectedIngredients
-                                                      .removeAt(index),
-                                                ),
+                                                () => setState(() {
+                                                  _selectedIngredients.removeAt(
+                                                    index,
+                                                  );
+                                                }),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
-                    ),
-                  ],
+                                    );
+                                  },
+                                ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -423,5 +451,32 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
         onPressed: onPressed,
       ),
     );
+  }
+
+  void _saveToWizard() {
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+    // 🔁 Entferne alle alten Zutaten aus dem Wizard
+    for (final ing in wizard.ingredients.toList()) {
+      wizard.removeIngredient(ing.ingredientId);
+    }
+
+    // ➕ Füge aktuelle Zutaten hinzu
+    for (var item in _selectedIngredients) {
+      final quantity = double.tryParse(item['amount'] ?? '') ?? 0.0;
+      if (quantity <= 0) continue;
+
+      final newIngredient = Recipeingredients(
+        id: '', // not used
+        userId: '',
+        householdId: '',
+        recipeId: '',
+        ingredientId: item['id']!,
+        measurementId: item['unit_id']!,
+        quantity: quantity,
+      );
+
+      wizard.addIngredient(newIngredient);
+    }
   }
 }

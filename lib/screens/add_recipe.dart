@@ -43,16 +43,51 @@ class _AddRecipePageState extends State<AddRecipePage> {
   @override
   void initState() {
     super.initState();
+
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+    // Load previously saved values
+    _nameController.text = wizard.title ?? '';
+    _descriptionController.text = wizard.description ?? '';
+    _image = wizard.image;
+    _portions = wizard.servings;
+
+    final prepTime = wizard.prepTimeMinutes;
+    _hourController.text = (prepTime ~/ 60).toString().padLeft(2, '0');
+    _minuteController.text = (prepTime % 60).toString().padLeft(2, '0');
+
+    // Load tags after fetching them
     _loadTags();
   }
 
   Future<void> _loadTags() async {
     final tags = await fetchTags();
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+    final tagIds = wizard.tagIds;
+
+    final mealTypes = tags.where((tag) => tag.category == 'meal_type').toList();
+    final recipeCategories =
+        tags.where((tag) => tag.category == 'meal_category').toList();
+    final recipeSeasons =
+        tags.where((tag) => tag.category == 'season').toList();
+
+    String? getSelectedName(List<Tags> list) {
+      final match = list.firstWhere(
+        (tag) => tagIds.contains(tag.id),
+        orElse: () => Tags(id: '', name: '', category: ''),
+      );
+      return match.name.isEmpty ? null : match.name;
+    }
+
     setState(() {
-      _mealTypes = tags.where((tag) => tag.category == 'meal_type').toList();
-      _recipeCategories =
-          tags.where((tag) => tag.category == 'meal_category').toList();
-      _recipeSeasons = tags.where((tag) => tag.category == 'season').toList();
+      _mealTypes = mealTypes;
+      _recipeCategories = recipeCategories;
+      _recipeSeasons = recipeSeasons;
+
+      _selectedRecipeType = getSelectedName(_mealTypes);
+      _selectedRecipeCategory = getSelectedName(_recipeCategories);
+      _selectedRecipeSeason = getSelectedName(_recipeSeasons);
+
       _isLoading = false;
     });
   }
