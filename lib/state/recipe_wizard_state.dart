@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
+import 'package:recipeapp/models/tags.dart';
 
 class RecipeWizardState extends ChangeNotifier {
   String? _recipeId;
@@ -10,6 +11,7 @@ class RecipeWizardState extends ChangeNotifier {
   int _servings = 2;
   int _prepTimeMinutes = 30;
   List<String> _tagIds = [];
+  List<Tags> _tagObjects = []; // ✅ ADD THIS
   List<Recipeingredients> _ingredients = [];
 
   // Getters
@@ -20,6 +22,8 @@ class RecipeWizardState extends ChangeNotifier {
   int get servings => _servings;
   int get prepTimeMinutes => _prepTimeMinutes;
   List<String> get tagIds => _tagIds;
+  List<Tags> get tagObjects => _tagObjects; // ✅ ADD THIS
+
   List<Recipeingredients> get ingredients => _ingredients;
 
   // Set recipe ID after backend creation
@@ -46,7 +50,12 @@ class RecipeWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Add or replace an ingredient (prevent duplicate with same ID + unit)
+  // ✅ ADD THIS
+  void setTagObjects(List<Tags> tags) {
+    _tagObjects = tags;
+    notifyListeners();
+  }
+
   void addIngredient(Recipeingredients ingredient) {
     final index = _ingredients.indexWhere(
       (i) =>
@@ -62,13 +71,11 @@ class RecipeWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Remove by ingredient ID (e.g., on delete tap)
   void removeIngredient(String ingredientId) {
     _ingredients.removeWhere((i) => i.ingredientId == ingredientId);
     notifyListeners();
   }
 
-  // Reset state after successful creation or cancel
   void clear() {
     _recipeId = null;
     _title = null;
@@ -77,6 +84,7 @@ class RecipeWizardState extends ChangeNotifier {
     _servings = 2;
     _prepTimeMinutes = 30;
     _tagIds = [];
+    _tagObjects = []; // ✅ CLEAR TAG OBJECTS TOO
     _ingredients = [];
     notifyListeners();
   }

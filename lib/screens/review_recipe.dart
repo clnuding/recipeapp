@@ -11,11 +11,10 @@ import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
 import 'package:recipeapp/models/ingredient.dart';
 import 'package:recipeapp/models/measurements.dart';
+import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/api/ingredients.dart';
 import 'package:recipeapp/api/measurements.dart';
-import 'package:recipeapp/widgets/atomics/primary_btn.dart';
-
-// ... (all your imports stay the same)
+import 'package:recipeapp/api/tags.dart';
 
 class RecipeReviewPage extends StatefulWidget {
   const RecipeReviewPage({super.key});
@@ -28,6 +27,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
   List<Recipeingredients> _ingredients = [];
   List<Ingredient> _allIngredients = [];
   List<Measurements> _allMeasurements = [];
+  List<Tags> _allTags = [];
   bool _isLoading = true;
   bool _isSubmitting = false;
 
@@ -40,11 +40,13 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
   Future<void> _loadRecipeData() async {
     try {
       final wizard = Provider.of<RecipeWizardState>(context, listen: false);
-
       final allIngredients = await fetchIngredients();
       final allMeasurements = await fetchMeasurements();
+      final allTags = await fetchTags();
+
       _allIngredients = allIngredients;
       _allMeasurements = allMeasurements;
+      _allTags = allTags;
 
       final enrichedIngredients =
           wizard.ingredients.map((entry) {
@@ -76,6 +78,18 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               quantity: entry.quantity,
             );
           }).toList();
+
+      final tagObjects =
+          wizard.tagIds
+              .map(
+                (id) => _allTags.firstWhere(
+                  (tag) => tag.id == id,
+                  orElse: () => Tags(id: id, name: '?', category: ''),
+                ),
+              )
+              .toList();
+
+      wizard.setTagObjects(tagObjects);
 
       setState(() {
         _ingredients = enrichedIngredients;
@@ -188,24 +202,103 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                             borderRadius: BorderRadius.circular(
                               SpoonSparkTheme.radiusXXL,
                             ),
-                            child: AspectRatio(
-                              aspectRatio: 1.9,
-                              child:
-                                  wizard.image != null
-                                      ? Image.file(
-                                        wizard.image!,
-                                        fit: BoxFit.cover,
-                                      )
-                                      : Container(
-                                        color: theme.colorScheme.surfaceBright,
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.image,
-                                            size: 48,
-                                            color: Colors.grey,
+                            child: Stack(
+                              children: [
+                                AspectRatio(
+                                  aspectRatio: 1.9,
+                                  child:
+                                      wizard.image != null
+                                          ? Image.file(
+                                            wizard.image!,
+                                            fit: BoxFit.cover,
+                                          )
+                                          : Container(
+                                            color:
+                                                theme.colorScheme.surfaceBright,
+                                            child: const Center(
+                                              child: Icon(
+                                                Icons.image,
+                                                size: 48,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                ),
+                                Positioned(
+                                  top: 12,
+                                  left: 12,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.7),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.timer,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${wizard.prepTimeMinutes} Min',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (wizard.tagObjects.isNotEmpty)
+                                  Positioned(
+                                    bottom: 12,
+                                    left: 0,
+                                    right: 0,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
                                       ),
+                                      child: Row(
+                                        children:
+                                            wizard.tagObjects.map((tag) {
+                                              return Container(
+                                                margin: const EdgeInsets.only(
+                                                  right: 8,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 6,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white
+                                                      .withOpacity(0.85),
+                                                  borderRadius:
+                                                      BorderRadius.circular(14),
+                                                ),
+                                                child: Text(
+                                                  tag.name,
+                                                  style: TextStyle(
+                                                    color:
+                                                        theme
+                                                            .colorScheme
+                                                            .onSurface,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ),
@@ -217,7 +310,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                           child: Text(
                             wizard.title ?? '',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -246,8 +339,6 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                     ),
                   ),
                 ),
-
-        // ✅ Floating action button here
         floatingActionButton: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: SizedBox(
@@ -269,68 +360,64 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingL),
-      child: Column(
-        children: [
-          Row(
-            children: List.generate(3, (index) {
-              final isActive = index == activeIndex;
-              final isCompleted = index < activeIndex;
-              final barColor =
-                  isActive || isCompleted
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.surfaceBright;
+      child: Row(
+        children: List.generate(3, (index) {
+          final isActive = index == activeIndex;
+          final isCompleted = index < activeIndex;
+          final barColor =
+              isActive || isCompleted
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.surfaceBright;
 
-              BorderRadius borderRadius = BorderRadius.zero;
-              if (index == 0) {
-                borderRadius = const BorderRadius.horizontal(
-                  left: Radius.circular(12),
-                );
-              } else if (index == 2) {
-                borderRadius = const BorderRadius.horizontal(
-                  right: Radius.circular(12),
-                );
-              }
+          BorderRadius borderRadius = BorderRadius.zero;
+          if (index == 0) {
+            borderRadius = const BorderRadius.horizontal(
+              left: Radius.circular(12),
+            );
+          } else if (index == 2) {
+            borderRadius = const BorderRadius.horizontal(
+              right: Radius.circular(12),
+            );
+          }
 
-              return Expanded(
-                child: Column(
+          return Expanded(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: index < 2 ? 6 : 0),
+                  child: Container(
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: barColor,
+                      borderRadius: borderRadius,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: index < 2 ? 6 : 0),
-                      child: Container(
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: barColor,
-                          borderRadius: borderRadius,
-                        ),
+                    Text(
+                      stepLabels[index],
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          stepLabels[index],
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurface,
-                          ),
+                    if (isCompleted)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Icon(
+                          Icons.check,
+                          size: 12,
+                          color: theme.colorScheme.primary.withOpacity(0.7),
                         ),
-                        if (isCompleted)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 4),
-                            child: Icon(
-                              Icons.check,
-                              size: 12,
-                              color: theme.colorScheme.primary.withOpacity(0.7),
-                            ),
-                          ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
-              );
-            }),
-          ),
-        ],
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

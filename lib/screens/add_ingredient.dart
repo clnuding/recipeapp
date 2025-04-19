@@ -273,102 +273,130 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                     horizontal: 16,
                     vertical: 24,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Stack(
                     children: [
-                      TextFormField(
-                        controller: _ingredientSearchController,
-                        decoration: const InputDecoration(
-                          labelText: "Zutat suchen",
-                          prefixIcon: Icon(Icons.search),
-                        ),
+                      // Main content
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _ingredientSearchController,
+                            decoration: const InputDecoration(
+                              labelText: "Zutat suchen",
+                              prefixIcon: Icon(Icons.search),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const SizedBox(height: 16),
+                          Expanded(
+                            child:
+                                _selectedIngredients.isEmpty
+                                    ? Center(
+                                      child: Text(
+                                        'Noch keine Zutaten ausgewählt',
+                                        style: TextStyle(
+                                          color: theme.colorScheme.onSurface
+                                              .withOpacity(0.6),
+                                        ),
+                                      ),
+                                    )
+                                    : GridView.builder(
+                                      itemCount: _selectedIngredients.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 4,
+                                            childAspectRatio: 0.7,
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 10,
+                                          ),
+                                      itemBuilder: (context, index) {
+                                        final item =
+                                            _selectedIngredients[index];
+                                        return IngredientTile(
+                                          name: item['name']!,
+                                          amount: double.tryParse(
+                                            item['amount'] ?? '',
+                                          ),
+                                          unit: item['unit'],
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.edit),
+                                                iconSize: 16,
+                                                padding: EdgeInsets.zero,
+                                                onPressed:
+                                                    () => _showAddDialog(
+                                                      _allIngredients
+                                                          .firstWhere(
+                                                            (ing) =>
+                                                                ing.id ==
+                                                                item['id'],
+                                                          ),
+                                                      indexToEdit: index,
+                                                    ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.delete),
+                                                iconSize: 16,
+                                                padding: EdgeInsets.zero,
+                                                onPressed:
+                                                    () => setState(() {
+                                                      _selectedIngredients
+                                                          .removeAt(index);
+                                                    }),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
+
+                      // Overlay search results
                       if (_ingredientSearchController.text.isNotEmpty &&
                           _filteredIngredients.isNotEmpty)
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _filteredIngredients.take(5).length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                                childAspectRatio: 0.7,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
+                        Positioned(
+                          top: 50,
+                          left: 0,
+                          right: 0,
+                          child: Material(
+                            elevation: 6,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.onPrimary,
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                          itemBuilder: (context, index) {
-                            final ingredient = _filteredIngredients[index];
-                            return GestureDetector(
-                              onTap: () => _showAddDialog(ingredient),
-                              child: IngredientTile(name: ingredient.name),
-                            );
-                          },
-                        ),
-
-                      const SizedBox(height: 16),
-                      Expanded(
-                        child:
-                            _selectedIngredients.isEmpty
-                                ? Center(
-                                  child: Text(
-                                    'Noch keine Zutaten ausgewählt',
-                                    style: TextStyle(
-                                      color: theme.colorScheme.onSurface
-                                          .withOpacity(0.6),
+                              constraints: const BoxConstraints(maxHeight: 250),
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: _filteredIngredients.take(5).length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      childAspectRatio: 0.7,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10,
                                     ),
-                                  ),
-                                )
-                                : GridView.builder(
-                                  itemCount: _selectedIngredients.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 4,
-                                        childAspectRatio: 0.7,
-                                        crossAxisSpacing: 10,
-                                        mainAxisSpacing: 10,
-                                      ),
-                                  itemBuilder: (context, index) {
-                                    final item = _selectedIngredients[index];
-                                    return IngredientTile(
-                                      name: item['name']!,
-                                      amount: double.tryParse(
-                                        item['amount'] ?? '',
-                                      ),
-                                      unit: item['unit'],
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit),
-                                            iconSize: 16,
-                                            padding: EdgeInsets.zero,
-                                            onPressed:
-                                                () => _showAddDialog(
-                                                  _allIngredients.firstWhere(
-                                                    (ing) =>
-                                                        ing.id == item['id'],
-                                                  ),
-                                                  indexToEdit: index,
-                                                ),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete),
-                                            iconSize: 16,
-                                            padding: EdgeInsets.zero,
-                                            onPressed:
-                                                () => setState(() {
-                                                  _selectedIngredients.removeAt(
-                                                    index,
-                                                  );
-                                                }),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                      ),
+                                itemBuilder: (context, index) {
+                                  final ingredient =
+                                      _filteredIngredients[index];
+                                  return GestureDetector(
+                                    onTap: () => _showAddDialog(ingredient),
+                                    child: IngredientTile(
+                                      name: ingredient.name,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
