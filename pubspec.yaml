@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   supabase_flutter: ^2.5.11
-  pocketbase: ^0.18.0
+  pocketbase: ^0.22.0
   google_fonts: ^6.2.1
   excel: ^2.0.19  # Check for the latest version at https://pub.dev/packages/excel
   image_picker: ^1.0.7  # (Ensure it's the latest version)

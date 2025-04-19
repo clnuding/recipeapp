@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/models/recipe.dart';
-import 'package:recipeapp/screens/weekday_plan.dart';
+import 'package:recipeapp/screens/meal_plan_intro.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/screens/meal_plan_table_overview.dart';
 import 'package:recipeapp/widgets/atomics/meal_plan_tile.dart';
-import 'package:recipeapp/widgets/card_stack.dart';
 import 'package:recipeapp/widgets/date_range_selector.dart';
 
 class MealPlanningPage extends StatefulWidget {
@@ -89,11 +88,15 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
               backgroundColor: theme.colorScheme.primary,
             ),
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder:
-                      (context) => WeekdayPlanScreen(startDate: _startOfWeek),
+                      (context) => MealPlanIntroScreen(
+                        startDate: _startOfWeek,
+                        userId: "73sm101s43o0apr",
+                        householdId: "93s2b45o34971c3",
+                      ),
                 ),
               );
             },

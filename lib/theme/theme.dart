@@ -22,7 +22,7 @@ class SpoonSparkTheme {
 
   // Text colors
   static const Color _primaryTextLight = Color.fromARGB(255, 28, 28, 28);
-  static const Color _secondaryTextLight = Color.fromARGB(117, 117, 117, 117);
+  static const Color _secondaryTextLight = Color.fromARGB(220, 117, 117, 117);
   static const Color textOnPrimaryLight = Color.fromARGB(255, 255, 255, 255);
   static const Color _foregroundMuted = Color.fromARGB(117, 117, 117, 117);
   static const Color _divider = Color.fromARGB(255, 224, 224, 244);
@@ -139,7 +139,7 @@ class SpoonSparkTheme {
         brightness: Brightness.light,
         primary: _primary,
         onPrimary: textOnPrimaryLight,
-        secondary: const Color.fromARGB(255, 28, 28, 28),
+        secondary: _secondaryTextLight,
         onSecondary: textOnPrimaryLight,
         secondaryContainer: _backgroundAccent,
         onSecondaryContainer: textOnPrimaryLight,
