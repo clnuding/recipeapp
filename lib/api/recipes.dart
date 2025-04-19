@@ -30,23 +30,3 @@ Future<RecordModel> updateRecipe(Recipe recipe) async {
 Future<void> deleteRecipe(String id) async {
   await pb.collection('recipes').delete(id);
 }
-
-// void main() async {
-//   Recipe test = Recipe(
-//     id: "21qs06713lynj5w",
-//     title: "test Create Updated",
-//     creatorId: "nl9sx3r489d383f",
-//     description: "test Create",
-//     thumbnailUrl: "test Create",
-//     category: "test",
-//     sourceUrl: "test",
-//     prepTime: 55,
-//     cookingTime: 25,
-//     servings: 2,
-//     nutritionAutoCalculated: true,
-//   );
-
-//   await deleteRecipe(test.id);
-//   // List<Recipe> recipes = await fetchRecipes();
-//   // print(recipes.map((recipe) => recipe.toJson()).toList());
-// }

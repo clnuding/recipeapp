@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:recipeapp/theme/theme.dart';
 
 class ActionButtonsRow extends StatelessWidget {
   final String dayKey;
@@ -39,7 +38,7 @@ class ActionButtonsRow extends StatelessWidget {
   }
 }
 
-enum ButtonState { normal, primary, highlighted }
+enum ButtonState { normal, primary }
 
 class ActionButton extends StatefulWidget {
   final IconData icon;
@@ -64,17 +63,9 @@ class _ActionButtonState extends State<ActionButton> {
   void _handleTap() {
     setState(() {
       _state =
-          (_state == ButtonState.primary || _state == ButtonState.highlighted)
+          _state == ButtonState.primary
               ? ButtonState.normal
               : ButtonState.primary;
-    });
-    // Notify parent
-    widget.onStateChanged(_state);
-  }
-
-  void _handleDoubleTap() {
-    setState(() {
-      _state = ButtonState.highlighted;
     });
     // Notify parent
     widget.onStateChanged(_state);
@@ -91,10 +82,7 @@ class _ActionButtonState extends State<ActionButton> {
         backgroundColor = theme.colorScheme.primary.withValues(alpha: 0.15);
         textColor = theme.colorScheme.primary;
         break;
-      case ButtonState.highlighted:
-        backgroundColor = SpoonSparkTheme.highlight;
-        textColor = theme.colorScheme.secondary;
-        break;
+
       case ButtonState.normal:
         backgroundColor = theme.colorScheme.surfaceBright;
         textColor = theme.colorScheme.secondary.withValues(alpha: 0.3);
@@ -103,7 +91,6 @@ class _ActionButtonState extends State<ActionButton> {
 
     return GestureDetector(
       onTap: _handleTap,
-      onDoubleTap: _handleDoubleTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
