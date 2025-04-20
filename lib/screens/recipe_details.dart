@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:recipeapp/api/ingredients.dart';
 import 'package:recipeapp/api/measurements.dart';
+import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/api/recipeingredients.dart';
 import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/api/recipes.dart';
@@ -12,6 +13,8 @@ import 'package:recipeapp/models/measurements.dart';
 import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
 import 'package:recipeapp/models/tags.dart';
+import 'package:recipeapp/screens/add_recipe.dart';
+import 'package:recipeapp/screens/recipes.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
@@ -79,6 +82,60 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     return recipe;
   }
 
+  Future<void> _deleteRecipe() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Rezept löschen"),
+            content: const Text(
+              "Bist du sicher, dass du dieses Rezept löschen möchtest?",
+            ),
+            actions: [
+              TextButton(
+                child: const Text("Abbrechen"),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              TextButton(
+                child: const Text("Löschen"),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      // ✅ Delete recipeIngredients by recipeId
+      final ingredientsToDelete = await fetchRecipeIngredientsByRecipeId(
+        widget.recipeId,
+      );
+
+      for (final ingredient in ingredientsToDelete) {
+        await pb.collection('recipeIngredients').delete(ingredient.id);
+      }
+
+      // ✅ Delete the recipe itself
+      await pb.collection('recipes').delete(widget.recipeId);
+
+      // ✅ Navigate back or to recipes list
+      if (mounted) {
+        Navigator.pop(
+          context,
+          true,
+        ); // Pass a signal that something was deleted
+      }
+    } catch (e) {
+      print("❌ Fehler beim Löschen des Rezepts: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Fehler beim Löschen des Rezepts")),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -86,8 +143,21 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     return Scaffold(
       appBar: LogoAppbar(
         actions: [
-          IconButton(icon: Icon(Icons.delete), onPressed: () {}),
-          IconButton(icon: Icon(Icons.edit), onPressed: () {}),
+          IconButton(icon: Icon(Icons.delete), onPressed: _deleteRecipe),
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder:
+                      (_, __, ___) => AddRecipePage(recipeId: widget.recipeId),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: FutureBuilder<Recipe>(

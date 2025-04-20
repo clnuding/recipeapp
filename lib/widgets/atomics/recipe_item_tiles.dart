@@ -9,12 +9,14 @@ class RecipeItemTiles extends StatefulWidget {
   final List<Recipe> recipes;
   final String error;
   final bool isLoading;
+  final VoidCallback? onChanged; // ✅ Added this
 
   const RecipeItemTiles({
     super.key,
     required this.recipes,
     required this.error,
     required this.isLoading,
+    this.onChanged,
   });
 
   @override
@@ -63,7 +65,6 @@ class _RecipeItemTilesState extends State<RecipeItemTiles> {
       itemBuilder: (context, index) {
         final recipe = widget.recipes[index];
 
-        // Map tag IDs to tag names
         final tagNames =
             (recipe.tagId ?? []).map((id) {
               return _allTags
@@ -77,13 +78,18 @@ class _RecipeItemTilesState extends State<RecipeItemTiles> {
         return RecipeCard(
           recipe: recipe,
           tagNames: tagNames,
-          onTap: () {
-            Navigator.push(
+          onTap: () async {
+            // ✅ Await result from detail screen
+            final result = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => RecipeDetailScreen(recipeId: recipe.id),
               ),
             );
+
+            if (result == true && widget.onChanged != null) {
+              widget.onChanged!(); // ✅ Trigger reload if needed
+            }
           },
         );
       },
@@ -143,7 +149,6 @@ class RecipeCard extends StatelessWidget {
                           ),
                     ),
                   ),
-                  // ⏱ Duration badge
                   Positioned(
                     top: 8,
                     left: 8,
@@ -175,7 +180,6 @@ class RecipeCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // 🏷 Tags (bottom overlay)
                   if (tagNames.isNotEmpty)
                     Positioned(
                       bottom: 8,
@@ -215,7 +219,6 @@ class RecipeCard extends StatelessWidget {
 
             const SizedBox(height: 4),
 
-            // 📝 Title area
             Expanded(
               flex: 1,
               child: Padding(

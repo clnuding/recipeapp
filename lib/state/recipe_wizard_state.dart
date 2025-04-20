@@ -11,8 +11,9 @@ class RecipeWizardState extends ChangeNotifier {
   int _servings = 2;
   int _prepTimeMinutes = 00;
   List<String> _tagIds = [];
-  List<Tags> _tagObjects = []; // ✅ ADD THIS
+  List<Tags> _tagObjects = [];
   List<Recipeingredients> _ingredients = [];
+  bool _isEditing = false; // ✅ NEW
 
   // Getters
   String? get recipeId => _recipeId;
@@ -22,17 +23,22 @@ class RecipeWizardState extends ChangeNotifier {
   int get servings => _servings;
   int get prepTimeMinutes => _prepTimeMinutes;
   List<String> get tagIds => _tagIds;
-  List<Tags> get tagObjects => _tagObjects; // ✅ ADD THIS
-
+  List<Tags> get tagObjects => _tagObjects;
   List<Recipeingredients> get ingredients => _ingredients;
+  bool get isEditing => _isEditing; // ✅ NEW
 
-  // Set recipe ID after backend creation
+  // Setters
   void setRecipeId(String id) {
     _recipeId = id;
     notifyListeners();
   }
 
-  // Set general recipe info
+  void setEditing(bool value) {
+    // ✅ NEW
+    _isEditing = value;
+    notifyListeners();
+  }
+
   void setRecipeInfo({
     required String title,
     String? description,
@@ -50,7 +56,6 @@ class RecipeWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ ADD THIS
   void setTagObjects(List<Tags> tags) {
     _tagObjects = tags;
     notifyListeners();
@@ -84,8 +89,9 @@ class RecipeWizardState extends ChangeNotifier {
     _servings = 2;
     _prepTimeMinutes = 00;
     _tagIds = [];
-    _tagObjects = []; // ✅ CLEAR TAG OBJECTS TOO
+    _tagObjects = [];
     _ingredients = [];
+    _isEditing = false; // ✅ RESET
     notifyListeners();
   }
 }

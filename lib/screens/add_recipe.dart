@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:recipeapp/api/recipeingredients.dart';
 import 'package:recipeapp/screens/add_ingredient.dart';
 import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'dart:io';
@@ -9,9 +10,12 @@ import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/api/pb_client.dart';
+import 'package:recipeapp/api/recipes.dart';
 
 class AddRecipePage extends StatefulWidget {
-  const AddRecipePage({super.key});
+  final String? recipeId; // ✅ Accepts null for create mode
+
+  const AddRecipePage({super.key, this.recipeId});
 
   @override
   State<AddRecipePage> createState() => _AddRecipePageState();
@@ -47,10 +51,16 @@ class _AddRecipePageState extends State<AddRecipePage> {
   @override
   void initState() {
     super.initState();
+    if (widget.recipeId != null) {
+      _loadRecipeData(widget.recipeId!);
+    } else {
+      _loadInitialWizardState();
+    }
+  }
 
+  void _loadInitialWizardState() {
     final wizard = Provider.of<RecipeWizardState>(context, listen: false);
 
-    // Load previously saved values
     _nameController.text = wizard.title ?? '';
     _descriptionController.text = wizard.description ?? '';
     _image = wizard.image;
@@ -60,8 +70,46 @@ class _AddRecipePageState extends State<AddRecipePage> {
     _hourController.text = (prepTime ~/ 60).toString().padLeft(2, '0');
     _minuteController.text = (prepTime % 60).toString().padLeft(2, '0');
 
-    // Load tags after fetching them
     _loadTags();
+  }
+
+  Future<void> _loadRecipeData(String recipeId) async {
+    final recipe = await fetchRecipeById(recipeId);
+    final tags = await fetchTags();
+    final dbIngredients = await fetchRecipeIngredientsByRecipeId(recipeId);
+
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+    // ✅ Mark as editing
+    wizard.setEditing(true);
+    wizard.setRecipeId(recipeId);
+
+    // ✅ Basic metadata
+    wizard.setRecipeInfo(
+      title: recipe.title,
+      description: recipe.description ?? '',
+      image: null,
+      servings: recipe.servings ?? 1,
+      prepTimeMinutes: recipe.prepTime ?? 0,
+      tagIds: (recipe.tagId ?? []).cast<String>(),
+    );
+
+    wizard.setTagObjects(
+      (recipe.tagId ?? []).map((id) {
+        return tags.firstWhere(
+          (tag) => tag.id == id,
+          orElse: () => Tags(id: id, name: '?', category: ''),
+        );
+      }).toList(),
+    );
+
+    // ✅ ✅ ✅ ADD THIS: populate ingredients
+    for (final ing in dbIngredients) {
+      wizard.addIngredient(ing);
+    }
+
+    // Continue local form setup
+    _loadInitialWizardState();
   }
 
   Future<void> _loadTags() async {

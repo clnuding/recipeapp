@@ -116,30 +116,79 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
     }
 
     try {
-      final recipeRecord = await pb
-          .collection('recipes')
-          .create(
-            body: {
-              'name': wizard.title,
-              'instructions': wizard.description,
-              'servings': wizard.servings,
-              'prep_time_minutes': wizard.prepTimeMinutes,
-              'tag_id': wizard.tagIds,
-              'user_id': userId,
-              'household_id': householdId,
-            },
-            files:
-                wizard.image != null
-                    ? [
-                      MultipartFile.fromBytes(
-                        'thumbnail',
-                        File(wizard.image!.path).readAsBytesSync(),
-                        filename: 'thumbnail.jpg',
-                      ),
-                    ]
-                    : [],
-          );
+      String recipeId;
 
+      // ✅ If editing, update instead of creating
+      if (wizard.isEditing && wizard.recipeId != null) {
+        await pb
+            .collection('recipes')
+            .update(
+              wizard.recipeId!,
+              body: {
+                'name': wizard.title,
+                'instructions': wizard.description,
+                'servings': wizard.servings,
+                'prep_time_minutes': wizard.prepTimeMinutes,
+                'tag_id': wizard.tagIds,
+              },
+            );
+
+        // Optional: update thumbnail if changed
+        if (wizard.image != null) {
+          await pb
+              .collection('recipes')
+              .update(
+                wizard.recipeId!,
+                files: [
+                  MultipartFile.fromBytes(
+                    'thumbnail',
+                    File(wizard.image!.path).readAsBytesSync(),
+                    filename: 'thumbnail.jpg',
+                  ),
+                ],
+              );
+        }
+
+        // ✅ Delete existing recipe ingredients and re-create
+        final existingIngredients = await pb
+            .collection('recipeIngredients')
+            .getFullList(filter: 'recipe_id="${wizard.recipeId!}"');
+
+        for (var ing in existingIngredients) {
+          await pb.collection('recipeIngredients').delete(ing.id);
+        }
+
+        recipeId = wizard.recipeId!;
+      } else {
+        // ✅ Create new recipe
+        final recipeRecord = await pb
+            .collection('recipes')
+            .create(
+              body: {
+                'name': wizard.title,
+                'instructions': wizard.description,
+                'servings': wizard.servings,
+                'prep_time_minutes': wizard.prepTimeMinutes,
+                'tag_id': wizard.tagIds,
+                'user_id': userId,
+                'household_id': householdId,
+              },
+              files:
+                  wizard.image != null
+                      ? [
+                        MultipartFile.fromBytes(
+                          'thumbnail',
+                          File(wizard.image!.path).readAsBytesSync(),
+                          filename: 'thumbnail.jpg',
+                        ),
+                      ]
+                      : [],
+            );
+
+        recipeId = recipeRecord.id;
+      }
+
+      // ✅ Create ingredients
       for (final ing in wizard.ingredients) {
         await pb
             .collection('recipeIngredients')
@@ -147,7 +196,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               body: {
                 'user_id': userId,
                 'household_id': householdId,
-                'recipe_id': recipeRecord.id,
+                'recipe_id': recipeId,
                 'ingredient_id': ing.ingredientId,
                 'measurement_id': ing.measurementId,
                 'quantity': ing.quantity,
@@ -369,7 +418,10 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
           child: SizedBox(
             width: double.infinity,
             child: PrimaryButton(
-              text: "Rezept erstellen",
+              text:
+                  wizard.isEditing
+                      ? "Rezept aktualisieren"
+                      : "Rezept erstellen",
               onPressed: _isSubmitting ? null : _submitRecipe,
             ),
           ),

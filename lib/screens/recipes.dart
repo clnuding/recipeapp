@@ -24,13 +24,22 @@ class _RecipesPageState extends State<RecipesPage> {
   bool _isLoading = true;
   String _error = '';
   bool _isGridView = false;
+  bool _didLoad = false;
 
   @override
   void initState() {
     super.initState();
     _loadViewPreference();
-    _loadRecipes();
     _searchController.addListener(_filterRecipes);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_didLoad) {
+      _didLoad = true;
+      _loadRecipes();
+    }
   }
 
   Future<void> _loadViewPreference() async {
@@ -155,6 +164,8 @@ class _RecipesPageState extends State<RecipesPage> {
                         recipes: _filteredRecipes,
                         error: _error,
                         isLoading: _isLoading,
+                        onChanged:
+                            _loadRecipes, // 👈 this triggers reload after delete
                       )
                       : RecipeItemList(
                         recipes: _filteredRecipes,
