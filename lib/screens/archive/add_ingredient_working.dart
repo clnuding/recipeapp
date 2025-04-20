@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:recipeapp/screens/add_recipe.dart';
-import 'package:recipeapp/screens/review_recipe.dart';
 import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
@@ -23,8 +21,6 @@ class AddIngredientPage extends StatefulWidget {
 }
 
 class _AddIngredientPageState extends State<AddIngredientPage> {
-  bool get _hasAtLeastOneIngredient => _selectedIngredients.isNotEmpty;
-
   final TextEditingController _ingredientSearchController =
       TextEditingController();
   List<Ingredient> _allIngredients = [];
@@ -237,14 +233,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       wizard.addIngredient(newIngredient);
     }
 
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => RecipeReviewPage(),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
+    Navigator.pushReplacementNamed(context, '/reviewRecipe');
   }
 
   @override
@@ -253,14 +242,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     return WillPopScope(
       onWillPop: () async {
         _saveToWizard(); // 👈 auch hier speichern
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => AddRecipePage(),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
-        );
+        Navigator.pushReplacementNamed(context, '/create_recipe');
         return false;
       },
 
@@ -269,29 +251,14 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
           leading: BackButton(
             onPressed: () {
               _saveToWizard(); // 👈 Speichern bevor zurück
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder:
-                      (context, animation1, animation2) => AddRecipePage(),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              );
+              Navigator.pushReplacementNamed(context, '/create_recipe');
             },
           ),
+
           actions: [
             IconButton(
               icon: const Icon(Icons.arrow_forward),
-              onPressed: _hasAtLeastOneIngredient ? _submitIngredients : null,
-              color:
-                  _hasAtLeastOneIngredient
-                      ? null
-                      : Colors.grey, // optional visual cue
-              // tooltip:
-              //     _hasAtLeastOneIngredient
-              //         ? "Weiter"
-              //         : "Mindestens eine Zutat erforderlich", // helpful for accessibility
+              onPressed: _submitIngredients,
             ),
           ],
         ),
@@ -322,125 +289,68 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                           const SizedBox(height: 8),
                           const SizedBox(height: 16),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (_selectedIngredients.isEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    // child: Text(
-                                    //   '* Mindestens eine Zutat erforderlich',
-                                    //   style: TextStyle(
-                                    //     color: theme.colorScheme.error,
-                                    //     fontSize: 14,
-                                    //     fontWeight: FontWeight.w500,
-                                    //   ),
-                                    // ),
-                                  ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (!_hasAtLeastOneIngredient)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 8,
-                                          ),
-                                          child: Text(
-                                            '* Mindestens eine Zutat erforderlich',
-                                            style: TextStyle(
-                                              color: theme.colorScheme.error,
-                                              fontSize: 13,
-                                            ),
-                                          ),
+                            child:
+                                _selectedIngredients.isEmpty
+                                    ? Center(
+                                      child: Text(
+                                        'Noch keine Zutaten ausgewählt',
+                                        style: TextStyle(
+                                          color: theme.colorScheme.onSurface
+                                              .withOpacity(0.6),
                                         ),
-                                      Expanded(
-                                        child:
-                                            _selectedIngredients.isEmpty
-                                                ? Center(
-                                                  child: Text(
-                                                    'Noch keine Zutaten ausgewählt',
-                                                    style: TextStyle(
-                                                      color: theme
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withOpacity(0.6),
-                                                    ),
-                                                  ),
-                                                )
-                                                : GridView.builder(
-                                                  itemCount:
-                                                      _selectedIngredients
-                                                          .length,
-                                                  gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisCount: 4,
-                                                        childAspectRatio: 0.7,
-                                                        crossAxisSpacing: 10,
-                                                        mainAxisSpacing: 10,
-                                                      ),
-                                                  itemBuilder: (
-                                                    context,
-                                                    index,
-                                                  ) {
-                                                    final item =
-                                                        _selectedIngredients[index];
-                                                    return IngredientTile(
-                                                      name: item['name']!,
-                                                      amount: double.tryParse(
-                                                        item['amount'] ?? '',
-                                                      ),
-                                                      unit: item['unit'],
-                                                      trailing: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          IconButton(
-                                                            icon: const Icon(
-                                                              Icons.edit,
-                                                            ),
-                                                            iconSize: 16,
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            onPressed:
-                                                                () => _showAddDialog(
-                                                                  _allIngredients
-                                                                      .firstWhere(
-                                                                        (ing) =>
-                                                                            ing.id ==
-                                                                            item['id'],
-                                                                      ),
-                                                                  indexToEdit:
-                                                                      index,
-                                                                ),
-                                                          ),
-                                                          IconButton(
-                                                            icon: const Icon(
-                                                              Icons.delete,
-                                                            ),
-                                                            iconSize: 16,
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            onPressed:
-                                                                () => setState(() {
-                                                                  _selectedIngredients
-                                                                      .removeAt(
-                                                                        index,
-                                                                      );
-                                                                }),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                                    )
+                                    : GridView.builder(
+                                      itemCount: _selectedIngredients.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 4,
+                                            childAspectRatio: 0.7,
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 10,
+                                          ),
+                                      itemBuilder: (context, index) {
+                                        final item =
+                                            _selectedIngredients[index];
+                                        return IngredientTile(
+                                          name: item['name']!,
+                                          amount: double.tryParse(
+                                            item['amount'] ?? '',
+                                          ),
+                                          unit: item['unit'],
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.edit),
+                                                iconSize: 16,
+                                                padding: EdgeInsets.zero,
+                                                onPressed:
+                                                    () => _showAddDialog(
+                                                      _allIngredients
+                                                          .firstWhere(
+                                                            (ing) =>
+                                                                ing.id ==
+                                                                item['id'],
+                                                          ),
+                                                      indexToEdit: index,
+                                                    ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.delete),
+                                                iconSize: 16,
+                                                padding: EdgeInsets.zero,
+                                                onPressed:
+                                                    () => setState(() {
+                                                      _selectedIngredients
+                                                          .removeAt(index);
+                                                    }),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
                           ),
                         ],
                       ),

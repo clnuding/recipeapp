@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/screens/add_recipe.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/filterbar.dart';
@@ -109,7 +110,17 @@ class _RecipesPageState extends State<RecipesPage> {
               backgroundColor: theme.colorScheme.primary,
             ),
             icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
-            onPressed: () => Navigator.pushNamed(context, '/create_recipe'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder:
+                      (context, animation1, animation2) => AddRecipePage(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+            },
           ),
         ],
       ),

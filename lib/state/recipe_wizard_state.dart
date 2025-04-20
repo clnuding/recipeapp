@@ -9,7 +9,7 @@ class RecipeWizardState extends ChangeNotifier {
   String? _description;
   File? _image;
   int _servings = 2;
-  int _prepTimeMinutes = 30;
+  int _prepTimeMinutes = 00;
   List<String> _tagIds = [];
   List<Tags> _tagObjects = []; // ✅ ADD THIS
   List<Recipeingredients> _ingredients = [];
@@ -82,7 +82,7 @@ class RecipeWizardState extends ChangeNotifier {
     _description = null;
     _image = null;
     _servings = 2;
-    _prepTimeMinutes = 30;
+    _prepTimeMinutes = 00;
     _tagIds = [];
     _tagObjects = []; // ✅ CLEAR TAG OBJECTS TOO
     _ingredients = [];

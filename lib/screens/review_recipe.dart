@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
+import 'package:recipeapp/screens/add_ingredient.dart';
+import 'package:recipeapp/screens/recipes.dart';
 import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
@@ -155,7 +157,14 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
 
       wizard.clear();
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/recipes');
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => RecipesPage(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
       }
     } catch (e) {
       print('❌ Error submitting recipe: $e');
@@ -171,14 +180,30 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
 
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pushReplacementNamed(context, '/addIngredient');
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder:
+                (context, animation1, animation2) => AddIngredientPage(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
         return false;
       },
       child: Scaffold(
         appBar: LogoAppbar(
           leading: BackButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/addIngredient');
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder:
+                      (context, animation1, animation2) => AddIngredientPage(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
             },
           ),
         ),

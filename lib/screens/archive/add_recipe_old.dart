@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:provider/provider.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/api/pb_client.dart';
-import 'package:recipeapp/state/recipe_wizard_state.dart';
 
 class AddRecipePage extends StatefulWidget {
   const AddRecipePage({super.key});
@@ -19,11 +17,15 @@ class AddRecipePage extends StatefulWidget {
 class _AddRecipePageState extends State<AddRecipePage> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _hourController = TextEditingController(text: '00');
-  final _minuteController = TextEditingController(text: '30');
+  File? _image;
 
   int _portions = 2;
-  File? _image;
+  final TextEditingController _hourController = TextEditingController(
+    text: '00',
+  );
+  final TextEditingController _minuteController = TextEditingController(
+    text: '30',
+  );
 
   String? _selectedRecipeType;
   String? _selectedRecipeCategory;
@@ -39,15 +41,6 @@ class _AddRecipePageState extends State<AddRecipePage> {
   void initState() {
     super.initState();
     _loadTags();
-    final state = context.read<RecipeWizardState>();
-    _nameController.text = state.name ?? '';
-    _descriptionController.text = state.description ?? '';
-    _portions = state.servings;
-    _hourController.text = (state.prepMinutes ~/ 60).toString().padLeft(2, '0');
-    _minuteController.text = (state.prepMinutes % 60).toString().padLeft(
-      2,
-      '0',
-    );
   }
 
   Future<void> _loadTags() async {
@@ -109,10 +102,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
   }
 
   Future<void> _submitRecipe() async {
-    final state = context.read<RecipeWizardState>();
-
     final name = _nameController.text.trim();
-    final description = _descriptionController.text.trim();
+    final instructions = _descriptionController.text.trim();
     final servings = _portions;
     final prepMinutes =
         (int.tryParse(_hourController.text) ?? 0) * 60 +
@@ -140,41 +131,30 @@ class _AddRecipePageState extends State<AddRecipePage> {
               .id,
         ].where((id) => id.isNotEmpty).toList();
 
-    state.updateRecipeData(
-      name: name,
-      description: description,
-      servings: servings,
-      prepMinutes: prepMinutes,
-      tagIds: tagIds,
-      imageFile: _image,
-    );
+    final userId = pb.authStore.model?.id;
+    final householdId = pb.authStore.model?.getStringValue('household_id');
 
-    if (state.recipeId == null) {
-      final userId = pb.authStore.model?.id;
-      final householdId = pb.authStore.model?.getStringValue('household_id');
+    final newRecipe = await pb
+        .collection('recipes')
+        .create(
+          body: {
+            'name': name,
+            'instructions': instructions,
+            'servings': servings,
+            'prep_time_minutes': prepMinutes,
+            'tag_id': tagIds,
+            'user_id': userId,
+            'household_id': householdId,
+          },
+        );
 
-      final newRecipe = await pb
-          .collection('recipes')
-          .create(
-            body: {
-              'name': name,
-              'instructions': description,
-              'servings': servings,
-              'prep_time_minutes': prepMinutes,
-              'tag_id': tagIds,
-              'user_id': userId,
-              'household_id': householdId,
-            },
-          );
-
-      state.recipeId = newRecipe.id;
-    }
+    final recipeId = newRecipe.id;
 
     if (mounted) {
       Navigator.pushNamed(
         context,
         '/addIngredient',
-        arguments: {'recipeId': state.recipeId},
+        arguments: {'recipeId': recipeId},
       );
     }
   }

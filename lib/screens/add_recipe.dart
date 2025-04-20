@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:recipeapp/screens/add_ingredient.dart';
 import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'dart:io';
 import 'package:recipeapp/theme/theme.dart';
@@ -17,6 +18,9 @@ class AddRecipePage extends StatefulWidget {
 }
 
 class _AddRecipePageState extends State<AddRecipePage> {
+  bool get _isFormValid =>
+      _nameController.text.trim().isNotEmpty && _selectedRecipeType != null;
+
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -27,7 +31,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
     text: '00',
   );
   final TextEditingController _minuteController = TextEditingController(
-    text: '30',
+    text: '00',
   );
 
   String? _selectedRecipeType;
@@ -180,7 +184,14 @@ class _AddRecipePageState extends State<AddRecipePage> {
       tagIds: tagIds,
     );
 
-    Navigator.pushReplacementNamed(context, '/addIngredient');
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => AddIngredientPage(),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
   }
 
   @override
@@ -192,10 +203,15 @@ class _AddRecipePageState extends State<AddRecipePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.arrow_forward),
-            onPressed: _submitRecipe,
+            onPressed: _isFormValid ? _submitRecipe : null,
+            color:
+                _isFormValid
+                    ? null
+                    : Colors.grey, // Optional: visually indicate disabled
           ),
         ],
       ),
+
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -261,13 +277,22 @@ class _AddRecipePageState extends State<AddRecipePage> {
                             const SizedBox(height: 16),
                             TextFormField(
                               controller: _nameController,
-                              decoration: const InputDecoration(
-                                labelText: "Name",
+                              decoration: InputDecoration(
+                                labelText: "Name *",
                                 hintText: "Namen eintragen",
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
+                                errorText:
+                                    _nameController.text.trim().isEmpty &&
+                                            !_isFormValid
+                                        ? "Pflichtfeld"
+                                        : null,
                               ),
+                              onChanged:
+                                  (_) =>
+                                      setState(() {}), // 👈 Refresh when typing
                             ),
+
                             const SizedBox(height: 16),
                             Row(
                               children: [
@@ -333,8 +358,12 @@ class _AddRecipePageState extends State<AddRecipePage> {
                               isExpanded: true,
                               value: _selectedRecipeType,
                               hint: const Text("Art wählen"),
-                              decoration: const InputDecoration(
-                                labelText: "Art",
+                              decoration: InputDecoration(
+                                labelText: "Art *",
+                                errorText:
+                                    _selectedRecipeType == null && !_isFormValid
+                                        ? "Pflichtfeld"
+                                        : null,
                               ),
                               items:
                                   _mealTypes
@@ -350,6 +379,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                                     () => _selectedRecipeType = value,
                                   ),
                             ),
+
                             const SizedBox(height: 16),
                             DropdownButtonFormField<String>(
                               isExpanded: true,

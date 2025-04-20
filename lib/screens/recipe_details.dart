@@ -1,34 +1,81 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:recipeapp/api/ingredients.dart';
+import 'package:recipeapp/api/measurements.dart';
+import 'package:recipeapp/api/recipeingredients.dart';
+import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/api/recipes.dart';
+import 'package:recipeapp/models/ingredient.dart';
+import 'package:recipeapp/models/measurements.dart';
 import 'package:recipeapp/models/recipe.dart';
+import 'package:recipeapp/models/recipeingredients.dart';
+import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/theme/theme.dart';
-import 'package:recipeapp/widgets/ingredients_grid.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
-import 'package:recipeapp/widgets/atomics/tag.dart';
+import 'package:recipeapp/widgets/ingredients_grid.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final String recipeId;
   const RecipeDetailScreen({super.key, required this.recipeId});
 
   @override
-  _RecipeDetailScreenState createState() => _RecipeDetailScreenState();
+  State<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
-  late Future<Recipe> recipe;
-  final String? cookingTime = "30";
-  final List<String> tags = ['french', 'dinner', 'vegetarian'];
+  late final Future<Recipe> _recipeFuture = _loadRecipe();
+  List<Recipeingredients> _ingredients = [];
+  List<Ingredient> _allIngredients = [];
+  List<Measurements> _allMeasurements = [];
+  List<Tags> _allTags = [];
+  List<Tags> _tagObjects = [];
 
-  @override
-  void initState() {
-    super.initState();
-    recipe = _fetchRecipeById();
-  }
-
-  Future<Recipe> _fetchRecipeById() async {
+  Future<Recipe> _loadRecipe() async {
     final recipe = await fetchRecipeById(widget.recipeId);
+    final ingredients = await fetchRecipeIngredientsByRecipeId(widget.recipeId);
+    _allIngredients = await fetchIngredients();
+    _allMeasurements = await fetchMeasurements();
+    _allTags = await fetchTags();
+
+    _ingredients =
+        ingredients.map((entry) {
+          final name =
+              _allIngredients
+                  .firstWhere(
+                    (ing) => ing.id == entry.ingredientId,
+                    orElse: () => Ingredient(id: '', name: 'Unbekannt'),
+                  )
+                  .name;
+          final unit =
+              _allMeasurements
+                  .firstWhere(
+                    (m) => m.id == entry.measurementId,
+                    orElse:
+                        () => Measurements(id: '', name: '?', abbreviation: ''),
+                  )
+                  .name;
+
+          return Recipeingredients(
+            id: entry.id,
+            userId: entry.userId,
+            householdId: entry.householdId,
+            recipeId: entry.recipeId,
+            ingredientId: name,
+            measurementId: unit,
+            quantity: entry.quantity,
+          );
+        }).toList();
+
+    _tagObjects =
+        (recipe.tagId ?? []).map((id) {
+          return _allTags.firstWhere(
+            (tag) => tag.id == id,
+            orElse: () => Tags(id: id, name: '?', category: ''),
+          );
+        }).toList();
+
     return recipe;
   }
 
@@ -44,34 +91,23 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         ],
       ),
       body: FutureBuilder<Recipe>(
-        future: recipe,
+        future: _recipeFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: \${snapshot.error}');
-          } else if (!snapshot.hasData) {
-            return Center(
-              child: Text(
-                "No Recipe Details Found.",
-                style: theme.textTheme.headlineSmall,
-              ),
-            );
+          } else if (snapshot.hasError || !snapshot.hasData) {
+            return Center(child: Text("Fehler beim Laden des Rezepts"));
           }
-          Recipe recipe = snapshot.data!;
+
+          final recipe = snapshot.data!;
 
           return SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 100),
+              padding: const EdgeInsets.only(bottom: 40),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: SpoonSparkTheme.spacingL),
-
-                  // 🔄 Stepper progress bar
-                  //_buildStepper(theme),
-                  //const SizedBox(height: SpoonSparkTheme.spacingL),
-
-                  // 🖼️ Image
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: SpoonSparkTheme.spacingL,
@@ -80,168 +116,138 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       borderRadius: BorderRadius.circular(
                         SpoonSparkTheme.radiusXXL,
                       ),
-                      child: AspectRatio(
-                        aspectRatio: 1.9,
-                        child: Stack(
-                          children: [
-                            // Background image
-                            Positioned.fill(
-                              child: Image.network(
-                                recipe.thumbnailUrl ?? '',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
-                            ),
-                            // Title banner (bottom-left)
-                            Positioned(
-                              bottom: 16,
-                              left: 16,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    252,
-                                    251,
-                                    251,
-                                  ).withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  recipe.title,
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                    color: const Color.fromARGB(255, 0, 0, 0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Duration badge (top-right)
-                            Positioned(
-                              top: 16,
-                              right: 16,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    255,
-                                    255,
-                                    255,
-                                  ).withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  '${recipe.cookingTime ?? "-"} Min.',
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                    color: const Color.fromARGB(255, 0, 0, 0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: SpoonSparkTheme.spacingL),
-
-                  // 🏷️ Tags
-                  SizedBox(
-                    height: SpoonSparkTheme.spacingXXL,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: SpoonSparkTheme.spacingL,
-                      ),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: tags.length,
-                      itemBuilder: (context, index) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            SpoonSparkTheme.radiusS,
+                      child: Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 1.9,
+                            child:
+                                recipe.thumbnailUrl != null &&
+                                        recipe.thumbnailUrl!.isNotEmpty
+                                    ? Image.network(
+                                      recipe.thumbnailUrl!,
+                                      fit: BoxFit.cover,
+                                    )
+                                    : Container(
+                                      color: theme.colorScheme.surfaceBright,
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.image,
+                                          size: 48,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          Positioned(
+                            top: 12,
+                            left: 12,
                             child: Container(
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surfaceBright,
-                                borderRadius: BorderRadius.circular(
-                                  SpoonSparkTheme.radiusXXL,
-                                ),
-                              ),
-                              margin: const EdgeInsets.only(
-                                right: SpoonSparkTheme.spacingS,
-                              ),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: SpoonSparkTheme.spacingM,
-                                vertical: SpoonSparkTheme.spacingXS,
+                                horizontal: 10,
+                                vertical: 4,
                               ),
-                              child: Text(
-                                tags[index],
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.colorScheme.onSurface,
-                                ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.timer,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${recipe.prepTime ?? "-"} Min',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        );
-                      },
+                          if (_tagObjects.isNotEmpty)
+                            Positioned(
+                              bottom: 12,
+                              left: 0,
+                              right: 0,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Row(
+                                  children:
+                                      _tagObjects.map((tag) {
+                                        return Container(
+                                          margin: const EdgeInsets.only(
+                                            right: 8,
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(
+                                              0.85,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            tag.name,
+                                            style: TextStyle(
+                                              color:
+                                                  theme.colorScheme.onSurface,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: SpoonSparkTheme.spacingM),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SpoonSparkTheme.spacingL,
+                    ),
+                    child: Text(
+                      recipe.title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: SpoonSparkTheme.spacingL),
-
-                  // 🧾 Ingredients
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: SpoonSparkTheme.spacingL,
                     ),
                     child: IngredientsGrid(
-                      initialServings: 2,
-                      ingredients: [
-                        {
-                          'name': 'Tomato',
-                          'measurement': 2.0,
-                          'measurementName': 'pcs',
-                          'group': 'vegetables',
-                        },
-                        {
-                          'name': 'Chicken Breast',
-                          'measurement': 150.0,
-                          'measurementName': 'g',
-                          'group': 'meat',
-                        },
-                        {
-                          'name': 'Cheese',
-                          'measurement': 50.0,
-                          'measurementName': 'g',
-                          'group': 'dairy',
-                        },
-                        {
-                          'name': 'Tomato',
-                          'measurement': 2.0,
-                          'measurementName': 'pcs',
-                          'group': 'vegetables',
-                        },
-                        {
-                          'name': 'Chicken Breast',
-                          'measurement': 150.0,
-                          'measurementName': 'g',
-                          'group': 'meat',
-                        },
-                        {
-                          'name': 'Brauner Champignon',
-                          'measurement': 50.0,
-                          'measurementName': 'g',
-                          'group': 'dairy',
-                        },
-                      ],
-                      description: 'Keine Zubereitungsbeschreibung vorhanden',
+                      initialServings: recipe.servings ?? 1,
+                      ingredients:
+                          _ingredients
+                              .map(
+                                (e) => {
+                                  'name': e.ingredientId,
+                                  'measurement': e.quantity,
+                                  'measurementName': e.measurementId,
+                                  'group': 'misc',
+                                },
+                              )
+                              .toList(),
+                      description:
+                          recipe.description ??
+                          'Keine Zubereitungsbeschreibung vorhanden',
                     ),
                   ),
                 ],
