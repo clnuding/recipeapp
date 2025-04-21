@@ -73,6 +73,113 @@ class _AddRecipePageState extends State<AddRecipePage> {
     _loadTags();
   }
 
+  void _showTimePickerBottomSheet({
+    required bool isHour,
+    required TextEditingController controller,
+  }) {
+    final theme = Theme.of(context);
+    final List<int> options =
+        isHour
+            ? List.generate(7, (index) => index) // 0 to 6
+            : List.generate(12, (index) => index * 5); // 0 to 55 by 5
+
+    final currentValue = int.tryParse(controller.text) ?? 0;
+    final initialIndex = options.indexOf(currentValue);
+    final scrollController = FixedExtentScrollController(
+      initialItem: initialIndex,
+    );
+
+    int selectedValue = currentValue;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: theme.colorScheme.onPrimary,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) {
+        return SizedBox(
+          height: 300,
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Text(
+                isHour ? "Stunden wählen" : "Minuten wählen",
+                style: theme.textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    ListWheelScrollView.useDelegate(
+                      controller: scrollController,
+                      itemExtent: 50,
+                      physics: const FixedExtentScrollPhysics(),
+                      onSelectedItemChanged: (index) {
+                        selectedValue = options[index];
+                      },
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        childCount: options.length,
+                        builder: (context, index) {
+                          final value = options[index].toString().padLeft(
+                            2,
+                            '0',
+                          );
+                          return Center(
+                            child: Text(
+                              value,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    options[index] == selectedValue
+                                        ? theme.colorScheme.primary
+                                        : theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      controller.text = selectedValue.toString().padLeft(
+                        2,
+                        '0',
+                      );
+                    });
+                    Navigator.pop(context);
+                  },
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
+                  ),
+                  child: const Text("Bestätigen"),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _loadRecipeData(String recipeId) async {
     final recipe = await fetchRecipeById(recipeId);
     final tags = await fetchTags();
@@ -387,14 +494,20 @@ class _AddRecipePageState extends State<AddRecipePage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        _boxedTimeField(_hourController),
+                                        _boxedTimeField(
+                                          _hourController,
+                                          isHour: true,
+                                        ),
                                         const Padding(
                                           padding: EdgeInsets.symmetric(
                                             horizontal: 4,
                                           ),
                                           child: Text(":"),
                                         ),
-                                        _boxedTimeField(_minuteController),
+                                        _boxedTimeField(
+                                          _minuteController,
+                                          isHour: false,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -508,16 +621,26 @@ class _AddRecipePageState extends State<AddRecipePage> {
     ),
   );
 
-  Widget _boxedTimeField(TextEditingController controller) => Container(
-    width: 50,
-    height: 40,
-    alignment: Alignment.center,
-    child: TextField(
-      controller: controller,
-      textAlign: TextAlign.center,
-      keyboardType: TextInputType.number,
-      style: Theme.of(context).textTheme.bodyLarge,
-      decoration: const InputDecoration(),
+  Widget _boxedTimeField(
+    TextEditingController controller, {
+    required bool isHour,
+  }) => GestureDetector(
+    onTap:
+        () =>
+            _showTimePickerBottomSheet(isHour: isHour, controller: controller),
+    child: Container(
+      width: 50,
+      height: 40,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+      ),
+      child: Text(
+        controller.text,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
     ),
   );
 

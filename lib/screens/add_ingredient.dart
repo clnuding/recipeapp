@@ -144,6 +144,9 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                   hint: const Text("Einheit wählen"),
                   items:
                       _allMeasurements
+                          .where(
+                            (m) => m.name != null && m.name.trim().isNotEmpty,
+                          )
                           .map(
                             (m) => DropdownMenuItem(
                               value: m.id,
@@ -151,6 +154,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                             ),
                           )
                           .toList(),
+
                   onChanged: (value) => selectedUnitId = value,
                   decoration: const InputDecoration(labelText: "Einheit"),
                 ),

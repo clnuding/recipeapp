@@ -34,7 +34,7 @@ class Recipe {
       creatorId: json['user_id'],
       householdId: json['household_id'],
       tagId: json['tag_id'],
-      description: json['description'],
+      description: json['instructions'],
       thumbnailUrl: json['thumbnail_url'],
       sourceUrl: json['source_url'],
       prepTime: json['prep_time_minutes'],
@@ -47,11 +47,11 @@ class Recipe {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
+      'name': title,
       'creator_id': creatorId,
       'household_id': householdId,
       'tag_id': tagId,
-      'description': description,
+      'instructions': description,
       'thumbnail_url': thumbnailUrl,
       'source_url': sourceUrl,
       'prep_time': prepTime,

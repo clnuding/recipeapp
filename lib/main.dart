@@ -39,7 +39,10 @@ class MyApp extends StatelessWidget {
         '/splash': (context) => const SplashScreen(),
         '/signIn': (context) => const SignInScreen(),
         '/signUp': (context) => const SignUpScreen(),
-        '/main': (context) => const MainScreen(),
+        '/main': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as int?;
+          return MainScreen(initialTabIndex: args ?? 0);
+        },
         '/create_recipe': (context) {
           if (!pb.authStore.isValid) {
             return const SignInScreen();

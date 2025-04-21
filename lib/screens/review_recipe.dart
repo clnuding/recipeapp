@@ -206,13 +206,11 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
 
       wizard.clear();
       if (mounted) {
-        Navigator.pushReplacement(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => RecipesPage(),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
+          '/main',
+          (route) => false,
+          arguments: 1, // 👈 Recipes tab index
         );
       }
     } catch (e) {
