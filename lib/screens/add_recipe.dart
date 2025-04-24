@@ -441,19 +441,22 @@ class _AddRecipePageState extends State<AddRecipePage> {
           _mealTypes
               .firstWhere(
                 (tag) => tag.name == _selectedRecipeType,
-                orElse: () => Tags(id: '', name: '', category: ''),
+                orElse:
+                    () => Tags(id: '', name: '', category: '', internal: ''),
               )
               .id,
           _recipeCategories
               .firstWhere(
                 (tag) => tag.name == _selectedRecipeCategory,
-                orElse: () => Tags(id: '', name: '', category: ''),
+                orElse:
+                    () => Tags(id: '', name: '', category: '', internal: ''),
               )
               .id,
           _recipeSeasons
               .firstWhere(
                 (tag) => tag.name == _selectedRecipeSeason,
-                orElse: () => Tags(id: '', name: '', category: ''),
+                orElse:
+                    () => Tags(id: '', name: '', category: '', internal: ''),
               )
               .id,
         ].where((id) => id.isNotEmpty).toList();

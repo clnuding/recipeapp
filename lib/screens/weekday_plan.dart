@@ -5,7 +5,7 @@ import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/legend_item.dart';
 import 'package:recipeapp/widgets/atomics/primary_btn.dart';
-import 'package:recipeapp/widgets/atomics/secondary_btn.dart';
+// import 'package:recipeapp/widgets/atomics/secondary_btn.dart';
 import 'package:recipeapp/widgets/card_stack.dart';
 import 'package:recipeapp/widgets/three_tap_button.dart';
 
@@ -67,7 +67,7 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: LogoAppbar(showBackButton: true),
+      appBar: LogoAppbar(showBackButton: false),
       body: Stack(
         children: [
           SafeArea(
@@ -146,14 +146,14 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
                     child: Row(
                       children: [
                         // Secondary button
-                        Expanded(
-                          child: SecondaryButton(
-                            text: 'Zurück',
-                            onPressed: Navigator.of(context).pop,
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: SecondaryButton(
+                        //     text: 'Zurück',
+                        //     onPressed: Navigator.of(context).pop,
+                        //   ),
+                        // ),
 
-                        const SizedBox(width: SpoonSparkTheme.spacingL),
+                        // const SizedBox(width: SpoonSparkTheme.spacingL),
 
                         // Primary button
                         Expanded(
@@ -162,7 +162,7 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
                             onPressed: () {
                               mpService.insertMealDaySelection(buttonStates);
                               // Navigate to the date selection screen
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder:

@@ -1,67 +1,11 @@
 // User model
 import 'package:recipeapp/models/recipe.dart';
 
-class User {
-  final String id;
-  final String email;
-  final String householdId;
-  final String name;
-  final String avatarUrl;
-
-  User({
-    required this.id,
-    required this.email,
-    required this.householdId,
-    required this.name,
-    this.avatarUrl = '',
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      email: json['email'],
-      householdId: json['householdId'],
-      name: json['name'],
-      avatarUrl: json['avatarUrl'] ?? '',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'email': email,
-      'householdId': householdId,
-      'name': name,
-      'avatarUrl': avatarUrl,
-    };
-  }
-}
-
-// Household model
-class Household {
-  final String id;
-  final String name;
-  final String createdBy;
-
-  Household({required this.id, required this.name, required this.createdBy});
-
-  factory Household.fromJson(Map<String, dynamic> json) {
-    return Household(
-      id: json['id'],
-      name: json['name'],
-      createdBy: json['createdBy'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'createdBy': createdBy};
-  }
-}
-
 // MealPlan model with status
 class MealPlan {
   final String id;
   final String householdId;
+  final String userId;
   final DateTime startDate;
   final DateTime endDate; // Calculated as startDate + 6 days
   final String status; // 'in_progress', 'finalized', 'completed'
@@ -69,6 +13,7 @@ class MealPlan {
   MealPlan({
     required this.id,
     required this.householdId,
+    required this.userId,
     required this.startDate,
     required this.endDate,
     required this.status,
@@ -77,9 +22,10 @@ class MealPlan {
   factory MealPlan.fromJson(Map<String, dynamic> json) {
     return MealPlan(
       id: json['id'],
-      householdId: json['householdId'],
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
+      householdId: json['household_id'],
+      userId: json['user_id'],
+      startDate: DateTime.parse(json['start_date']),
+      endDate: DateTime.parse(json['end_date']),
       status: json['status'],
     );
   }
@@ -87,9 +33,10 @@ class MealPlan {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'householdId': householdId,
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
+      'household_id': householdId,
+      'user_id': userId,
+      'start_date': startDate.toIso8601String(),
+      'end_date': endDate.toIso8601String(),
       'status': status,
     };
   }
