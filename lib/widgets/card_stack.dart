@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/api/recipes.dart';
-import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/screens/main_screen.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
@@ -25,8 +26,8 @@ class SwipeCardStackScreen extends StatefulWidget {
 
 class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
   final CardSwiperController controller = CardSwiperController();
-  Set<Recipe> chosenRecipes = {};
-  Set<Recipe> rejectedRecipes = {};
+  Set<String> chosenRecipes = {};
+  Set<String> rejectedRecipes = {};
 
   late final List<RecipeSwipeCard> cards;
   late bool cardsEmpty;
@@ -57,7 +58,6 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
 
     try {
       final recipes = await fetchRecipes();
-      print(recipes[0].toJson());
       setState(() {
         cards = recipes.map(RecipeSwipeCard.new).toList();
         _isLoading = false;
@@ -70,31 +70,23 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
     }
   }
 
-  // // Save recipe selections for the current user.
-  // Future<void> _saveRecipeSelections() async {
-  //   for (final recipe in chosenRecipes) {
-  //     await DatabaseHelper.instance.insertRecipeSelection(
-  //       widget.userId,
-  //       recipe.id,
-  //       true,
-  //     );
-  //   }
-  //   for (final recipe in rejectedRecipes) {
-  //     await DatabaseHelper.instance.insertRecipeSelection(
-  //       widget.userId,
-  //       recipe.id,
-  //       false,
-  //     );
-  //   }
+  // Save recipe selections for the current user.
+  Future<void> _saveRecipeSelections() async {
+    await mpService.insertRecipeSelection(chosenRecipes.toList());
 
-  //   // After saving individual selections, check if all household users have completed their selection.
-  //   // If so, create the final meal plan.
-  //   bool householdCompleted = await DatabaseHelper.instance
-  //       .checkHouseholdSelectionsCompleted(widget.householdId);
-  //   if (householdCompleted) {
-  //     await DatabaseHelper.instance.finalizeMealPlan(widget.householdId);
-  //   }
-  // }
+    // mark user selection as complete, check if all users in a household
+    // have completed their selection, and set meal plan to 'finalized'
+    // afterwards finalzing meal plan an deriving the shopping list
+    await mpService.markUserSelectionAsCompleted();
+
+    // After saving individual selections, check if all household users have completed their selection.
+    // If so, create the final meal plan.
+    // bool householdCompleted =
+    //     await mpService.checkHouseholdSelectionsCompleted();
+    // if (householdCompleted) {
+    //   await mpService.finalizeMealPlan();
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +105,7 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
     }
 
     return Scaffold(
-      appBar: LogoAppbar(showBackButton: true),
+      appBar: LogoAppbar(showBackButton: false),
       body: Center(
         child:
             cardsEmpty
@@ -164,14 +156,14 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
                           onSwipe: _onSwipe,
                           onUndo: _onUndo,
                           onEnd: () async {
-                            // await _saveRecipeSelections();
+                            _saveRecipeSelections();
                             setState(() {
                               cardsEmpty = true;
                             });
                           },
                           allowedSwipeDirection:
                               AllowedSwipeDirection.symmetric(horizontal: true),
-                          numberOfCardsDisplayed: 4,
+                          numberOfCardsDisplayed: min(cards.length, 4),
                           backCardOffset: const Offset(25, 35),
                           padding: const EdgeInsets.all(
                             SpoonSparkTheme.spacingXXL,
@@ -242,9 +234,9 @@ class _SwipeCardStackScreenState extends State<SwipeCardStackScreen> {
     CardSwiperDirection direction,
   ) {
     if (direction.name == "left") {
-      rejectedRecipes.add(cards[previousIndex].recipe);
+      rejectedRecipes.add(cards[previousIndex].recipe.id);
     } else {
-      chosenRecipes.add(cards[previousIndex].recipe);
+      chosenRecipes.add(cards[previousIndex].recipe.id);
     }
     return true;
   }

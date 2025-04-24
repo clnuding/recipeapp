@@ -10,7 +10,7 @@ String createDateTimeString(DateTime dateTime) {
 }
 
 /// Builds a PocketBase‐style filter string from a map of field→value.
-String _buildFilter(Map<String, String> filters) {
+String _buildFilter(Map<String, dynamic> filters) {
   return filters.entries.map((e) => '${e.key} = "${e.value}"').join(' && ');
 }
 
@@ -18,7 +18,7 @@ String _buildFilter(Map<String, String> filters) {
 /// If found, returns its id; otherwise returns null.
 Future<String?> findExistingId({
   required String collectionName,
-  required Map<String, String> filters,
+  required Map<String, dynamic> filters,
   int page = 1,
   int perPage = 1,
 }) async {

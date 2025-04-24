@@ -1,16 +1,24 @@
 import 'dart:math';
 import 'package:intl/intl.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/api/shopping_list.dart';
 import 'package:recipeapp/api/utils.dart';
+import 'package:recipeapp/models/meal.dart';
+import 'package:recipeapp/models/tags.dart';
 
 class MealPlannerService {
   late final ShoppingListService _shoppingListService;
   late String mealPlanId;
+  late DateTime startDate;
   late String startDateString;
+  late String householdId;
+  late String userId;
 
   MealPlannerService() {
     _shoppingListService = ShoppingListService();
+    userId = pb.authStore.record!.id;
+    householdId = pb.authStore.record!.getStringValue('household_id');
   }
 
   // Create a new meal plan in 'in_progress' state
@@ -26,6 +34,7 @@ class MealPlannerService {
     if (existingId != null) {
       this.mealPlanId = existingId;
       this.startDateString = startDateString;
+      this.startDate = startDate;
       return;
     }
 
@@ -38,6 +47,7 @@ class MealPlannerService {
         .create(
           body: {
             'household_id': householdId,
+            'user_id': userId,
             'start_date': DateFormat('yyyy-MM-dd').format(startDate),
             'end_date': DateFormat('yyyy-MM-dd').format(endDate),
             'status': 'in_progress',
@@ -66,6 +76,7 @@ class MealPlannerService {
     print("created Mealplan with id: $mealPlanId");
     this.mealPlanId = mealPlanId;
     this.startDateString = startDateString;
+    this.startDate = startDate;
   }
 
   // Inserts a meal plan selection for one meal for the given user.
@@ -74,101 +85,106 @@ class MealPlannerService {
   ) async {
     final existingId = await findExistingId(
       collectionName: 'mealPlanDaySelections',
-      filters: {'meal_plan_id': mealPlanId, 'date': startDateString},
+      filters: {
+        'meal_plan_id': mealPlanId,
+        'date': startDateString,
+        'user_id': userId,
+      },
     );
-
-    if (existingId != null) {
-      return;
-    }
-
     final batch = pb.createBatch();
-    for (var entry in selectedMeals.entries) {
-      final dateStr = entry.key;
-      final meals = entry.value; // { "breakfast": state, ... }
-      batch
-          .collection('mealPlanDaySelections')
-          .create(
-            body: {
-              'meal_plan_id': mealPlanId,
-              'user_id': pb.authStore.record?.id,
-              'date': dateStr,
-              'breakfast': meals['breakfast'] == 0 ? false : true,
-              'lunch': meals['lunch'] == 0 ? false : true,
-              'dinner': meals['dinner'] == 0 ? false : true,
-            },
-          );
+    if (existingId != null) {
+      for (var entry in selectedMeals.entries) {
+        final dateStr = entry.key;
+        final meals = entry.value; // { "breakfast": state, ... }
+        batch
+            .collection('mealPlanDaySelections')
+            .update(
+              existingId,
+              body: {
+                'date': dateStr,
+                'breakfast': meals['breakfast'] == 0 ? false : true,
+                'lunch': meals['lunch'] == 0 ? false : true,
+                'dinner': meals['dinner'] == 0 ? false : true,
+              },
+            );
+      }
+    } else {
+      for (var entry in selectedMeals.entries) {
+        final dateStr = entry.key;
+        final meals = entry.value; // { "breakfast": state, ... }
+        batch
+            .collection('mealPlanDaySelections')
+            .create(
+              body: {
+                'household_id': householdId,
+                'meal_plan_id': mealPlanId,
+                'user_id': pb.authStore.record?.id,
+                'date': dateStr,
+                'breakfast': meals['breakfast'] == 0 ? false : true,
+                'lunch': meals['lunch'] == 0 ? false : true,
+                'dinner': meals['dinner'] == 0 ? false : true,
+              },
+            );
+      }
     }
     await batch.send();
   }
 
   // Inserts a recipe selection (accepted or rejected) for the given user.
-  Future<void> insertRecipeSelection(
-    String mealPlanId,
-    String recipeId,
-    bool selected,
-  ) async {
+  Future<void> insertRecipeSelection(List<String> recipeIds) async {
     // Check if a record already exists
-    final userId = pb.authStore.record?.id;
-    final existingRecords = await pb
-        .collection('recipe_selections')
-        .getList(
-          filter:
-              'userId = "$userId" && recipeId = "$recipeId" && mealPlanId = "$mealPlanId"',
-        );
+    final existingId = await findExistingId(
+      collectionName: 'recipeSelections',
+      filters: {'meal_plan_id': mealPlanId, 'user_id': userId},
+    );
 
-    if (existingRecords.items.isNotEmpty) {
-      // Update existing record
+    if (existingId != null) {
       await pb
-          .collection('recipe_selections')
-          .update(existingRecords.items.first.id, body: {'selected': selected});
+          .collection('recipeSelections')
+          .update(existingId, body: {'recipe_ids': recipeIds});
     } else {
       // Create new record
       await pb
-          .collection('recipe_selections')
+          .collection('recipeSelections')
           .create(
             body: {
-              'userId': userId,
-              'mealPlanId': mealPlanId,
-              'recipeId': recipeId,
-              'selected': selected,
+              'household_id': householdId,
+              'user_id': userId,
+              'meal_plan_id': mealPlanId,
+              'recipe_ids': recipeIds,
             },
           );
     }
   }
 
   // Mark a user's selection as completed
-  Future<void> markUserSelectionAsCompleted(
-    String userId,
-    String mealPlanId,
-  ) async {
-    final participantResponse = await pb
-        .collection('meal_plan_participants')
-        .getList(filter: 'userId = "$userId" && mealPlanId = "$mealPlanId"');
+  Future<void> markUserSelectionAsCompleted() async {
+    final recordId = await findExistingId(
+      collectionName: 'mealPlanParticipants',
+      filters: {'meal_plan_id': mealPlanId, 'user_id': userId},
+    );
 
-    if (participantResponse.items.isNotEmpty) {
+    if (recordId != null) {
       await pb
-          .collection('meal_plan_participants')
-          .update(
-            participantResponse.items.first.id,
-            body: {'selectionCompleted': true},
-          );
+          .collection('mealPlanParticipants')
+          .update(recordId, body: {'selection_completed': true});
     }
 
     // Check if all users have completed their selections
-    await checkAndFinalizeMealPlan(mealPlanId);
+    await checkAndFinalizeMealPlan();
   }
 
   // Check whether all household users have completed their recipe selection.
-  Future<bool> checkHouseholdSelectionsCompleted(String mealPlanId) async {
+  Future<bool> checkHouseholdSelectionsCompleted() async {
     final participantsResponse = await pb
-        .collection('meal_plan_participants')
-        .getList(filter: 'mealPlanId = "$mealPlanId"');
+        .collection('mealPlanParticipants')
+        .getList(filter: 'meal_plan_id = "$mealPlanId"');
 
     if (participantsResponse.items.isEmpty) return false;
 
     // Check if all participants have completed their selections
     for (var participant in participantsResponse.items) {
-      if (participant.data['selectionCompleted'] != true) {
+      if (participant.data['selection_completed'] != true) {
         return false;
       }
     }
@@ -177,124 +193,146 @@ class MealPlannerService {
   }
 
   // Check if all users have completed selections and finalize the meal plan if so
-  Future<void> checkAndFinalizeMealPlan(String mealPlanId) async {
-    final allCompleted = await checkHouseholdSelectionsCompleted(mealPlanId);
+  Future<void> checkAndFinalizeMealPlan() async {
+    final allCompleted = await checkHouseholdSelectionsCompleted();
 
     if (allCompleted) {
-      // Get the meal plan to get the household ID
-      final mealPlanResponse = await pb
-          .collection('meal_plans')
-          .getOne(mealPlanId);
-      final householdId = mealPlanResponse.data['householdId'];
-
       // Update the meal plan status
       await pb
-          .collection('meal_plans')
+          .collection('mealPlans')
           .update(mealPlanId, body: {'status': 'finalized'});
 
       // Generate the final meal plan
-      await finalizeMealPlan(mealPlanId, householdId);
+      await finalizeMealPlan();
 
-      // Generate shopping list
-      await _shoppingListService.generateShoppingListFromMealPlan(mealPlanId);
+      // // Generate shopping list
+      // await _shoppingListService.generateShoppingListFromMealPlan(mealPlanId);
     }
   }
 
-  // Finalizes the meal plan for the household
-  Future<void> finalizeMealPlan(String mealPlanId, String householdId) async {
-    // Get the meal plan to get start date
-    final mealPlanResponse = await pb
-        .collection('meal_plans')
-        .getOne(mealPlanId);
-    final DateTime startDate = DateTime.parse(
-      mealPlanResponse.data['startDate'],
-    );
-
+  Future<void> finalizeMealPlan() async {
     // Retrieve users in this household
     final usersResponse = await pb
         .collection('users')
-        .getList(filter: 'householdId = "$householdId"');
+        .getList(filter: 'household_id = "$householdId"');
 
     final List<String> userIds = usersResponse.items.map((e) => e.id).toList();
 
     // Get accepted recipes for each user
     final Map<String, List<String>> userAcceptedRecipes = {};
     for (var userId in userIds) {
-      final selectionsResponse = await pb
-          .collection('recipe_selections')
+      final selections = await pb
+          .collection('recipeSelections')
           .getList(
-            filter:
-                'userId = "$userId" && mealPlanId = "$mealPlanId" && selected = true',
+            filter: 'user_id = "$userId" && meal_plan_id = "$mealPlanId"',
           );
-
-      userAcceptedRecipes[userId] =
-          selectionsResponse.items
-              .map<String>((item) => item.data['recipeId'] as String)
-              .toList();
+      userAcceptedRecipes[userId] = List<String>.from(
+        selections.items.first.data['recipe_ids'],
+      );
     }
 
-    // Find common recipes (intersection of all users' accepted recipes)
+    // Compute intersection (common) and union of accepted recipes
     Set<String> commonRecipes =
         userAcceptedRecipes.values.isNotEmpty
             ? userAcceptedRecipes.values.first.toSet()
             : {};
-
     for (var recipes in userAcceptedRecipes.values.skip(1)) {
       commonRecipes = commonRecipes.intersection(recipes.toSet());
     }
 
-    // If not enough common recipes, fill with recipes from the union
-    final int totalMeals = 7 * 3; // 7 days x 3 meals
-    final unionRecipes = userAcceptedRecipes.values.fold<Set<String>>(
-      {},
-      (previous, element) => previous..addAll(element),
-    );
+    final Set<String> unionRecipes = userAcceptedRecipes.values
+        .fold<Set<String>>({}, (all, list) => all..addAll(list));
 
-    List<String> finalRecipeCandidates = commonRecipes.toList();
-    Random random = Random();
+    // Count how many meals of each type we need
+    final Map<String, int> neededByType = await countPlannedMealsByType();
 
-    while (finalRecipeCandidates.length < totalMeals &&
-        unionRecipes.isNotEmpty) {
-      // Choose a random recipe from the union
-      final unionList = unionRecipes.toList();
-      if (unionList.isEmpty) break;
+    // Helper: group recipe IDs by their "meal_type" tag
+    Future<Map<String, List<String>>> groupByMealType(Set<String> ids) async {
+      final Map<String, List<String>> map = {
+        'breakfast': [],
+        'lunch': [],
+        'dinner': [],
+      };
+      if (ids.isEmpty) return map;
 
-      final String candidate = unionList[random.nextInt(unionList.length)];
-      if (!finalRecipeCandidates.contains(candidate)) {
-        finalRecipeCandidates.add(candidate);
-        unionRecipes.remove(candidate);
+      // build: id = "a" || id = "b" ...
+      final filter = makeIdListFilter(ids.toList());
+
+      // Fetch tag info in batch
+      final resp = await pb
+          .collection('recipes')
+          .getList(filter: filter, expand: 'tag_id');
+
+      for (var item in resp.items) {
+        final tagsRecords = (item.get<List<RecordModel>>('expand.tag_id'));
+        List<Tags> tags =
+            tagsRecords.map((e) => Tags.fromJson(e.toJson())).toList();
+
+        for (var tag in tags) {
+          if (tag.category == 'meal_type') {
+            map[tag.internal]!.add(item.id);
+          }
+        }
       }
+      return map;
     }
 
-    // Shuffle to randomize distribution
-    finalRecipeCandidates.shuffle(random);
+    // Prepare final candidates per meal type
+    final Map<String, List<String>> candidatesByType = {
+      'breakfast': [],
+      'lunch': [],
+      'dinner': [],
+    };
 
-    // Assign recipes to each day and meal type
-    final List<String> mealTypes = ['breakfast', 'lunch', 'dinner'];
+    print("neededByType: $neededByType");
+
+    // Fill from commonRecipes first
+    final commonByType = await groupByMealType(commonRecipes);
+    commonByType.forEach((meal, list) {
+      final take = neededByType[meal]!;
+      candidatesByType[meal] = list.take(take).toList();
+    });
+
+    // Fill shortages from unionRecipes
+    final unionByType = await groupByMealType(
+      unionRecipes..removeAll(commonRecipes),
+    );
+
+    for (var meal in candidatesByType.keys) {
+      final have = candidatesByType[meal]!.length;
+      final need = neededByType[meal]! - have;
+      if (need > 0) {
+        candidatesByType[meal]!.addAll(unionByType[meal]!.take(need).toList());
+      }
+      // Shuffle each meal list
+      candidatesByType[meal]!.shuffle(Random());
+    }
+
+    // Batch create mealPlanRecipes entries
+    final batch = pb.createBatch();
     for (int dayOffset = 0; dayOffset < 7; dayOffset++) {
-      final DateTime day = startDate.add(Duration(days: dayOffset));
-
-      for (var meal in mealTypes) {
-        if (finalRecipeCandidates.isEmpty)
-          break; // In case we don't have enough recipes
-
-        final String recipeId = finalRecipeCandidates.removeAt(0);
-        int servings = await getHouseholdSize(householdId) * 2;
-
-        await pb
-            .collection('meal_plan_recipes')
+      final date = startDate.add(Duration(days: dayOffset)).toIso8601String();
+      for (var meal in ['breakfast', 'lunch', 'dinner']) {
+        final list = candidatesByType[meal]!;
+        if (list.isEmpty) continue;
+        final recipeId = list.removeAt(0);
+        final servings = await getHouseholdSize(householdId);
+        batch
+            .collection('mealPlanRecipes')
             .create(
               body: {
-                'mealPlanId': mealPlanId,
-                'date': day.toIso8601String(),
-                'mealType': meal,
-                'recipeId': recipeId,
+                'household_id': householdId,
+                'meal_plan_id': mealPlanId,
+                'date': date,
+                'meal_type': meal,
+                'recipe_id': recipeId,
                 'servings': servings,
                 'completed': false,
               },
             );
       }
     }
+    await batch.send();
   }
 
   // Mark a meal as completed
@@ -340,7 +378,7 @@ class MealPlannerService {
   Future<int> getHouseholdSize(String householdId) async {
     final householdResponse = await pb
         .collection('users')
-        .getList(filter: 'householdId = "$householdId"');
+        .getList(filter: 'household_id = "$householdId"');
 
     return householdResponse.items.length;
   }
@@ -383,10 +421,72 @@ class MealPlannerService {
     final response = await pb
         .collection('meal_plan_recipes')
         .getList(
-          filter: 'mealPlanId = "$mealPlanId" && date ~ "$dateString"',
+          filter: 'meal_plan_id = "$mealPlanId" && date ~ "$dateString"',
           expand: 'recipe',
         );
 
     return response.items.map((item) => item.data).toList();
   }
+
+  Future<bool> deleteMealPlan(String mealPlanId) async {
+    try {
+      await pb.collection('mealPlans').delete(mealPlanId);
+      return true;
+    } catch (e) {
+      print('Error deleting meal plan: $e');
+      return false;
+    }
+  }
+
+  Future<MealPlan?> mealPlanExists(
+    DateTime startDate,
+    String householdId,
+  ) async {
+    final startDateString = createDateTimeString(startDate);
+    final response = await pb
+        .collection('mealPlans')
+        .getList(
+          filter:
+              'start_date = "$startDateString" && household_id = "$householdId"',
+        );
+
+    if (response.items.isEmpty) {
+      return null;
+    }
+
+    return MealPlan.fromJson(response.items.first.data);
+  }
+
+  Future<Map<String, int>> countPlannedMealsByType() async {
+    // Fetch all 7 day‑records for this mealPlanId and userId
+    final records = await pb
+        .collection('mealPlanDaySelections')
+        .getList(
+          filter:
+              'meal_plan_id = "$mealPlanId" && household_id = "$householdId"',
+        );
+
+    // Initialize counters for each meal type
+    final counts = <String, int>{'breakfast': 0, 'lunch': 0, 'dinner': 0};
+
+    // Increment the counter for each meal if it's planned
+    for (final rec in records.items) {
+      if (rec.getBoolValue('breakfast')) {
+        counts['breakfast'] = counts['breakfast']! + 1;
+      }
+      if (rec.getBoolValue('lunch')) {
+        counts['lunch'] = counts['lunch']! + 1;
+      }
+      if (rec.getBoolValue('dinner')) {
+        counts['dinner'] = counts['dinner']! + 1;
+      }
+    }
+
+    return counts;
+  }
+}
+
+String makeIdListFilter(List<String> ids) {
+  if (ids.isEmpty) return '';
+  return ids.map((id) => 'id = "$id"').join(' || ');
 }
