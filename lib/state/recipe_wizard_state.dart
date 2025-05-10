@@ -8,24 +8,26 @@ class RecipeWizardState extends ChangeNotifier {
   String? _title;
   String? _description;
   File? _image;
+  String? _thumbnailFilename; // ✅ NEW
   int _servings = 2;
   int _prepTimeMinutes = 00;
   List<String> _tagIds = [];
   List<Tags> _tagObjects = [];
   List<Recipeingredients> _ingredients = [];
-  bool _isEditing = false; // ✅ NEW
+  bool _isEditing = false;
 
   // Getters
   String? get recipeId => _recipeId;
   String? get title => _title;
   String? get description => _description;
   File? get image => _image;
+  String? get thumbnailFilename => _thumbnailFilename; // ✅ NEW
   int get servings => _servings;
   int get prepTimeMinutes => _prepTimeMinutes;
   List<String> get tagIds => _tagIds;
   List<Tags> get tagObjects => _tagObjects;
   List<Recipeingredients> get ingredients => _ingredients;
-  bool get isEditing => _isEditing; // ✅ NEW
+  bool get isEditing => _isEditing;
 
   // Setters
   void setRecipeId(String id) {
@@ -34,8 +36,12 @@ class RecipeWizardState extends ChangeNotifier {
   }
 
   void setEditing(bool value) {
-    // ✅ NEW
     _isEditing = value;
+    notifyListeners();
+  }
+
+  void setThumbnail(String? filename) {
+    _thumbnailFilename = filename;
     notifyListeners();
   }
 
@@ -86,12 +92,13 @@ class RecipeWizardState extends ChangeNotifier {
     _title = null;
     _description = null;
     _image = null;
+    _thumbnailFilename = null; // ✅ RESET
     _servings = 2;
     _prepTimeMinutes = 00;
     _tagIds = [];
     _tagObjects = [];
     _ingredients = [];
-    _isEditing = false; // ✅ RESET
+    _isEditing = false;
     notifyListeners();
   }
 }

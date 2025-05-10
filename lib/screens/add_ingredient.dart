@@ -270,7 +270,8 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
 
       child: Scaffold(
         appBar: LogoAppbar(
-          leading: BackButton(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               _saveToWizard(); // 👈 Speichern bevor zurück
               Navigator.pushReplacement(
@@ -284,6 +285,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
               );
             },
           ),
+
           actions: [
             IconButton(
               icon: const Icon(Icons.arrow_forward),
@@ -578,18 +580,17 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   void _saveToWizard() {
     final wizard = Provider.of<RecipeWizardState>(context, listen: false);
 
-    // 🔁 Entferne alle alten Zutaten aus dem Wizard
-    for (final ing in wizard.ingredients.toList()) {
+    // 🔁 Update ingredients
+    wizard.ingredients.toList().forEach((ing) {
       wizard.removeIngredient(ing.ingredientId);
-    }
+    });
 
-    // ➕ Füge aktuelle Zutaten hinzu
     for (var item in _selectedIngredients) {
       final quantity = double.tryParse(item['amount'] ?? '') ?? 0.0;
       if (quantity <= 0) continue;
 
       final newIngredient = Recipeingredients(
-        id: '', // not used
+        id: '',
         userId: '',
         householdId: '',
         recipeId: '',
@@ -600,5 +601,16 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
 
       wizard.addIngredient(newIngredient);
     }
+
+    // ✅ ALSO re-save the image if already set
+    final currentImage = wizard.image;
+    wizard.setRecipeInfo(
+      title: wizard.title ?? '',
+      description: wizard.description ?? '',
+      image: currentImage,
+      servings: wizard.servings,
+      prepTimeMinutes: wizard.prepTimeMinutes,
+      tagIds: wizard.tagIds,
+    );
   }
 }

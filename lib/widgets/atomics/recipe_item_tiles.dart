@@ -54,11 +54,14 @@ class _RecipeItemTilesState extends State<RecipeItemTiles> {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 3,
+        vertical: 6,
+      ), // 👈 SAME as list
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 1,
         childAspectRatio: 0.75,
       ),
       itemCount: widget.recipes.length,
@@ -75,22 +78,26 @@ class _RecipeItemTilesState extends State<RecipeItemTiles> {
                   .name;
             }).toList();
 
-        return RecipeCard(
-          recipe: recipe,
-          tagNames: tagNames,
-          onTap: () async {
-            // ✅ Await result from detail screen
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RecipeDetailScreen(recipeId: recipe.id),
-              ),
-            );
-
-            if (result == true && widget.onChanged != null) {
-              widget.onChanged!(); // ✅ Trigger reload if needed
-            }
-          },
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 3,
+            vertical: 6,
+          ), // 👈 SAME PADDING inside
+          child: RecipeCard(
+            recipe: recipe,
+            tagNames: tagNames,
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RecipeDetailScreen(recipeId: recipe.id),
+                ),
+              );
+              if (result == true && widget.onChanged != null) {
+                widget.onChanged!();
+              }
+            },
+          ),
         );
       },
     );

@@ -36,9 +36,10 @@ class IngredientTile extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: Center(
-              child: Text(
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
                 name,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
@@ -48,13 +49,17 @@ class IngredientTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
-            ),
+              if (amount != null && unit != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    '${_formatNumber(amount!)} $unit',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
+                  ),
+                ),
+            ],
           ),
-          if (amount != null && unit != null)
-            Text(
-              '${_formatNumber(amount!)} $unit',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
-            ),
+
           if (trailing != null)
             Padding(
               padding: const EdgeInsets.only(top: 4),

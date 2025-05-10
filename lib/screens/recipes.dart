@@ -9,6 +9,7 @@ import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/widgets/atomics/recipe_item_list.dart';
 import 'package:recipeapp/widgets/atomics/recipe_item_tiles.dart';
 import 'package:recipeapp/api/pb_client.dart';
+import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 
 class RecipesPage extends StatefulWidget {
   const RecipesPage({super.key});
@@ -18,6 +19,10 @@ class RecipesPage extends StatefulWidget {
 }
 
 class _RecipesPageState extends State<RecipesPage> {
+  List<String> _selectedMealTypes = [];
+  List<String> _selectedCategories = [];
+  List<String> _selectedSeasons = [];
+
   final TextEditingController _searchController = TextEditingController();
   List<Recipe> _allRecipes = [];
   List<Recipe> _filteredRecipes = [];
@@ -105,31 +110,17 @@ class _RecipesPageState extends State<RecipesPage> {
       appBar: LogoAppbar(
         showBackButton: false,
         actions: [
-          IconButton(
-            icon: Icon(_isGridView ? Icons.list : Icons.grid_view),
-            onPressed: () {
-              setState(() {
-                _isGridView = !_isGridView;
-                _saveViewPreference(_isGridView);
-              });
-            },
-          ),
-          IconButton(
-            style: IconButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
+          Padding(
+            padding: const EdgeInsets.only(right: SpoonSparkTheme.spacingL - 8),
+            child: IconButton(
+              icon: Icon(_isGridView ? Icons.list : Icons.grid_view),
+              onPressed: () {
+                setState(() {
+                  _isGridView = !_isGridView;
+                  _saveViewPreference(_isGridView);
+                });
+              },
             ),
-            icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
-            onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder:
-                      (context, animation1, animation2) => AddRecipePage(),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              );
-            },
           ),
         ],
       ),
@@ -154,9 +145,7 @@ class _RecipesPageState extends State<RecipesPage> {
                 ],
               ),
             ),
-
             const SizedBox(width: SpoonSparkTheme.spacingS),
-
             Expanded(
               child:
                   _isGridView
@@ -164,8 +153,7 @@ class _RecipesPageState extends State<RecipesPage> {
                         recipes: _filteredRecipes,
                         error: _error,
                         isLoading: _isLoading,
-                        onChanged:
-                            _loadRecipes, // 👈 this triggers reload after delete
+                        onChanged: _loadRecipes,
                       )
                       : RecipeItemList(
                         recipes: _filteredRecipes,
@@ -176,6 +164,30 @@ class _RecipesPageState extends State<RecipesPage> {
           ],
         ),
       ),
+
+      // ✅ Reserve space so button floats above BottomNavbar
+      bottomNavigationBar: const SizedBox(height: 80),
+
+      floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(), // 👈 Ensures it's a circle
+        elevation: 0, // 👈 Removes shadow
+        highlightElevation: 0, // 👈 Removes tap shadow
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        onPressed: () {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) => AddRecipePage(),
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+            ),
+          );
+        },
+        child: const Icon(Icons.add, size: 28),
+      ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

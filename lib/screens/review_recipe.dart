@@ -17,6 +17,7 @@ import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/api/ingredients.dart';
 import 'package:recipeapp/api/measurements.dart';
 import 'package:recipeapp/api/tags.dart';
+import 'package:image/image.dart' as img;
 
 class RecipeReviewPage extends StatefulWidget {
   const RecipeReviewPage({super.key});
@@ -37,6 +38,85 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
   void initState() {
     super.initState();
     _loadRecipeData();
+  }
+
+  Future<MultipartFile> _prepareResizedImage(File file) async {
+    final originalBytes = await file.readAsBytes();
+    final decoded = img.decodeImage(originalBytes);
+
+    if (decoded == null) {
+      throw Exception("Could not decode image.");
+    }
+
+    final resized = img.copyResize(
+      decoded,
+      width: decoded.width > 800 ? 800 : decoded.width,
+    );
+
+    final compressed = img.encodeJpg(resized, quality: 85); // quality: 0-100
+
+    return MultipartFile.fromBytes(
+      'thumbnail',
+      compressed,
+      filename: 'thumbnail.jpg',
+    );
+  }
+
+  Future<bool> _showDiscardChangesDialog() async {
+    final theme = Theme.of(context);
+    bool shouldLeave = false;
+
+    await showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      backgroundColor: theme.colorScheme.onPrimary,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                size: 40,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              Text("Änderungen verwerfen?", style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Text(
+                "Wenn du abbrichst, gehen deine Eingaben verloren.",
+                style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  shouldLeave = true;
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                child: const Text("Ja, verwerfen"),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Abbrechen"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    return shouldLeave;
   }
 
   Future<void> _loadRecipeData() async {
@@ -139,13 +219,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               .collection('recipes')
               .update(
                 wizard.recipeId!,
-                files: [
-                  MultipartFile.fromBytes(
-                    'thumbnail',
-                    File(wizard.image!.path).readAsBytesSync(),
-                    filename: 'thumbnail.jpg',
-                  ),
-                ],
+                files: [await _prepareResizedImage(File(wizard.image!.path))],
               );
         }
 
@@ -175,13 +249,7 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               },
               files:
                   wizard.image != null
-                      ? [
-                        MultipartFile.fromBytes(
-                          'thumbnail',
-                          File(wizard.image!.path).readAsBytesSync(),
-                          filename: 'thumbnail.jpg',
-                        ),
-                      ]
+                      ? [await _prepareResizedImage(File(wizard.image!.path))]
                       : [],
             );
 
@@ -240,7 +308,8 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
       },
       child: Scaffold(
         appBar: LogoAppbar(
-          leading: BackButton(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pushReplacement(
                 context,
@@ -253,7 +322,28 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               );
             },
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.close), // cancel icon
+              onPressed: () async {
+                final shouldLeave = await _showDiscardChangesDialog();
+                if (shouldLeave && mounted) {
+                  Provider.of<RecipeWizardState>(
+                    context,
+                    listen: false,
+                  ).clear(); // 🧹 Clear wizard state
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/main',
+                    (route) => false,
+                    arguments: 1,
+                  );
+                }
+              },
+            ),
+          ],
         ),
+
         body:
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -284,17 +374,25 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                                             wizard.image!,
                                             fit: BoxFit.cover,
                                           )
-                                          : Container(
-                                            color:
-                                                theme.colorScheme.surfaceBright,
-                                            child: const Center(
-                                              child: Icon(
-                                                Icons.image,
-                                                size: 48,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ),
+                                          : (wizard.thumbnailFilename != null &&
+                                                  wizard.recipeId != null
+                                              ? Image.network(
+                                                "${pb.baseUrl}/api/files/recipes/${wizard.recipeId}/${wizard.thumbnailFilename!}",
+                                                fit: BoxFit.cover,
+                                              )
+                                              : Container(
+                                                color:
+                                                    theme
+                                                        .colorScheme
+                                                        .surfaceBright,
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.image,
+                                                    size: 48,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              )),
                                 ),
                                 Positioned(
                                   top: 12,

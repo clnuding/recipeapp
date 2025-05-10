@@ -1,3 +1,6 @@
+import 'package:pocketbase/pocketbase.dart';
+import 'package:recipeapp/api/pb_client.dart';
+
 class Recipe {
   final String id;
   final String title;
@@ -5,7 +8,8 @@ class Recipe {
   final String? householdId;
   final List? tagId;
   final String? description;
-  final String? thumbnailUrl;
+  final String? thumbnail; // ✅ Raw filename from PB
+  final String? thumbnailUrl; // ✅ Full URL to image
   final String? sourceUrl;
   final int? prepTime;
   final int? cookingTime;
@@ -19,6 +23,7 @@ class Recipe {
     this.householdId,
     this.tagId,
     this.description,
+    this.thumbnail,
     this.thumbnailUrl,
     this.sourceUrl,
     this.prepTime,
@@ -27,35 +32,43 @@ class Recipe {
     this.nutritionAutoCalculated = false,
   });
 
-  factory Recipe.fromJson(Map<String, dynamic> json) {
+  /// ✅ Create a Recipe from a PocketBase record
+  factory Recipe.fromRecord(RecordModel record) {
+    final thumbnailField = record.getStringValue('thumbnail');
+    final thumbnailUrl =
+        thumbnailField.isNotEmpty
+            ? pb.getFileUrl(record, thumbnailField).toString()
+            : null;
+
     return Recipe(
-      id: json['id'],
-      title: json['name'],
-      creatorId: json['user_id'],
-      householdId: json['household_id'],
-      tagId: json['tag_id'],
-      description: json['instructions'],
-      thumbnailUrl: json['thumbnail_url'],
-      sourceUrl: json['source_url'],
-      prepTime: json['prep_time_minutes'],
-      cookingTime: json['cook_time_minutes'],
-      servings: json['servings'],
-      nutritionAutoCalculated: json['nutrition_auto_calculated'] ?? false,
+      id: record.id,
+      title: record.getStringValue('name'),
+      creatorId: record.getStringValue('user_id'),
+      householdId: record.getStringValue('household_id'),
+      tagId: record.data['tag_id'] as List?,
+      description: record.getStringValue('instructions'),
+      thumbnail: thumbnailField, // ✅ Save raw filename
+      thumbnailUrl: thumbnailUrl, // ✅ Save URL
+      sourceUrl: record.getStringValue('source_url'),
+      prepTime: record.getIntValue('prep_time_minutes'),
+      cookingTime: record.getIntValue('cook_time_minutes'),
+      servings: record.getIntValue('servings'),
+      nutritionAutoCalculated:
+          record.getBoolValue('nutrition_auto_calculated') ?? false,
     );
   }
 
+  /// ✅ Used when creating/updating a recipe; excludes `thumbnailUrl` and `thumbnail`
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'name': title,
       'creator_id': creatorId,
       'household_id': householdId,
       'tag_id': tagId,
       'instructions': description,
-      'thumbnail_url': thumbnailUrl,
       'source_url': sourceUrl,
-      'prep_time': prepTime,
-      'cooking_time': cookingTime,
+      'prep_time_minutes': prepTime,
+      'cook_time_minutes': cookingTime,
       'servings': servings,
       'nutrition_auto_calculated': nutritionAutoCalculated,
     };

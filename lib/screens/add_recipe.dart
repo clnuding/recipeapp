@@ -29,6 +29,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
   final _descriptionController = TextEditingController();
 
   File? _image;
+  String? thumbnailUrl;
 
   int _portions = 2;
   final TextEditingController _hourController = TextEditingController(
@@ -58,12 +59,37 @@ class _AddRecipePageState extends State<AddRecipePage> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+    // Only update if image not manually set
+    if (_image == null && wizard.image != null) {
+      setState(() {
+        _image = wizard.image;
+      });
+    }
+
+    if (thumbnailUrl == null &&
+        wizard.recipeId != null &&
+        wizard.thumbnailFilename != null &&
+        wizard.thumbnailFilename!.isNotEmpty) {
+      setState(() {
+        thumbnailUrl =
+            "${pb.baseUrl}/api/files/recipes/${wizard.recipeId}/${wizard.thumbnailFilename}";
+      });
+    }
+  }
+
   void _loadInitialWizardState() {
     final wizard = Provider.of<RecipeWizardState>(context, listen: false);
 
     _nameController.text = wizard.title ?? '';
     _descriptionController.text = wizard.description ?? '';
-    _image = wizard.image;
+    if (_image == null && wizard.image != null) {
+      _image = wizard.image;
+    }
     _portions = wizard.servings;
 
     final prepTime = wizard.prepTimeMinutes;
@@ -180,6 +206,73 @@ class _AddRecipePageState extends State<AddRecipePage> {
     );
   }
 
+  Future<bool> _handleBackPressed() async {
+    final shouldLeave = await _showDiscardChangesDialog();
+    if (shouldLeave && mounted) {
+      // 🧹 Clear wizard state
+      Provider.of<RecipeWizardState>(context, listen: false).clear();
+      Navigator.of(context).pop(); // ⬅️ actually go back
+    }
+    return false; // Prevent default back navigation
+  }
+
+  Future<bool> _showDiscardChangesDialog() async {
+    final theme = Theme.of(context);
+    bool shouldLeave = false;
+
+    await showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      backgroundColor: theme.colorScheme.onPrimary,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                size: 40,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              Text("Änderungen verwerfen?", style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Text(
+                "Wenn du zurück gehst, gehen deine Eingaben verloren.",
+                style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  shouldLeave = true;
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                child: const Text("Ja, zurückgehen"),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Abbrechen"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    return shouldLeave;
+  }
+
   Future<void> _loadRecipeData(String recipeId) async {
     final recipe = await fetchRecipeById(recipeId);
     final tags = await fetchTags();
@@ -190,6 +283,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
     // ✅ Mark as editing
     wizard.setEditing(true);
     wizard.setRecipeId(recipeId);
+    wizard.setThumbnail(
+      recipe.thumbnail,
+    ); // this sets the filename (e.g., "thumbnail.jpg")
 
     // ✅ Basic metadata
     wizard.setRecipeInfo(
@@ -213,6 +309,11 @@ class _AddRecipePageState extends State<AddRecipePage> {
     // ✅ ✅ ✅ ADD THIS: populate ingredients
     for (final ing in dbIngredients) {
       wizard.addIngredient(ing);
+    }
+
+    if (recipe.thumbnail != null && recipe.thumbnail!.isNotEmpty) {
+      thumbnailUrl =
+          "${pb.baseUrl}/api/files/recipes/${recipe.id}/${recipe.thumbnail}";
     }
 
     // Continue local form setup
@@ -261,40 +362,67 @@ class _AddRecipePageState extends State<AddRecipePage> {
     final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
+      isDismissible: true,
       backgroundColor: theme.colorScheme.onPrimary,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder:
-          (context) => Wrap(
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: Icon(
-                  Icons.camera_alt,
-                  color: theme.colorScheme.onSurface,
-                ),
-                title: Text(
-                  "Foto aufnehmen",
-                  style: TextStyle(color: theme.colorScheme.onSurface),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
+              Icon(
+                Icons.add_a_photo,
+                size: 40,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              Text("Bild hinzufügen", style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Text(
+                "Wähle eine Option zum Hinzufügen eines Bildes.",
+                style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pop();
                   _pickImage(ImageSource.camera);
                 },
-              ),
-              ListTile(
-                leading: Icon(Icons.image, color: theme.colorScheme.onSurface),
-                title: Text(
-                  "Aus Galerie wählen",
-                  style: TextStyle(color: theme.colorScheme.onSurface),
+                icon: const Icon(Icons.camera_alt),
+                label: const Text("Foto aufnehmen"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  minimumSize: const Size(double.infinity, 48),
                 ),
-                onTap: () {
-                  Navigator.pop(context);
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pop();
                   _pickImage(ImageSource.gallery);
                 },
+                icon: const Icon(Icons.image),
+                label: const Text("Aus Galerie wählen"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.surfaceBright,
+                  foregroundColor: theme.colorScheme.onSurface,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Abbrechen"),
               ),
             ],
           ),
+        );
+      },
     );
   }
 
@@ -352,257 +480,317 @@ class _AddRecipePageState extends State<AddRecipePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+    final imageToShow = _image ?? wizard.image;
 
-    return Scaffold(
-      appBar: LogoAppbar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_forward),
-            onPressed: _isFormValid ? _submitRecipe : null,
-            color:
-                _isFormValid
-                    ? null
-                    : Colors.grey, // Optional: visually indicate disabled
+    return WillPopScope(
+      onWillPop: _handleBackPressed, // <-- handle physical back button
+      child: Scaffold(
+        appBar: LogoAppbar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back), // same style as forward
+            onPressed: () async {
+              final shouldLeave = await _handleBackPressed();
+              if (shouldLeave && mounted) {
+                Navigator.of(context).pop();
+              }
+            },
           ),
-        ],
-      ),
 
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: SpoonSparkTheme.spacingL),
-                      _buildStepper(theme),
-                      const SizedBox(height: SpoonSparkTheme.spacingL),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          children: [
-                            GestureDetector(
-                              onTap: _showImageSourceDialog,
-                              child: Container(
-                                height: 100,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.surfaceBright,
-                                  borderRadius: BorderRadius.circular(
-                                    SpoonSparkTheme.radiusS,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.arrow_forward),
+              onPressed: _isFormValid ? _submitRecipe : null,
+              color: _isFormValid ? null : Colors.grey,
+            ),
+          ],
+        ),
+
+        body:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: SpoonSparkTheme.spacingL),
+                        _buildStepper(theme),
+                        const SizedBox(height: SpoonSparkTheme.spacingL),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: _showImageSourceDialog,
+                                child: Container(
+                                  height: 100,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.surfaceBright,
+                                    borderRadius: BorderRadius.circular(
+                                      SpoonSparkTheme.radiusS,
+                                    ),
                                   ),
-                                ),
-                                child:
-                                    _image == null
-                                        ? Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.add_a_photo,
-                                              color:
-                                                  theme.colorScheme.onSurface,
-                                              size: 40,
+
+                                  child: Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          SpoonSparkTheme.radiusS,
+                                        ),
+                                        child:
+                                            imageToShow != null
+                                                ? Image.file(
+                                                  imageToShow,
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                )
+                                                : (thumbnailUrl != null
+                                                    ? Image.network(
+                                                      thumbnailUrl!,
+                                                      fit: BoxFit.cover,
+                                                      width: double.infinity,
+                                                      height: double.infinity,
+                                                    )
+                                                    : Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.add_a_photo,
+                                                            color:
+                                                                theme
+                                                                    .colorScheme
+                                                                    .onSurface,
+                                                            size: 40,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 4,
+                                                          ),
+                                                          Text(
+                                                            "Bild hinzufügen (optional)",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  theme
+                                                                      .colorScheme
+                                                                      .onSurface,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )),
+                                      ),
+                                      if (imageToShow != null ||
+                                          thumbnailUrl != null)
+                                        Positioned(
+                                          right: 8,
+                                          bottom: 8,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: theme.colorScheme.surface,
+                                              shape: BoxShape.circle,
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              "Bild hinzufügen (optional)",
-                                              style: TextStyle(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                6.0,
+                                              ),
+                                              child: Icon(
+                                                Icons.edit,
+                                                size: 18,
                                                 color:
-                                                    theme.colorScheme.onSurface,
+                                                    theme.colorScheme.primary,
                                               ),
                                             ),
-                                          ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _nameController,
+                                decoration: InputDecoration(
+                                  labelText: "Name *",
+                                  hintText: "Namen eintragen",
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  errorText:
+                                      _nameController.text.trim().isEmpty &&
+                                              !_isFormValid
+                                          ? "Pflichtfeld"
+                                          : null,
+                                ),
+                                onChanged:
+                                    (_) => setState(
+                                      () {},
+                                    ), // 👈 Refresh when typing
+                              ),
+
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: InputDecorator(
+                                      decoration: const InputDecoration(
+                                        labelText: "Portionen",
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _boxedButton(
+                                            Icons.remove,
+                                            () => setState(
+                                              () =>
+                                                  _portions =
+                                                      _portions > 1
+                                                          ? _portions - 1
+                                                          : 1,
+                                            ),
+                                          ),
+                                          Text(
+                                            '$_portions',
+                                            style: theme.textTheme.bodyLarge,
+                                          ),
+                                          _boxedButton(
+                                            Icons.add,
+                                            () => setState(() => _portions++),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: InputDecorator(
+                                      decoration: const InputDecoration(
+                                        labelText: "Zubereitungszeit",
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _boxedTimeField(
+                                            _hourController,
+                                            isHour: true,
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                            ),
+                                            child: Text(":"),
+                                          ),
+                                          _boxedTimeField(
+                                            _minuteController,
+                                            isHour: false,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              DropdownButtonFormField<String>(
+                                isExpanded: true,
+                                value: _selectedRecipeType,
+                                hint: const Text("Art wählen"),
+                                decoration: InputDecoration(
+                                  labelText: "Art *",
+                                  errorText:
+                                      _selectedRecipeType == null &&
+                                              !_isFormValid
+                                          ? "Pflichtfeld"
+                                          : null,
+                                ),
+                                items:
+                                    _mealTypes
+                                        .map(
+                                          (tag) => DropdownMenuItem(
+                                            value: tag.name,
+                                            child: Text(tag.name),
+                                          ),
                                         )
-                                        : ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            SpoonSparkTheme.radiusS,
-                                          ),
-                                          child: Image.file(
-                                            _image!,
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          ),
-                                        ),
+                                        .toList(),
+                                onChanged:
+                                    (value) => setState(
+                                      () => _selectedRecipeType = value,
+                                    ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                labelText: "Name *",
-                                hintText: "Namen eintragen",
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                errorText:
-                                    _nameController.text.trim().isEmpty &&
-                                            !_isFormValid
-                                        ? "Pflichtfeld"
-                                        : null,
-                              ),
-                              onChanged:
-                                  (_) =>
-                                      setState(() {}), // 👈 Refresh when typing
-                            ),
 
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: InputDecorator(
-                                    decoration: const InputDecoration(
-                                      labelText: "Portionen",
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        _boxedButton(
-                                          Icons.remove,
-                                          () => setState(
-                                            () =>
-                                                _portions =
-                                                    _portions > 1
-                                                        ? _portions - 1
-                                                        : 1,
-                                          ),
-                                        ),
-                                        Text(
-                                          '$_portions',
-                                          style: theme.textTheme.bodyLarge,
-                                        ),
-                                        _boxedButton(
-                                          Icons.add,
-                                          () => setState(() => _portions++),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                              const SizedBox(height: 16),
+                              DropdownButtonFormField<String>(
+                                isExpanded: true,
+                                value: _selectedRecipeCategory,
+                                hint: const Text("Kategorie wählen"),
+                                decoration: const InputDecoration(
+                                  labelText: "Kategorie",
                                 ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: InputDecorator(
-                                    decoration: const InputDecoration(
-                                      labelText: "Zubereitungszeit",
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        _boxedTimeField(
-                                          _hourController,
-                                          isHour: true,
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 4,
+                                items:
+                                    _recipeCategories
+                                        .map(
+                                          (tag) => DropdownMenuItem(
+                                            value: tag.name,
+                                            child: Text(tag.name),
                                           ),
-                                          child: Text(":"),
-                                        ),
-                                        _boxedTimeField(
-                                          _minuteController,
-                                          isHour: false,
-                                        ),
-                                      ],
+                                        )
+                                        .toList(),
+                                onChanged:
+                                    (value) => setState(
+                                      () => _selectedRecipeCategory = value,
                                     ),
-                                  ),
+                              ),
+                              const SizedBox(height: 16),
+                              DropdownButtonFormField<String>(
+                                isExpanded: true,
+                                value: _selectedRecipeSeason,
+                                hint: const Text("Saison wählen"),
+                                decoration: const InputDecoration(
+                                  labelText: "Saison",
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              value: _selectedRecipeType,
-                              hint: const Text("Art wählen"),
-                              decoration: InputDecoration(
-                                labelText: "Art *",
-                                errorText:
-                                    _selectedRecipeType == null && !_isFormValid
-                                        ? "Pflichtfeld"
-                                        : null,
+                                items:
+                                    _recipeSeasons
+                                        .map(
+                                          (tag) => DropdownMenuItem(
+                                            value: tag.name,
+                                            child: Text(tag.name),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged:
+                                    (value) => setState(
+                                      () => _selectedRecipeSeason = value,
+                                    ),
                               ),
-                              items:
-                                  _mealTypes
-                                      .map(
-                                        (tag) => DropdownMenuItem(
-                                          value: tag.name,
-                                          child: Text(tag.name),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged:
-                                  (value) => setState(
-                                    () => _selectedRecipeType = value,
-                                  ),
-                            ),
-
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              value: _selectedRecipeCategory,
-                              hint: const Text("Kategorie wählen"),
-                              decoration: const InputDecoration(
-                                labelText: "Kategorie",
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _descriptionController,
+                                decoration: const InputDecoration(
+                                  labelText: "Zubereitung (optional)",
+                                  hintText: "Beschreibung eintragen",
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                ),
+                                maxLines: 3,
                               ),
-                              items:
-                                  _recipeCategories
-                                      .map(
-                                        (tag) => DropdownMenuItem(
-                                          value: tag.name,
-                                          child: Text(tag.name),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged:
-                                  (value) => setState(
-                                    () => _selectedRecipeCategory = value,
-                                  ),
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              value: _selectedRecipeSeason,
-                              hint: const Text("Saison wählen"),
-                              decoration: const InputDecoration(
-                                labelText: "Saison",
-                              ),
-                              items:
-                                  _recipeSeasons
-                                      .map(
-                                        (tag) => DropdownMenuItem(
-                                          value: tag.name,
-                                          child: Text(tag.name),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged:
-                                  (value) => setState(
-                                    () => _selectedRecipeSeason = value,
-                                  ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: _descriptionController,
-                              decoration: const InputDecoration(
-                                labelText: "Zubereitung (optional)",
-                                hintText: "Beschreibung eintragen",
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                              ),
-                              maxLines: 3,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
+      ),
     );
   }
 
