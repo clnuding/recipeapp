@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/screens/add_recipe.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
@@ -45,6 +46,166 @@ class _RecipesPageState extends State<RecipesPage> {
       _didLoad = true;
       _loadRecipes();
     }
+  }
+
+  bool get _hasFilterActive =>
+      _selectedMealTypes.isNotEmpty ||
+      _selectedCategories.isNotEmpty ||
+      _selectedSeasons.isNotEmpty;
+
+  void _showFilterSheet() async {
+    final theme = Theme.of(context);
+    final tags = await fetchTags(); // get tags from backend
+
+    final mealTypes = tags.where((t) => t.category == 'meal_type').toList();
+    final recipeCategories =
+        tags.where((t) => t.category == 'meal_category').toList();
+    final recipeSeasons = tags.where((t) => t.category == 'season').toList();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: theme.colorScheme.onPrimary,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Rezepte filtern", style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 16),
+
+                  // Meal Type Dropdown
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value:
+                        _selectedMealTypes.isEmpty
+                            ? null
+                            : _selectedMealTypes.first,
+                    items:
+                        mealTypes.map((tag) {
+                          return DropdownMenuItem(
+                            value: tag.id,
+                            child: Text(tag.name),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      setModalState(() {
+                        _selectedMealTypes = value != null ? [value] : [];
+                      });
+                    },
+                    decoration: const InputDecoration(labelText: "Art"),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Category Dropdown
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value:
+                        _selectedCategories.isEmpty
+                            ? null
+                            : _selectedCategories.first,
+                    items:
+                        recipeCategories.map((tag) {
+                          return DropdownMenuItem(
+                            value: tag.id,
+                            child: Text(tag.name),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      setModalState(() {
+                        _selectedCategories = value != null ? [value] : [];
+                      });
+                    },
+                    decoration: const InputDecoration(labelText: "Kategorie"),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Season Dropdown
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value:
+                        _selectedSeasons.isEmpty
+                            ? null
+                            : _selectedSeasons.first,
+                    items:
+                        recipeSeasons.map((tag) {
+                          return DropdownMenuItem(
+                            value: tag.id,
+                            child: Text(tag.name),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      setModalState(() {
+                        _selectedSeasons = value != null ? [value] : [];
+                      });
+                    },
+                    decoration: const InputDecoration(labelText: "Saison"),
+                  ),
+
+                  const SizedBox(height: 24),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedMealTypes.clear();
+                        _selectedCategories.clear();
+                        _selectedSeasons.clear();
+                        _filteredRecipes = _allRecipes; // Reset to full list
+                      });
+                      Navigator.of(context).pop(); // Close the modal
+                    },
+                    child: Text(
+                      "Filter zurücksetzen",
+                      style: TextStyle(color: theme.colorScheme.primary),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      _applyTagFilter();
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                    child: const Text("Anwenden"),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _applyTagFilter() {
+    setState(() {
+      _filteredRecipes =
+          _allRecipes.where((recipe) {
+            final tags = recipe.tagId ?? [];
+
+            final matchesMeal =
+                _selectedMealTypes.isEmpty ||
+                tags.any(_selectedMealTypes.contains);
+            final matchesCat =
+                _selectedCategories.isEmpty ||
+                tags.any(_selectedCategories.contains);
+            final matchesSeason =
+                _selectedSeasons.isEmpty || tags.any(_selectedSeasons.contains);
+
+            return matchesMeal && matchesCat && matchesSeason;
+          }).toList();
+    });
   }
 
   Future<void> _loadViewPreference() async {
@@ -140,6 +301,8 @@ class _RecipesPageState extends State<RecipesPage> {
                     child: FilterBar(
                       controller: _searchController,
                       hintText: 'Filter Recipes',
+                      onFilterPressed: _showFilterSheet,
+                      isFilterActive: _hasFilterActive, // ✅ this shows the dot
                     ),
                   ),
                 ],
