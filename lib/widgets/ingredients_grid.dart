@@ -120,8 +120,8 @@ class _IngredientsGridState extends State<IngredientsGrid> {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                                childAspectRatio: 0.7,
+                                crossAxisCount: 3,
+                                childAspectRatio: 1,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
                               ),

@@ -106,106 +106,106 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     }
 
     final theme = Theme.of(context);
-    showDialog(
+
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: theme.colorScheme.onPrimary,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            left: 24,
+            right: 24,
+            top: 24,
           ),
-          backgroundColor: theme.colorScheme.onPrimary,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        ingredient.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      ingredient.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: selectedUnitId,
-                  hint: const Text("Einheit wählen"),
-                  items:
-                      _allMeasurements
-                          .where(
-                            (m) => m.name != null && m.name.trim().isNotEmpty,
-                          )
-                          .map(
-                            (m) => DropdownMenuItem(
-                              value: m.id,
-                              child: Text(m.name),
-                            ),
-                          )
-                          .toList(),
-
-                  onChanged: (value) => selectedUnitId = value,
-                  decoration: const InputDecoration(labelText: "Einheit"),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: amountController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
                   ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^\d{0,5}(,\d{0,2})?$'),
-                    ),
-                  ],
-                  decoration: const InputDecoration(labelText: "Menge"),
-                ),
-
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (amountController.text.isNotEmpty &&
-                        selectedUnitId != null) {
-                      final data = {
-                        'id': ingredient.id,
-                        'name': ingredient.name,
-                        'amount': amountController.text,
-                        'unit':
-                            _allMeasurements
-                                .firstWhere((m) => m.id == selectedUnitId)
-                                .name,
-                        'unit_id': selectedUnitId!,
-                      };
-
-                      setState(() {
-                        if (indexToEdit != null) {
-                          _selectedIngredients[indexToEdit] = data;
-                        } else {
-                          _selectedIngredients.add(data);
-                        }
-                      });
-                      Navigator.pop(context);
-                      _ingredientSearchController.clear();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
+                  IconButton(
+                    icon: Icon(Icons.close, color: theme.colorScheme.onSurface),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                  child: const Text("OK"),
+                ],
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedUnitId,
+                hint: const Text("Einheit wählen"),
+                items:
+                    _allMeasurements
+                        .where((m) => m.name.trim().isNotEmpty)
+                        .map(
+                          (m) => DropdownMenuItem(
+                            value: m.id,
+                            child: Text(m.name),
+                          ),
+                        )
+                        .toList(),
+                onChanged: (value) => selectedUnitId = value,
+                decoration: const InputDecoration(labelText: "Einheit"),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: amountController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
                 ),
-              ],
-            ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d{0,5}(,\d{0,2})?$'),
+                  ),
+                ],
+                decoration: const InputDecoration(labelText: "Menge"),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  if (amountController.text.isNotEmpty &&
+                      selectedUnitId != null) {
+                    final data = {
+                      'id': ingredient.id,
+                      'name': ingredient.name,
+                      'amount': amountController.text,
+                      'unit':
+                          _allMeasurements
+                              .firstWhere((m) => m.id == selectedUnitId)
+                              .name,
+                      'unit_id': selectedUnitId!,
+                    };
+
+                    setState(() {
+                      if (indexToEdit != null) {
+                        _selectedIngredients[indexToEdit] = data;
+                      } else {
+                        _selectedIngredients.add(data);
+                      }
+                    });
+                    Navigator.pop(context);
+                    _ingredientSearchController.clear();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                child: const Text("Hinzufügen"),
+              ),
+            ],
           ),
         );
       },
@@ -318,15 +318,6 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextFormField(
-                            controller: _ingredientSearchController,
-                            decoration: const InputDecoration(
-                              labelText: "Zutat suchen",
-                              prefixIcon: Icon(Icons.search),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const SizedBox(height: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,165 +325,177 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                                 if (_selectedIngredients.isEmpty)
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
-                                    // child: Text(
-                                    //   '* Mindestens eine Zutat erforderlich',
-                                    //   style: TextStyle(
-                                    //     color: theme.colorScheme.error,
-                                    //     fontSize: 14,
-                                    //     fontWeight: FontWeight.w500,
-                                    //   ),
-                                    // ),
+                                  ),
+                                if (!_hasAtLeastOneIngredient)
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: Text(
+                                      '* Mindestens eine Zutat erforderlich',
+                                      style: TextStyle(
+                                        color: theme.colorScheme.error,
+                                        fontSize: 13,
+                                      ),
+                                    ),
                                   ),
                                 Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (!_hasAtLeastOneIngredient)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 8,
-                                          ),
-                                          child: Text(
-                                            '* Mindestens eine Zutat erforderlich',
-                                            style: TextStyle(
-                                              color: theme.colorScheme.error,
-                                              fontSize: 13,
+                                  child:
+                                      _selectedIngredients.isEmpty
+                                          ? Center(
+                                            child: Text(
+                                              'Noch keine Zutaten ausgewählt',
+                                              style: TextStyle(
+                                                color: theme
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withOpacity(0.6),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      Expanded(
-                                        child:
-                                            _selectedIngredients.isEmpty
-                                                ? Center(
-                                                  child: Text(
-                                                    'Noch keine Zutaten ausgewählt',
-                                                    style: TextStyle(
-                                                      color: theme
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withOpacity(0.6),
-                                                    ),
-                                                  ),
-                                                )
-                                                : GridView.builder(
-                                                  itemCount:
-                                                      _selectedIngredients
-                                                          .length,
-                                                  gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisCount: 4,
-                                                        childAspectRatio: 0.7,
-                                                        crossAxisSpacing: 10,
-                                                        mainAxisSpacing: 10,
-                                                      ),
-                                                  itemBuilder: (
-                                                    context,
-                                                    index,
-                                                  ) {
-                                                    final item =
-                                                        _selectedIngredients[index];
-                                                    return IngredientTile(
-                                                      name: item['name']!,
-                                                      amount: double.tryParse(
-                                                        item['amount'] ?? '',
-                                                      ),
-                                                      unit: item['unit'],
-                                                      trailing: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          IconButton(
-                                                            icon: const Icon(
-                                                              Icons.edit,
-                                                            ),
-                                                            iconSize: 16,
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            onPressed:
-                                                                () => _showAddDialog(
-                                                                  _allIngredients
-                                                                      .firstWhere(
-                                                                        (ing) =>
-                                                                            ing.id ==
-                                                                            item['id'],
-                                                                      ),
-                                                                  indexToEdit:
-                                                                      index,
-                                                                ),
-                                                          ),
-                                                          IconButton(
-                                                            icon: const Icon(
-                                                              Icons.delete,
-                                                            ),
-                                                            iconSize: 16,
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            onPressed:
-                                                                () => setState(() {
-                                                                  _selectedIngredients
-                                                                      .removeAt(
-                                                                        index,
-                                                                      );
-                                                                }),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  },
+                                          )
+                                          : GridView.builder(
+                                            itemCount:
+                                                _selectedIngredients.length,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 3,
+                                                  childAspectRatio: 1,
+                                                  crossAxisSpacing: 10,
+                                                  mainAxisSpacing: 10,
                                                 ),
-                                      ),
-                                    ],
-                                  ),
+                                            itemBuilder: (context, index) {
+                                              final item =
+                                                  _selectedIngredients[index];
+                                              return IngredientTile(
+                                                name: item['name']!,
+                                                amount: double.tryParse(
+                                                  item['amount'] ?? '',
+                                                ),
+                                                unit: item['unit'],
+                                                trailing: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        Icons.edit,
+                                                      ),
+                                                      iconSize: 16,
+                                                      padding: EdgeInsets.zero,
+                                                      onPressed:
+                                                          () => _showAddDialog(
+                                                            _allIngredients
+                                                                .firstWhere(
+                                                                  (ing) =>
+                                                                      ing.id ==
+                                                                      item['id'],
+                                                                ),
+                                                            indexToEdit: index,
+                                                          ),
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        Icons.delete,
+                                                      ),
+                                                      iconSize: 16,
+                                                      padding: EdgeInsets.zero,
+                                                      onPressed:
+                                                          () => setState(() {
+                                                            _selectedIngredients
+                                                                .removeAt(
+                                                                  index,
+                                                                );
+                                                          }),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
                                 ),
                               ],
                             ),
                           ),
                         ],
                       ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surface,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 6,
+                                  offset: Offset(0, -1),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (_ingredientSearchController
+                                        .text
+                                        .isNotEmpty &&
+                                    _filteredIngredients.isNotEmpty)
+                                  if (_ingredientSearchController
+                                          .text
+                                          .isNotEmpty &&
+                                      _filteredIngredients.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                      ),
+                                      child: GridView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            _filteredIngredients.take(3).length,
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3,
+                                              childAspectRatio: 1,
+                                              crossAxisSpacing: 10,
+                                              mainAxisSpacing: 10,
+                                            ),
+                                        itemBuilder: (context, index) {
+                                          final ingredient =
+                                              _filteredIngredients[index];
+                                          return GestureDetector(
+                                            onTap:
+                                                () =>
+                                                    _showAddDialog(ingredient),
+                                            child: IngredientTile(
+                                              name: ingredient.name,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
 
-                      // Overlay search results
-                      if (_ingredientSearchController.text.isNotEmpty &&
-                          _filteredIngredients.isNotEmpty)
-                        Positioned(
-                          top: 50,
-                          left: 0,
-                          right: 0,
-                          child: Material(
-                            elevation: 6,
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.onPrimary,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              constraints: const BoxConstraints(maxHeight: 250),
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: _filteredIngredients.take(5).length,
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 4,
-                                      childAspectRatio: 0.7,
-                                      crossAxisSpacing: 10,
-                                      mainAxisSpacing: 10,
+                                TextFormField(
+                                  controller: _ingredientSearchController,
+                                  decoration: InputDecoration(
+                                    hintText: "Zutat suchen",
+                                    prefixIcon: const Icon(Icons.search),
+                                    filled: true,
+                                    fillColor: theme.colorScheme.surfaceVariant,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
                                     ),
-                                itemBuilder: (context, index) {
-                                  final ingredient =
-                                      _filteredIngredients[index];
-                                  return GestureDetector(
-                                    onTap: () => _showAddDialog(ingredient),
-                                    child: IngredientTile(
-                                      name: ingredient.name,
-                                    ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -506,57 +509,69 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
 
   Widget _buildStepper(ThemeData theme) {
     const stepLabels = ["Rezept", "Zutaten", "Prüfen"];
-    const int activeIndex = 1;
+    const int activeIndex = 1; // This page is the second step
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: SpoonSparkTheme.spacingL),
-      child: Column(
-        children: [
-          Row(
-            children: List.generate(3, (index) {
-              final isActive = index == activeIndex;
-              final isCompleted = index < activeIndex;
-              final Color barColor =
-                  isActive || isCompleted
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.surfaceBright;
+      child: Row(
+        children: List.generate(3, (index) {
+          final isActive = index == activeIndex;
+          final isCompleted = index < activeIndex;
 
-              BorderRadius borderRadius = BorderRadius.zero;
-              if (index == 0)
-                borderRadius = const BorderRadius.horizontal(
-                  left: Radius.circular(12),
-                );
-              if (index == 2)
-                borderRadius = const BorderRadius.horizontal(
-                  right: Radius.circular(12),
-                );
+          final Color barColor =
+              isActive || isCompleted
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.surfaceBright;
 
-              return Expanded(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: index < 2 ? 4 : 0),
-                      child: Container(
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: barColor,
-                          borderRadius: borderRadius,
-                        ),
-                      ),
+          BorderRadius borderRadius = BorderRadius.zero;
+          if (index == 0) {
+            borderRadius = const BorderRadius.horizontal(
+              left: Radius.circular(12),
+            );
+          } else if (index == 2) {
+            borderRadius = const BorderRadius.horizontal(
+              right: Radius.circular(12),
+            );
+          }
+
+          return Expanded(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: index < 2 ? 4 : 0),
+                  child: Container(
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: barColor,
+                      borderRadius: borderRadius,
                     ),
-                    const SizedBox(height: 4),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Text(
                       stepLabels[index],
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
+                    if (isCompleted)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Icon(
+                          Icons.check,
+                          size: 12,
+                          color: theme.colorScheme.primary.withOpacity(0.7),
+                        ),
+                      ),
                   ],
                 ),
-              );
-            }),
-          ),
-        ],
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
