@@ -129,7 +129,7 @@ class RecipeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           boxShadow: const [
             BoxShadow(
-              color: Color.fromARGB(255, 234, 234, 234),
+              color: Color.fromARGB(255, 234, 234, 234), // ✅ match tile shadow
               blurRadius: 4,
               spreadRadius: 1,
             ),
