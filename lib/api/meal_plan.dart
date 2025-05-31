@@ -2,13 +2,13 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:recipeapp/api/pb_client.dart';
-import 'package:recipeapp/api/shopping_list.dart';
+// import 'package:recipeapp/api/shopping_list.dart';
 import 'package:recipeapp/api/utils.dart';
 import 'package:recipeapp/models/meal.dart';
 import 'package:recipeapp/models/tags.dart';
 
 class MealPlannerService {
-  late final ShoppingListService _shoppingListService;
+  // late final ShoppingListService _shoppingListService;
   late String mealPlanId;
   late DateTime startDate;
   late String startDateString;
@@ -16,7 +16,7 @@ class MealPlannerService {
   late String userId;
 
   MealPlannerService() {
-    _shoppingListService = ShoppingListService();
+    // _shoppingListService = ShoppingListService();
     userId = pb.authStore.record!.id;
     householdId = pb.authStore.record!.getStringValue('household_id');
   }

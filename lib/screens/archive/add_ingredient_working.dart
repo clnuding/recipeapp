@@ -6,11 +6,9 @@ import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/api/ingredients.dart';
 import 'package:recipeapp/api/measurements.dart';
-import 'package:recipeapp/api/recipeingredients.dart';
 import 'package:recipeapp/models/ingredient.dart';
 import 'package:recipeapp/models/measurements.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
-import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/widgets/atomics/ingredient_tile.dart';
 
 class AddIngredientPage extends StatefulWidget {
@@ -27,7 +25,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
   List<Ingredient> _filteredIngredients = [];
   List<Measurements> _allMeasurements = [];
   List<Map<String, String?>> _selectedIngredients = [];
-  bool _submitted = false;
+  // bool _submitted = false;
 
   @override
   void initState() {
@@ -465,21 +463,21 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     );
   }
 
-  Widget _buildSquareIconButton(IconData icon, VoidCallback onPressed) {
-    final theme = Theme.of(context);
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.onPrimary,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: theme.colorScheme.onSurface),
-        onPressed: onPressed,
-      ),
-    );
-  }
+  // Widget _buildSquareIconButton(IconData icon, VoidCallback onPressed) {
+  //   final theme = Theme.of(context);
+  //   return Container(
+  //     height: 50,
+  //     width: 50,
+  //     decoration: BoxDecoration(
+  //       color: theme.colorScheme.onPrimary,
+  //       borderRadius: BorderRadius.circular(7),
+  //     ),
+  //     child: IconButton(
+  //       icon: Icon(icon, color: theme.colorScheme.onSurface),
+  //       onPressed: onPressed,
+  //     ),
+  //   );
+  // }
 
   void _saveToWizard() {
     final wizard = Provider.of<RecipeWizardState>(context, listen: false);

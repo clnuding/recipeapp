@@ -58,7 +58,7 @@ Future<List<Recipe>> fetchRecipes() async {
 
 Future<Recipe> fetchRecipeById(String id) async {
   final record = await pb.collection('recipes').getOne(id);
-  return Recipe.fromRecord(record);
+  return Recipe.fromJson(record.toJson());
 }
 
 Future<void> deleteRecipe(String id) async {

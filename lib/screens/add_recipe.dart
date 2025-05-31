@@ -77,7 +77,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
         wizard.thumbnailFilename!.isNotEmpty) {
       setState(() {
         thumbnailUrl =
-            "${pb.baseUrl}/api/files/recipes/${wizard.recipeId}/${wizard.thumbnailFilename}";
+            "${pb.baseURL}/api/files/recipes/${wizard.recipeId}/${wizard.thumbnailFilename}";
       });
     }
   }
@@ -143,7 +143,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                       width: double.infinity,
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.2),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -294,14 +294,14 @@ class _AddRecipePageState extends State<AddRecipePage> {
       image: null,
       servings: recipe.servings ?? 1,
       prepTimeMinutes: recipe.prepTime ?? 0,
-      tagIds: (recipe.tagId ?? []).cast<String>(),
+      tagIds: recipe.tags.map((id) => id.toString()).toList(),
     );
 
     wizard.setTagObjects(
-      (recipe.tagId ?? []).map((id) {
+      (recipe.tags.isEmpty ? [] : recipe.tags).map((id) {
         return tags.firstWhere(
           (tag) => tag.id == id,
-          orElse: () => Tags(id: id, name: '?', category: ''),
+          orElse: () => Tags(id: id, name: '?', category: '', internal: ''),
         );
       }).toList(),
     );
@@ -313,7 +313,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
 
     if (recipe.thumbnail != null && recipe.thumbnail!.isNotEmpty) {
       thumbnailUrl =
-          "${pb.baseUrl}/api/files/recipes/${recipe.id}/${recipe.thumbnail}";
+          "${pb.baseURL}/api/files/recipes/${recipe.id}/${recipe.thumbnail}";
     }
 
     // Continue local form setup
@@ -334,7 +334,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
     String? getSelectedName(List<Tags> list) {
       final match = list.firstWhere(
         (tag) => tagIds.contains(tag.id),
-        orElse: () => Tags(id: '', name: '', category: ''),
+        orElse: () => Tags(id: '', name: '', category: '', internal: ''),
       );
       return match.name.isEmpty ? null : match.name;
     }

@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:recipeapp/api/ingredients.dart';
 import 'package:recipeapp/api/measurements.dart';
@@ -14,7 +11,6 @@ import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/models/recipeingredients.dart';
 import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/screens/add_recipe.dart';
-import 'package:recipeapp/screens/recipes.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
@@ -72,10 +68,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         }).toList();
 
     _tagObjects =
-        (recipe.tagId ?? []).map((id) {
+        (recipe.tags.isEmpty ? [] : recipe.tags).map((id) {
           return _allTags.firstWhere(
             (tag) => tag.id == id,
-            orElse: () => Tags(id: id, name: '?', category: ''),
+            orElse: () => Tags(id: id, name: '?', category: '', internal: ''),
           );
         }).toList();
 

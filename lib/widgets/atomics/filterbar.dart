@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:recipeapp/theme/theme.dart';
 
 class FilterBar extends StatelessWidget {

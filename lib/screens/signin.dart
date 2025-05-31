@@ -16,10 +16,10 @@ class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  _SignInScreenState createState() => _SignInScreenState();
+  SignInScreenState createState() => SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
   final _emailController = TextEditingController();

@@ -54,10 +54,7 @@ class _RecipeItemTilesState extends State<RecipeItemTiles> {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 3,
-        vertical: 6,
-      ), // 👈 SAME as list
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 6),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 5,
@@ -69,11 +66,17 @@ class _RecipeItemTilesState extends State<RecipeItemTiles> {
         final recipe = widget.recipes[index];
 
         final tagNames =
-            (recipe.tagId ?? []).map((id) {
+            recipe.tags.map((tagObj) {
               return _allTags
                   .firstWhere(
-                    (tag) => tag.id == id,
-                    orElse: () => Tags(id: id, name: '?', category: ''),
+                    (tag) => tag.id == tagObj.id,
+                    orElse:
+                        () => Tags(
+                          id: tagObj.id,
+                          name: '?',
+                          category: '',
+                          internal: '',
+                        ),
                   )
                   .name;
             }).toList();
@@ -151,7 +154,9 @@ class RecipeCard extends StatelessWidget {
                       errorBuilder:
                           (context, error, stackTrace) => Icon(
                             Icons.broken_image,
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.5,
+                            ),
                             size: 50,
                           ),
                     ),
@@ -165,7 +170,7 @@ class RecipeCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
+                        color: Colors.black.withValues(alpha: 0.7),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -205,7 +210,7 @@ class RecipeCard extends StatelessWidget {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.85),
+                                    color: Colors.white.withValues(alpha: 0.85),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
