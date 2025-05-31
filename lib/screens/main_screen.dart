@@ -6,14 +6,21 @@ import 'package:recipeapp/screens/account.dart';
 import 'package:recipeapp/screens/groceries.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int initialTabIndex;
+  const MainScreen({super.key, this.initialTabIndex = 0}); // 👈 Add this
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0; // Default to Meal Planning
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialTabIndex;
+  }
 
   // List of pages corresponding to each nav bar item.
   final List<Widget> _pages = [

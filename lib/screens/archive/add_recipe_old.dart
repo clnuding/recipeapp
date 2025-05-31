@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:provider/provider.dart';
+import 'package:recipeapp/screens/add_ingredient.dart';
+import 'package:recipeapp/state/recipe_wizard_state.dart';
+import 'dart:io';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/models/tags.dart';
 import 'package:recipeapp/api/tags.dart';
 import 'package:recipeapp/api/pb_client.dart';
-import 'package:recipeapp/state/recipe_wizard_state.dart';
 
 class AddRecipePage extends StatefulWidget {
   const AddRecipePage({super.key});
@@ -17,13 +18,21 @@ class AddRecipePage extends StatefulWidget {
 }
 
 class _AddRecipePageState extends State<AddRecipePage> {
+  bool get _isFormValid =>
+      _nameController.text.trim().isNotEmpty && _selectedRecipeType != null;
+
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _hourController = TextEditingController(text: '00');
-  final _minuteController = TextEditingController(text: '30');
+
+  File? _image;
 
   int _portions = 2;
-  File? _image;
+  final TextEditingController _hourController = TextEditingController(
+    text: '00',
+  );
+  final TextEditingController _minuteController = TextEditingController(
+    text: '00',
+  );
 
   String? _selectedRecipeType;
   String? _selectedRecipeCategory;
@@ -38,25 +47,51 @@ class _AddRecipePageState extends State<AddRecipePage> {
   @override
   void initState() {
     super.initState();
+
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+    // Load previously saved values
+    _nameController.text = wizard.title ?? '';
+    _descriptionController.text = wizard.description ?? '';
+    _image = wizard.image;
+    _portions = wizard.servings;
+
+    final prepTime = wizard.prepTimeMinutes;
+    _hourController.text = (prepTime ~/ 60).toString().padLeft(2, '0');
+    _minuteController.text = (prepTime % 60).toString().padLeft(2, '0');
+
+    // Load tags after fetching them
     _loadTags();
-    final state = context.read<RecipeWizardState>();
-    _nameController.text = state.name ?? '';
-    _descriptionController.text = state.description ?? '';
-    _portions = state.servings;
-    _hourController.text = (state.prepMinutes ~/ 60).toString().padLeft(2, '0');
-    _minuteController.text = (state.prepMinutes % 60).toString().padLeft(
-      2,
-      '0',
-    );
   }
 
   Future<void> _loadTags() async {
     final tags = await fetchTags();
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+    final tagIds = wizard.tagIds;
+
+    final mealTypes = tags.where((tag) => tag.category == 'meal_type').toList();
+    final recipeCategories =
+        tags.where((tag) => tag.category == 'meal_category').toList();
+    final recipeSeasons =
+        tags.where((tag) => tag.category == 'season').toList();
+
+    String? getSelectedName(List<Tags> list) {
+      final match = list.firstWhere(
+        (tag) => tagIds.contains(tag.id),
+        orElse: () => Tags(id: '', name: '', category: ''),
+      );
+      return match.name.isEmpty ? null : match.name;
+    }
+
     setState(() {
-      _mealTypes = tags.where((tag) => tag.category == 'meal_type').toList();
-      _recipeCategories =
-          tags.where((tag) => tag.category == 'meal_category').toList();
-      _recipeSeasons = tags.where((tag) => tag.category == 'season').toList();
+      _mealTypes = mealTypes;
+      _recipeCategories = recipeCategories;
+      _recipeSeasons = recipeSeasons;
+
+      _selectedRecipeType = getSelectedName(_mealTypes);
+      _selectedRecipeCategory = getSelectedName(_recipeCategories);
+      _selectedRecipeSeason = getSelectedName(_recipeSeasons);
+
       _isLoading = false;
     });
   }
@@ -109,7 +144,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
   }
 
   Future<void> _submitRecipe() async {
-    final state = context.read<RecipeWizardState>();
+    final wizard = Provider.of<RecipeWizardState>(context, listen: false);
 
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
@@ -140,43 +175,23 @@ class _AddRecipePageState extends State<AddRecipePage> {
               .id,
         ].where((id) => id.isNotEmpty).toList();
 
-    state.updateRecipeData(
-      name: name,
+    wizard.setRecipeInfo(
+      title: name,
       description: description,
+      image: _image,
       servings: servings,
-      prepMinutes: prepMinutes,
+      prepTimeMinutes: prepMinutes,
       tagIds: tagIds,
-      imageFile: _image,
     );
 
-    if (state.recipeId == null) {
-      final userId = pb.authStore.model?.id;
-      final householdId = pb.authStore.model?.getStringValue('household_id');
-
-      final newRecipe = await pb
-          .collection('recipes')
-          .create(
-            body: {
-              'name': name,
-              'instructions': description,
-              'servings': servings,
-              'prep_time_minutes': prepMinutes,
-              'tag_id': tagIds,
-              'user_id': userId,
-              'household_id': householdId,
-            },
-          );
-
-      state.recipeId = newRecipe.id;
-    }
-
-    if (mounted) {
-      Navigator.pushNamed(
-        context,
-        '/addIngredient',
-        arguments: {'recipeId': state.recipeId},
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => AddIngredientPage(),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
   }
 
   @override
@@ -188,10 +203,15 @@ class _AddRecipePageState extends State<AddRecipePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.arrow_forward),
-            onPressed: _submitRecipe,
+            onPressed: _isFormValid ? _submitRecipe : null,
+            color:
+                _isFormValid
+                    ? null
+                    : Colors.grey, // Optional: visually indicate disabled
           ),
         ],
       ),
+
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -257,13 +277,22 @@ class _AddRecipePageState extends State<AddRecipePage> {
                             const SizedBox(height: 16),
                             TextFormField(
                               controller: _nameController,
-                              decoration: const InputDecoration(
-                                labelText: "Name",
+                              decoration: InputDecoration(
+                                labelText: "Name *",
                                 hintText: "Namen eintragen",
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
+                                errorText:
+                                    _nameController.text.trim().isEmpty &&
+                                            !_isFormValid
+                                        ? "Pflichtfeld"
+                                        : null,
                               ),
+                              onChanged:
+                                  (_) =>
+                                      setState(() {}), // 👈 Refresh when typing
                             ),
+
                             const SizedBox(height: 16),
                             Row(
                               children: [
@@ -329,8 +358,12 @@ class _AddRecipePageState extends State<AddRecipePage> {
                               isExpanded: true,
                               value: _selectedRecipeType,
                               hint: const Text("Art wählen"),
-                              decoration: const InputDecoration(
-                                labelText: "Art",
+                              decoration: InputDecoration(
+                                labelText: "Art *",
+                                errorText:
+                                    _selectedRecipeType == null && !_isFormValid
+                                        ? "Pflichtfeld"
+                                        : null,
                               ),
                               items:
                                   _mealTypes
@@ -346,6 +379,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                                     () => _selectedRecipeType = value,
                                   ),
                             ),
+
                             const SizedBox(height: 16),
                             DropdownButtonFormField<String>(
                               isExpanded: true,

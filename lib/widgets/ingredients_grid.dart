@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/widgets/atomics/ingredient_tile.dart';
+
 //import 'package:recipeapp/theme/theme.dart';
 
 class IngredientsGrid extends StatefulWidget {
   final List<Map<String, dynamic>> ingredients;
   final int initialServings;
+  final String description; // 🆕
 
   const IngredientsGrid({
     super.key,
     required this.ingredients,
     required this.initialServings,
+    required this.description, // 🆕
   });
 
   @override
@@ -116,8 +120,8 @@ class _IngredientsGridState extends State<IngredientsGrid> {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                                childAspectRatio: 0.7,
+                                crossAxisCount: 3,
+                                childAspectRatio: 1,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
                               ),
@@ -125,49 +129,12 @@ class _IngredientsGridState extends State<IngredientsGrid> {
                           itemBuilder: (context, index) {
                             final ingredient = widget.ingredients[index];
                             final adjustedMeasurement =
-                                (ingredient['measurement'] as double) *
-                                _servings;
+                                (ingredient['measurement'] as double);
 
-                            return Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(
-                                      255,
-                                      234,
-                                      234,
-                                      234,
-                                    ),
-                                    blurRadius: 4,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    ingredient['name'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                  Text(
-                                    '${_formatNumber(adjustedMeasurement)} ${ingredient['measurementName']}',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            return IngredientTile(
+                              name: ingredient['name'],
+                              amount: adjustedMeasurement,
+                              unit: ingredient['measurementName'],
                             );
                           },
                         ),
@@ -177,11 +144,13 @@ class _IngredientsGridState extends State<IngredientsGrid> {
                 ),
 
                 // Zubereitung Tab (Placeholder for now)
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    'Hier steht die Zubereitungsbeschreibung...',
-                    style: TextStyle(fontSize: 14),
+                    widget.description.isNotEmpty
+                        ? widget.description
+                        : 'Keine Zubereitungsbeschreibung vorhanden.',
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ),
               ],
