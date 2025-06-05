@@ -33,7 +33,7 @@ class SecondaryButton extends StatelessWidget {
         ),
       );
     }
-    return ElevatedButton(
+    return OutlinedButton(
       onPressed: onPressed,
       child: Text(
         text,

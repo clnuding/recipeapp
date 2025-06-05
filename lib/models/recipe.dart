@@ -1,27 +1,31 @@
-import 'package:pocketbase/pocketbase.dart';
-import 'package:recipeapp/api/pb_client.dart';
+// User model
+import 'package:recipeapp/models/tags.dart';
 
 class Recipe {
   final String id;
   final String title;
   final String creatorId;
   final String? householdId;
-  final List? tagId;
+  final List<Tags> tags;
   final String? description;
-  final String? thumbnail; // ✅ Raw filename from PB
-  final String? thumbnailUrl; // ✅ Full URL to image
+  final String? thumbnail;
+  final String? thumbnailUrl;
   final String? sourceUrl;
   final int? prepTime;
   final int? cookingTime;
   final int? servings;
   final bool nutritionAutoCalculated;
+  final bool isBreakfast;
+  final bool isMainCourse;
+  final int planningFrequency;
+  final bool alwaysPlan;
 
   Recipe({
     required this.id,
     required this.title,
     required this.creatorId,
     this.householdId,
-    this.tagId,
+    this.tags = const [],
     this.description,
     this.thumbnail,
     this.thumbnailUrl,
@@ -30,47 +34,56 @@ class Recipe {
     this.cookingTime,
     this.servings,
     this.nutritionAutoCalculated = false,
+    this.isBreakfast = false,
+    this.isMainCourse = false,
+    this.planningFrequency = 1,
+    this.alwaysPlan = false,
   });
 
-  /// ✅ Create a Recipe from a PocketBase record
-  factory Recipe.fromRecord(RecordModel record) {
-    final thumbnailField = record.getStringValue('thumbnail');
-    final thumbnailUrl =
-        thumbnailField.isNotEmpty
-            ? pb.getFileUrl(record, thumbnailField).toString()
-            : null;
-
+  factory Recipe.fromJson(Map<String, dynamic> json) {
+    final rawTags = json['expand']?['tag_id'] as List<dynamic>?;
     return Recipe(
-      id: record.id,
-      title: record.getStringValue('name'),
-      creatorId: record.getStringValue('user_id'),
-      householdId: record.getStringValue('household_id'),
-      tagId: record.data['tag_id'] as List?,
-      description: record.getStringValue('instructions'),
-      thumbnail: thumbnailField, // ✅ Save raw filename
-      thumbnailUrl: thumbnailUrl, // ✅ Save URL
-      sourceUrl: record.getStringValue('source_url'),
-      prepTime: record.getIntValue('prep_time_minutes'),
-      cookingTime: record.getIntValue('cook_time_minutes'),
-      servings: record.getIntValue('servings'),
-      nutritionAutoCalculated:
-          record.getBoolValue('nutrition_auto_calculated') ?? false,
+      id: json['id'],
+      title: json['name'],
+      creatorId: json['user_id'],
+      householdId: json['household_id'],
+      tags:
+          rawTags == null
+              ? <Tags>[]
+              : rawTags
+                  .map((tag) => Tags.fromJson(tag as Map<String, dynamic>))
+                  .toList(),
+      description: json['description'],
+      thumbnailUrl: json['thumbnail_url'],
+      sourceUrl: json['source_url'],
+      prepTime: json['prep_time_minutes'],
+      cookingTime: json['cook_time_minutes'],
+      servings: json['servings'],
+      nutritionAutoCalculated: json['nutrition_auto_calculated'] ?? false,
+      isBreakfast: json['is_breakfast'] ?? false,
+      isMainCourse: json['is_main_course'] ?? false,
+      planningFrequency: json['planning_frequency'] ?? 1,
+      alwaysPlan: json['always_plan'] ?? false,
     );
   }
 
-  /// ✅ Used when creating/updating a recipe; excludes `thumbnailUrl` and `thumbnail`
   Map<String, dynamic> toJson() {
     return {
       'name': title,
       'creator_id': creatorId,
       'household_id': householdId,
-      'tag_id': tagId,
-      'instructions': description,
+      'tag_id': tags.map((tag) => tag.id).toList(),
+      'description': description,
+      'thumbnail_url': thumbnailUrl,
       'source_url': sourceUrl,
       'prep_time_minutes': prepTime,
       'cook_time_minutes': cookingTime,
       'servings': servings,
       'nutrition_auto_calculated': nutritionAutoCalculated,
+      'is_breakfast': isBreakfast,
+      'is_main_course': isMainCourse,
+      'planning_frequency': planningFrequency,
+      'always_plan': alwaysPlan,
     };
   }
 }

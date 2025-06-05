@@ -28,9 +28,9 @@ class _IngredientsGridState extends State<IngredientsGrid> {
     _servings = widget.initialServings;
   }
 
-  String _formatNumber(double value) {
-    return value % 1 == 0 ? value.toInt().toString() : value.toString();
-  }
+  // String _formatNumber(double value) {
+  //   return value % 1 == 0 ? value.toInt().toString() : value.toString();
+  // }
 
   @override
   Widget build(BuildContext context) {

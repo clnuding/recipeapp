@@ -108,8 +108,8 @@ class _RecipeItemListState extends State<RecipeItemList> {
                             child: Icon(
                               Icons.broken_image,
                               size: 40,
-                              color: theme.colorScheme.onSurface.withOpacity(
-                                0.5,
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.5,
                               ),
                             ),
                           ),
@@ -147,14 +147,15 @@ class _RecipeItemListState extends State<RecipeItemList> {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children:
-                                  (recipe.tagId ?? []).map((id) {
+                                  recipe.tags.map((tagObj) {
                                     final tag = _allTags.firstWhere(
-                                      (t) => t.id == id,
+                                      (t) => t.id == tagObj.id,
                                       orElse:
                                           () => Tags(
-                                            id: id,
+                                            id: tagObj.id,
                                             name: '?',
                                             category: '',
+                                            internal: '',
                                           ),
                                     );
                                     return Container(
@@ -164,7 +165,9 @@ class _RecipeItemListState extends State<RecipeItemList> {
                                         vertical: 2,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.85),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.85,
+                                        ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(

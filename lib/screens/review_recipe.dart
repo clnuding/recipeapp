@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:recipeapp/screens/add_ingredient.dart';
-import 'package:recipeapp/screens/recipes.dart';
 import 'package:recipeapp/state/recipe_wizard_state.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/ingredients_grid.dart';
@@ -28,8 +27,8 @@ class RecipeReviewPage extends StatefulWidget {
 
 class _RecipeReviewPageState extends State<RecipeReviewPage> {
   List<Recipeingredients> _ingredients = [];
-  List<Ingredient> _allIngredients = [];
-  List<Measurements> _allMeasurements = [];
+  // List<Ingredient> _allIngredients = [];
+  // List<Measurements> _allMeasurements = [];
   List<Tags> _allTags = [];
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -122,12 +121,27 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
   Future<void> _loadRecipeData() async {
     try {
       final wizard = Provider.of<RecipeWizardState>(context, listen: false);
+
+      // final recipe = Recipe(
+      //   id: "12345", //wizard.recipeId!,
+      //   title: wizard.title ?? 'Unbenannt',
+      //   description: wizard.description,
+      //   servings: wizard.servings,
+      //   thumbnailUrl: wizard.image?.path,
+      //   creatorId: pb.authStore.record?.id ?? '',
+      //   householdId: pb.authStore.record?.getStringValue('household_id'),
+      //   // tags: "12345",//wizard.tagIds,
+      //   prepTime: wizard.prepTimeMinutes,
+      //   nutritionAutoCalculated: false,
+      // );
+
+      // ✅ Fetch details for names
       final allIngredients = await fetchIngredients();
       final allMeasurements = await fetchMeasurements();
       final allTags = await fetchTags();
 
-      _allIngredients = allIngredients;
-      _allMeasurements = allMeasurements;
+      // _allIngredients = allIngredients;
+      // _allMeasurements = allMeasurements;
       _allTags = allTags;
 
       final enrichedIngredients =
@@ -166,7 +180,8 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
               .map(
                 (id) => _allTags.firstWhere(
                   (tag) => tag.id == id,
-                  orElse: () => Tags(id: id, name: '?', category: ''),
+                  orElse:
+                      () => Tags(id: id, name: '?', category: '', internal: ''),
                 ),
               )
               .toList();

@@ -10,7 +10,6 @@ import 'package:recipeapp/models/recipe.dart';
 import 'package:recipeapp/widgets/atomics/recipe_item_list.dart';
 import 'package:recipeapp/widgets/atomics/recipe_item_tiles.dart';
 import 'package:recipeapp/api/pb_client.dart';
-import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 
 class RecipesPage extends StatefulWidget {
   const RecipesPage({super.key});
@@ -192,7 +191,7 @@ class _RecipesPageState extends State<RecipesPage> {
     setState(() {
       _filteredRecipes =
           _allRecipes.where((recipe) {
-            final tags = recipe.tagId ?? [];
+            final tags = recipe.tags.isEmpty ? [] : recipe.tags;
 
             final matchesMeal =
                 _selectedMealTypes.isEmpty ||
@@ -265,8 +264,6 @@ class _RecipesPageState extends State<RecipesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: LogoAppbar(
         showBackButton: false,

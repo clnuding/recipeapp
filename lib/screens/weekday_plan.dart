@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:recipeapp/api/pb_client.dart';
 import 'package:recipeapp/theme/theme.dart';
 import 'package:recipeapp/widgets/atomics/appbar.dart';
 import 'package:recipeapp/widgets/atomics/legend_item.dart';
 import 'package:recipeapp/widgets/atomics/primary_btn.dart';
+// import 'package:recipeapp/widgets/atomics/secondary_btn.dart';
 import 'package:recipeapp/widgets/card_stack.dart';
 import 'package:recipeapp/widgets/three_tap_button.dart';
 
 class WeekdayPlanScreen extends StatefulWidget {
   final DateTime startDate;
+  final String userId;
+  final String householdId;
+  final int duration;
 
-  const WeekdayPlanScreen({super.key, required this.startDate});
+  const WeekdayPlanScreen({
+    super.key,
+    required this.startDate,
+    required this.userId,
+    required this.householdId,
+    this.duration = 7,
+  });
 
   @override
   State<WeekdayPlanScreen> createState() => _WeekdayPlanScreenState();
@@ -29,7 +40,7 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
 
   void _initDates() {
     _weekDates = List.generate(
-      7,
+      widget.duration,
       (index) => widget.startDate.add(Duration(days: index)),
     );
   }
@@ -56,44 +67,43 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: LogoAppbar(showBackButton: true),
+      appBar: LogoAppbar(showBackButton: false),
       body: Stack(
         children: [
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Plane wann du kochen möchtest',
-                    style: theme.textTheme.titleLarge,
+                    '1. Plane deine Mahlzeiten',
+                    style: theme.textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 12),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       LegendItem(
                         color: theme.colorScheme.primary,
-                        label: 'geplant (0 Tap)',
+                        label: 'Mahlzeit hinzufügen',
                       ),
                       LegendItem(
                         color: theme.colorScheme.secondary.withValues(
                           alpha: 0.2,
                         ),
-                        label: 'nicht geplant (1 Tap)',
+                        label: 'Mahlzeit entfernen / manuell planen',
                       ),
-                      LegendItem(
-                        color: const Color.fromARGB(255, 255, 226, 146),
-                        label: 'plane später (2 Taps)',
-                      ),
+                      // LegendItem(
+                      //   color: const Color.fromARGB(255, 255, 226, 146),
+                      //   label: 'plane später (2 Taps)',
+                      // ),
                     ],
                   ),
-                  const SizedBox(height: SpoonSparkTheme.spacingXL),
+                  const SizedBox(height: SpoonSparkTheme.spacingM),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: 7,
-                      // separatorBuilder: (context, index) => const Divider(),
+                      itemCount: widget.duration,
                       itemBuilder: (context, index) {
                         final date = _weekDates[index];
                         final dateStr = DateFormat('yyyy-MM-dd').format(date);
@@ -129,33 +139,46 @@ class _WeekdayPlanScreenState extends State<WeekdayPlanScreen> {
                       },
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: SpoonSparkTheme.spacingS,
+                    ),
+                    child: Row(
+                      children: [
+                        // Secondary button
+                        // Expanded(
+                        //   child: SecondaryButton(
+                        //     text: 'Zurück',
+                        //     onPressed: Navigator.of(context).pop,
+                        //   ),
+                        // ),
 
-          Positioned(
-            bottom: 30,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: SizedBox(
-                width: 230,
-                child: PrimaryButton(
-                  text: "Speichern und Weiter",
-                  onPressed: () {
-                    // Print the buttonStates map
-                    print(buttonStates);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SwipeCardStackScreen(),
-                      ),
-                    );
-                  },
-                  icon: Icons.arrow_forward,
-                  iconAlignment: IconAlignment.end,
-                ),
+                        // const SizedBox(width: SpoonSparkTheme.spacingL),
+
+                        // Primary button
+                        Expanded(
+                          child: PrimaryButton(
+                            text: 'Weiter',
+                            onPressed: () {
+                              mpService.insertMealDaySelection(buttonStates);
+                              // Navigate to the date selection screen
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => SwipeCardStackScreen(
+                                        userId: widget.userId,
+                                        householdId: widget.householdId,
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

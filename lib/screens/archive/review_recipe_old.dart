@@ -13,7 +13,6 @@ import 'package:recipeapp/models/ingredient.dart';
 import 'package:recipeapp/models/measurements.dart';
 import 'package:recipeapp/api/ingredients.dart';
 import 'package:recipeapp/api/measurements.dart';
-import 'package:recipeapp/widgets/atomics/primary_btn.dart';
 
 // ... (all your imports stay the same)
 
@@ -26,8 +25,8 @@ class RecipeReviewPage extends StatefulWidget {
 
 class _RecipeReviewPageState extends State<RecipeReviewPage> {
   List<Recipeingredients> _ingredients = [];
-  List<Ingredient> _allIngredients = [];
-  List<Measurements> _allMeasurements = [];
+  // List<Ingredient> _allIngredients = [];
+  // List<Measurements> _allMeasurements = [];
   bool _isLoading = true;
   bool _isSubmitting = false;
 
@@ -43,8 +42,8 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
 
       final allIngredients = await fetchIngredients();
       final allMeasurements = await fetchMeasurements();
-      _allIngredients = allIngredients;
-      _allMeasurements = allMeasurements;
+      // _allIngredients = allIngredients;
+      // _allMeasurements = allMeasurements;
 
       final enrichedIngredients =
           wizard.ingredients.map((entry) {
