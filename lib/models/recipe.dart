@@ -8,13 +8,17 @@ class Recipe {
   final String? householdId;
   final List<Tags> tags;
   final String? description;
-  final String? thumbnail; // ✅ Raw filename from PB
-  final String? thumbnailUrl; // ✅ Full URL to image
+  final String? thumbnail;
+  final String? thumbnailUrl;
   final String? sourceUrl;
   final int? prepTime;
   final int? cookingTime;
   final int? servings;
   final bool nutritionAutoCalculated;
+  final bool isBreakfast;
+  final bool isMainCourse;
+  final int planningFrequency;
+  final bool alwaysPlan;
 
   Recipe({
     required this.id,
@@ -30,11 +34,14 @@ class Recipe {
     this.cookingTime,
     this.servings,
     this.nutritionAutoCalculated = false,
+    this.isBreakfast = false,
+    this.isMainCourse = false,
+    this.planningFrequency = 1,
+    this.alwaysPlan = false,
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     final rawTags = json['expand']?['tag_id'] as List<dynamic>?;
-
     return Recipe(
       id: json['id'],
       title: json['name'],
@@ -53,10 +60,13 @@ class Recipe {
       cookingTime: json['cook_time_minutes'],
       servings: json['servings'],
       nutritionAutoCalculated: json['nutrition_auto_calculated'] ?? false,
+      isBreakfast: json['is_breakfast'] ?? false,
+      isMainCourse: json['is_main_course'] ?? false,
+      planningFrequency: json['planning_frequency'] ?? 1,
+      alwaysPlan: json['always_plan'] ?? false,
     );
   }
 
-  /// ✅ Used when creating/updating a recipe; excludes `thumbnailUrl` and `thumbnail`
   Map<String, dynamic> toJson() {
     return {
       'name': title,
@@ -70,6 +80,10 @@ class Recipe {
       'cook_time_minutes': cookingTime,
       'servings': servings,
       'nutrition_auto_calculated': nutritionAutoCalculated,
+      'is_breakfast': isBreakfast,
+      'is_main_course': isMainCourse,
+      'planning_frequency': planningFrequency,
+      'always_plan': alwaysPlan,
     };
   }
 }
