@@ -627,5 +627,9 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       prepTimeMinutes: wizard.prepTimeMinutes,
       tagIds: wizard.tagIds,
     );
+
+    // ✅ Re-assign weekly planning values to retain state
+    wizard.setWeeklyPlanning(wizard.weeklyPlanning);
+    wizard.setNumberOfMeals(wizard.numberOfMeals);
   }
 }

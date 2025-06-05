@@ -210,6 +210,8 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                 'servings': wizard.servings,
                 'prep_time_minutes': wizard.prepTimeMinutes,
                 'tag_id': wizard.tagIds,
+                'weekly_planning': wizard.weeklyPlanning, // ✅ NEW
+                'number_of_meals': wizard.numberOfMeals, // ✅ NEW
               },
             );
 
@@ -246,6 +248,8 @@ class _RecipeReviewPageState extends State<RecipeReviewPage> {
                 'tag_id': wizard.tagIds,
                 'user_id': userId,
                 'household_id': householdId,
+                'weekly_planning': wizard.weeklyPlanning, // ✅ NEW
+                'number_of_meals': wizard.numberOfMeals, // ✅ NEW
               },
               files:
                   wizard.image != null

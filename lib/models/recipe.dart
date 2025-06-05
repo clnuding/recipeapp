@@ -15,6 +15,8 @@ class Recipe {
   final int? cookingTime;
   final int? servings;
   final bool nutritionAutoCalculated;
+  final bool? weeklyPlanning;
+  final int? numberOfMeals;
 
   Recipe({
     required this.id,
@@ -30,6 +32,8 @@ class Recipe {
     this.cookingTime,
     this.servings,
     this.nutritionAutoCalculated = false,
+    this.weeklyPlanning,
+    this.numberOfMeals,
   });
 
   /// ✅ Create a Recipe from a PocketBase record
@@ -55,6 +59,8 @@ class Recipe {
       servings: record.getIntValue('servings'),
       nutritionAutoCalculated:
           record.getBoolValue('nutrition_auto_calculated') ?? false,
+      weeklyPlanning: record.getBoolValue('weekly_planning'),
+      numberOfMeals: record.getIntValue('number_of_meals'),
     );
   }
 
@@ -71,6 +77,8 @@ class Recipe {
       'cook_time_minutes': cookingTime,
       'servings': servings,
       'nutrition_auto_calculated': nutritionAutoCalculated,
+      'weekly_planning': weeklyPlanning,
+      'number_of_meals': numberOfMeals,
     };
   }
 }

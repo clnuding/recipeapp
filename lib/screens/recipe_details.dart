@@ -302,6 +302,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     padding: const EdgeInsets.symmetric(
                       horizontal: SpoonSparkTheme.spacingL,
                     ),
+
                     child: IngredientsGrid(
                       initialServings: recipe.servings ?? 1,
                       ingredients:

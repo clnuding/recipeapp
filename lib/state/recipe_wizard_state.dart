@@ -8,26 +8,33 @@ class RecipeWizardState extends ChangeNotifier {
   String? _title;
   String? _description;
   File? _image;
-  String? _thumbnailFilename; // ✅ NEW
+  String? _thumbnailFilename;
   int _servings = 2;
-  int _prepTimeMinutes = 00;
+  int _prepTimeMinutes = 0;
   List<String> _tagIds = [];
   List<Tags> _tagObjects = [];
   List<Recipeingredients> _ingredients = [];
   bool _isEditing = false;
+
+  // ✅ New planning fields
+  bool _weeklyPlanning = false;
+  int _numberOfMeals = 1;
 
   // Getters
   String? get recipeId => _recipeId;
   String? get title => _title;
   String? get description => _description;
   File? get image => _image;
-  String? get thumbnailFilename => _thumbnailFilename; // ✅ NEW
+  String? get thumbnailFilename => _thumbnailFilename;
   int get servings => _servings;
   int get prepTimeMinutes => _prepTimeMinutes;
   List<String> get tagIds => _tagIds;
   List<Tags> get tagObjects => _tagObjects;
   List<Recipeingredients> get ingredients => _ingredients;
   bool get isEditing => _isEditing;
+
+  bool get weeklyPlanning => _weeklyPlanning;
+  int get numberOfMeals => _numberOfMeals;
 
   // Setters
   void setRecipeId(String id) {
@@ -87,18 +94,30 @@ class RecipeWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setWeeklyPlanning(bool value) {
+    _weeklyPlanning = value;
+    notifyListeners();
+  }
+
+  void setNumberOfMeals(int value) {
+    _numberOfMeals = value;
+    notifyListeners();
+  }
+
   void clear() {
     _recipeId = null;
     _title = null;
     _description = null;
     _image = null;
-    _thumbnailFilename = null; // ✅ RESET
+    _thumbnailFilename = null;
     _servings = 2;
-    _prepTimeMinutes = 00;
+    _prepTimeMinutes = 0;
     _tagIds = [];
     _tagObjects = [];
     _ingredients = [];
     _isEditing = false;
+    _weeklyPlanning = false;
+    _numberOfMeals = 1;
     notifyListeners();
   }
 }

@@ -27,6 +27,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
 
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
+  int _numberOfMeals = 1;
+  bool _weeklyPlanning = false;
 
   File? _image;
   String? thumbnailUrl;
@@ -97,6 +99,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
     _minuteController.text = (prepTime % 60).toString().padLeft(2, '0');
 
     _loadTags();
+    _weeklyPlanning = wizard.weeklyPlanning;
+    _numberOfMeals = wizard.numberOfMeals;
   }
 
   void _showTimePickerBottomSheet({
@@ -467,6 +471,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
       tagIds: tagIds,
     );
 
+    wizard.setWeeklyPlanning(_weeklyPlanning);
+    wizard.setNumberOfMeals(_numberOfMeals);
+
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
@@ -782,6 +789,71 @@ class _AddRecipePageState extends State<AddRecipePage> {
                                       FloatingLabelBehavior.always,
                                 ),
                                 maxLines: 3,
+                              ),
+                              const SizedBox(height: 24),
+                              Divider(),
+                              const SizedBox(height: 16),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Mahlzeitenplanung",
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Tage planen
+                              InputDecorator(
+                                decoration: const InputDecoration(
+                                  labelText:
+                                      "Für wie viele Male planst du diese Mahlzeit in der Regel?",
+                                  border: OutlineInputBorder(),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    _boxedButton(Icons.remove, () {
+                                      setState(() {
+                                        _numberOfMeals =
+                                            _numberOfMeals > 1
+                                                ? _numberOfMeals - 1
+                                                : 1;
+                                      });
+                                    }),
+                                    Text(
+                                      '$_numberOfMeals',
+                                      style: theme.textTheme.bodyLarge,
+                                    ),
+                                    _boxedButton(Icons.add, () {
+                                      setState(() => _numberOfMeals++);
+                                    }),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Jede Woche einplanen
+                              InputDecorator(
+                                decoration: const InputDecoration(
+                                  labelText:
+                                      "Möchtest du diese Mahlzeit jede Woche einplanen?",
+                                  border: OutlineInputBorder(),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Wöchentlich einplanen"),
+                                    Switch(
+                                      value: _weeklyPlanning,
+                                      onChanged:
+                                          (val) => setState(
+                                            () => _weeklyPlanning = val,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
